@@ -1,0 +1,29 @@
+{
+  "name": "prepwithjd",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AI Interview Prep Kit — full-stack assessment (Next.js + Express + MongoDB + TypeScript)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run dev -w @prepwithjd/api",
+    "dev:web": "npm run dev -w @prepwithjd/web",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "fixture": "FIXTURE_PORT=9999 node tooling/fixture-site/server.mjs",
+    "smoke": "tsx tooling/smoke.ts",
+    "evaluate": "npm run evaluate -w @prepwithjd/cli --"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}
