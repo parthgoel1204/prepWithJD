@@ -6,16 +6,18 @@ import { KitModel } from "./models/kit.model";
 import { SourceFailureModel } from "./models/sourceFailure.model";
 import { companyNameFromUrl } from "../lib/util";
 
+type HydratedUser = InstanceType<typeof UserModel>;
+
 // ---------- users ----------
-export async function findUserByEmail(email: string): Promise<UserDoc | null> {
+export async function findUserByEmail(email: string): Promise<HydratedUser | null> {
   return UserModel.findOne({ email: email.toLowerCase() });
 }
 
-export async function findUserById(id: Types.ObjectId | string): Promise<UserDoc | null> {
+export async function findUserById(id: Types.ObjectId | string): Promise<HydratedUser | null> {
   return UserModel.findById(id);
 }
 
-export async function createUser(name: string, email: string, passwordHash: string): Promise<UserDoc> {
+export async function createUser(name: string, email: string, passwordHash: string): Promise<HydratedUser> {
   return UserModel.create({ name, email: email.toLowerCase(), passwordHash });
 }
 
@@ -80,6 +82,11 @@ export async function findKitById(id: string): Promise<KitModelInstance | null> 
 
 export async function updateKitStatus(id: string, status: KitStatus): Promise<void> {
   await KitModel.updateOne({ _id: id }, { $set: { status } });
+}
+
+export async function deleteKit(id: string): Promise<boolean> {
+  const res = await KitModel.deleteOne({ _id: id });
+  return res.deletedCount > 0;
 }
 
 export async function persistRetrieval(kitId: string, content: KitContent): Promise<void> {

@@ -6,10 +6,9 @@ import { NotImplementedExtractor } from "./extraction";
 import { NotImplementedGenerator } from "./generation";
 import { NotImplementedScheduler } from "./scheduling";
 
-export type { RetrievalOptions, RetrievalResult } from "./types";
-
 export { connectDb, disconnectDb, isConnected } from "./persistence/connect";
 export * as models from "./persistence/models";
+export { UserModel } from "./persistence/models";
 export {
   createUser,
   findUserByEmail,
@@ -22,12 +21,15 @@ export {
   listKits,
   findKitById,
   updateKitStatus,
+  deleteKit,
   persistRetrieval,
   persistFailedKit,
   recordSourceFailures,
   listSourceFailures,
 } from "./persistence/repositories";
+export { resolveRetrievalOptions } from "./retrieval/options";
 export { companyNameFromUrl, hostnameOf } from "./lib/util";
+export type { RetrievalOptions, RetrievalResult } from "./types";
 
 export const PIPELINE_VERSION = "0.1.0";
 
