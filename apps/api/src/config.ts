@@ -1,4 +1,9 @@
-import "dotenv/config";
+import { config as loadEnv } from "dotenv";
+import { fileURLToPath } from "node:url";
+
+// Load apps/api/.env regardless of the process cwd (cli/monorepo tooling start this
+// server from repo root too).
+loadEnv({ path: fileURLToPath(new URL("../.env", import.meta.url)) });
 
 function intEnv(name: string, fallback: number): number {
   const raw = process.env[name];

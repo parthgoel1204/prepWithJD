@@ -47,6 +47,11 @@ const server = createServer(async (req, res) => {
   }
 });
 
+server.on("error", (err) => {
+  console.error(`[fixture] failed to bind :${PORT} — ${err.message}`);
+  process.exit(1);
+});
+
 server.listen(PORT, "127.0.0.1", () => {
   console.log(`[fixture] serving ${ROOT} on http://localhost:${PORT}`);
 });
