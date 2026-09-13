@@ -66,7 +66,7 @@ const requirementsSchema: JsonSchema = {
   properties: {
     title: { type: "string", maximumLength: 200 },
     seniority: { type: "string", maximumLength: 120 },
-    responsibilities: { type: "array", items: { type: "string", maximumLength: 300 }, description: "job responsibilities explicitly listed in the JD" },
+    responsibilities: { type: "array", items: { type: "string", maximumLength: 800 }, description: "job responsibilities explicitly listed in the JD" },
     requirements: { type: "array", items: requirementItemSchema },
   },
   required: ["title", "seniority", "responsibilities", "requirements"],
@@ -76,8 +76,8 @@ const companyBriefSchema: JsonSchema = {
   type: "object",
   additionalProperties: false,
   properties: {
-    summary: { type: "string", maximumLength: 600 },
-    what_they_do: { type: "string", maximumLength: 800 },
+    summary: { type: "string", maximumLength: 1200 },
+    what_they_do: { type: "string", maximumLength: 1600 },
     sources: { type: "array", items: { type: "string" }, description: "subset of the provided researched URLs used" },
   },
   required: ["summary", "what_they_do", "sources"],
