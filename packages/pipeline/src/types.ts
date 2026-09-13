@@ -20,6 +20,8 @@ export interface KitSource {
   jd_chars: number;
   researched_at: string;
   pages_used: string[];
+  /** Extended field (add-only permitted by the contract): search-API discussion hits. */
+  discussion?: Array<{ title: string; url: string; snippet: string }>;
 }
 
 export interface CompanyBrief {
@@ -125,11 +127,19 @@ export interface SearchHits {
   failures: RetrievalFailure[];
 }
 
+export interface RobotsBlockedPage {
+  url: string;
+  via: string; // the url that linked to it
+  rule: string; // the matching robots.txt directive, e.g. "Disallow: /private"
+}
+
 export interface RetrievalResult {
   company: string;
   pages: CrawledPage[];
   pages_used: string[];
   search_hits: SearchHits;
+  /** URLs skipped specifically because robots.txt disallowed them (with the matched rule). */
+  robots_blocked: RobotsBlockedPage[];
   failures: RetrievalFailure[];
 }
 

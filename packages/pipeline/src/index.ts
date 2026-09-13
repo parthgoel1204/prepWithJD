@@ -42,6 +42,7 @@ export async function runRetrieval(input: Pick<KitInput, "company_url">, opts?: 
     pages: draft.pages,
     pages_used: draft.pages_used,
     search_hits: draft.search_hits,
+    robots_blocked: draft.robots_blocked,
     failures,
   };
 }

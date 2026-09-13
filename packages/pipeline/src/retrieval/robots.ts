@@ -61,6 +61,33 @@ export class RobotsRules {
     }
     return bestRule ? bestRule.allow : true;
   }
+
+  /** The winning rule for this URL (e.g. `Disallow: /private`) or null if none matched. */
+  matchingRule(rawUrl: string, userAgent: string): string | null {
+    let url: URL;
+    try {
+      url = new URL(rawUrl);
+    } catch {
+      return null;
+    }
+    const group = this.groupFor(userAgent);
+    if (!group) return null;
+
+    const path = url.pathname + url.search;
+    let best: { rule: string; len: number } | null = null;
+    for (const [kind, patterns] of [
+      ["Allow", group.allow],
+      ["Disallow", group.disallow],
+    ] as const) {
+      for (const pattern of patterns) {
+        if (patternToRegex(pattern).test(path)) {
+          const len = pathLength(pattern);
+          if (!best || len > best.len) best = { rule: `${kind}: ${pattern}`, len };
+        }
+      }
+    }
+    return best?.rule ?? null;
+  }
 }
 
 export interface RobotsOutcome {

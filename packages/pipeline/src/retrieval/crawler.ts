@@ -1,4 +1,4 @@
-import type { CrawledPage, RetrievalFailure, RetrievalOptions, RetrievalResult, SearchHits } from "../types";
+import type { CrawledPage, RetrievalFailure, RetrievalOptions, RetrievalResult, RobotsBlockedPage, SearchHits } from "../types";
 import { nowIso, companyNameFromUrl } from "../lib/util";
 import { checkUrl } from "./guard";
 import { fetchPage, parseHtml } from "./fetcher";
@@ -11,6 +11,7 @@ export interface CrawlDraft {
   pages: CrawledPage[];
   pages_used: string[];
   search_hits: SearchHits;
+  robots_blocked: RobotsBlockedPage[];
 }
 
 /** Crawl a site without assuming anything about its host/paths. */
@@ -27,7 +28,13 @@ export async function crawlSite(companyUrl: string, opts: Required<RetrievalOpti
       occurred_at: nowIso(),
     });
     return {
-      draft: { company: companyNameFromUrl(companyUrl), pages: [], pages_used: [], search_hits: { items: [], failures: [] } },
+      draft: {
+        company: companyNameFromUrl(companyUrl),
+        pages: [],
+        pages_used: [],
+        search_hits: { items: [], failures: [] },
+        robots_blocked: [],
+      },
       failures,
     };
   }
@@ -39,6 +46,7 @@ export async function crawlSite(companyUrl: string, opts: Required<RetrievalOpti
   const pageTitles = new Map<string, string>();
   const anchorContext = new Map<string, string>();
   const pages: CrawledPage[] = [];
+  const robotsBlocked: RobotsBlockedPage[] = [];
   const queue: Array<{ url: string; depth: number; via: string }> = [{ url: baseUrl, depth: 0, via: "manual-input" }];
 
   const robots = await loadRobots(origin, opts);
@@ -58,7 +66,12 @@ export async function crawlSite(companyUrl: string, opts: Required<RetrievalOpti
     const depth = item.depth;
     if (depth > opts.maxDepth) continue;
     if (visited.has(item.url)) continue;
-    if (!robots.rules?.isAllowed(item.url, opts.userAgent)) continue; // robots says no
+    if (!robots.rules?.isAllowed(item.url, opts.userAgent)) {
+      // Skipped BECAUSE of robots.txt (not just "no link pointed here") — record the exact rule.
+      const rule = robots.rules?.matchingRule(item.url, opts.userAgent) ?? "Disallow: *";
+      robotsBlocked.push({ url: item.url, via: item.via, rule });
+      continue; // robots says no
+    }
     visited.set(item.url, depth);
 
     await waitForGap();
@@ -117,6 +130,7 @@ export async function crawlSite(companyUrl: string, opts: Required<RetrievalOpti
       pages,
       pages_used: pages.map((p) => p.url),
       search_hits,
+      robots_blocked: robotsBlocked,
     },
     failures,
   };
