@@ -16,6 +16,7 @@
     "lint": "npm run lint --workspaces --if-present",
     "fixture": "FIXTURE_PORT=9999 node tooling/fixture-site/server.mjs",
     "smoke": "tsx tooling/smoke.ts",
+    "verify:search": "tsx tooling/verify-search.ts",
     "evaluate": "npm run evaluate -w @prepwithjd/cli --",
     "e2e": "tsx tooling/e2e.ts"
   },

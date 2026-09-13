@@ -25,6 +25,17 @@ const server = createServer(async (req, res) => {
   try {
     const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
     let path = decodeURIComponent(url.pathname);
+
+    // /slow hangs past the crawler timeout — used to test timeout failure recording.
+    if (path === "/slow") {
+      const delay = Number(process.env.SLOW_DELAY_MS ?? 30_000);
+      setTimeout(() => {
+        res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+        res.end("<html><body>slow page that should time out</body></html>");
+      }, delay);
+      return;
+    }
+
     if (path === "/") path = "/index.html";
     else if (!extname(path)) path += ".html";
 
