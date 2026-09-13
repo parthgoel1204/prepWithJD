@@ -107,6 +107,24 @@ const kitSourceSchema: JsonSchema = {
     jd_chars: { type: "integer", minimum: 0 },
     researched_at: { type: "string" },
     pages_used: { type: "array", items: { type: "string" } },
+    discussion: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: { title: { type: "string" }, url: { type: "string" }, snippet: { type: "string" } },
+        required: ["title", "url", "snippet"],
+        additionalProperties: false,
+      },
+    },
+    robots_blocked: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: { url: { type: "string" }, via: { type: "string" }, rule: { type: "string" } },
+        required: ["url", "via", "rule"],
+        additionalProperties: false,
+      },
+    },
   },
   required: ["company", "company_url", "role", "location", "jd_chars", "researched_at", "pages_used"],
   additionalProperties: false,
@@ -150,6 +168,20 @@ export const kitContentSchema: JsonSchema = {
     },
     schedule: kitScheduleSchema,
     coverage: coverageSchema,
+    stage_errors: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          stage: { type: "string" },
+          code: { type: "string" },
+          message: { type: "string" },
+          occurred_at: { type: "string" },
+        },
+        required: ["stage", "code", "message", "occurred_at"],
+        additionalProperties: false,
+      },
+    },
   },
   required: ["source", "company_brief", "role", "questions", "flashcards", "schedule", "coverage"],
   additionalProperties: false,

@@ -79,6 +79,14 @@ export interface Coverage {
   passes: number;
 }
 
+/** A stage that degraded but didn't stop the pipeline (log-and-continue). */
+export interface KitStageError {
+  stage: string;
+  code: string;
+  message: string;
+  occurred_at: string;
+}
+
 export interface KitContent {
   source: KitSource;
   company_brief: CompanyBrief;
@@ -87,6 +95,8 @@ export interface KitContent {
   flashcards: Flashcard[];
   schedule: KitSchedule;
   coverage: Coverage;
+  /** Extended field (add-only): structured stage degradations (e.g. a page or LLM call failed). */
+  stage_errors?: KitStageError[];
 }
 
 // ---------- raw user input ----------
