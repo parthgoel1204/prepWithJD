@@ -1,5 +1,8 @@
 import type { ParsedPage } from "./fetcher";
 
+/** Extensions that can never be a crawlable text page — skip at discovery so we don't fetch svg/png/pdf/… links and log noise. */
+const ASSET_EXTENSION = /\.(?:svg|png|jpe?g|gif|webp|avif|ico|bmp|woff2?|ttf|otf|eot|mp4|webm|mp3|ogg|wav|pdf|docx?|xlsx?|pptx?|zip|gz|tar|rar|7z|css|js|json)$/i;
+
 /** Resolve anchors to absolute same-origin URLs. Host-agnostic — works for any site. */
 export function extractInternalLinks(page: ParsedPage, baseUrl: string, sourceHtmlBase: string): string[] {
   const seen = new Set<string>();
@@ -24,6 +27,7 @@ export function extractInternalLinks(page: ParsedPage, baseUrl: string, sourceHt
     }
     if (target.protocol !== "http:" && target.protocol !== "https:") continue;
     if (target.origin !== base.origin) continue; // internal only
+    if (ASSET_EXTENSION.test(target.pathname)) continue; // image/font/doc/asset, not a page
     target.hash = "";
     const url = target.toString();
     if (!seen.has(url)) {
