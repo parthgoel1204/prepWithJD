@@ -61,7 +61,7 @@ export interface LLMCallResult {
   metrics: LLMCallMetrics;
 }
 
-const DEFAULT_MAX_TOKENS = 900;
+const DEFAULT_MAX_TOKENS = 1200;
 const DEFAULT_TEMPERATURE = 0.2;
 const DEFAULT_RETRIES = 3;
 const DEFAULT_REASONING_EFFORT = "low";
@@ -137,18 +137,32 @@ async function sendWithRetries(
   const bareJsonInstruction = "\n\nReturn ONLY valid JSON (no prose, no markdown fences, no trailing text).";
 
   // Repair path re-sends with the strict instruction appended and switches strict
-  // constrained decoding OFF (best-effort) — a strict 400 can't self-heal otherwise.
+  // constrained decoding OFF (best-effort) — a strict 400/parse-trap can't self-heal otherwise.
+  const makeRepairMessages = (msgs: GroqMessage[]): GroqMessage[] => {
+    const lastContent = msgs[msgs.length - 1]!.content;
+    return [
+      ...msgs.slice(0, msgs.length - 1),
+      { role: "user", content: env.schema ? `${lastContent}${strictInstruction}` : `${lastContent}${bareJsonInstruction}` },
+    ];
+  };
+  // prettier-ignore
+  const relaxedFmt = env.schema
+    ? ({ type: "json_schema", json_schema: { name: "structured_response", strict: false, schema: env.schema } } as const)
+    : undefined;
+
   const trySend = async (messages: GroqMessage[], fmt: typeof responseFormat): Promise<LLMCallResult> => {
+    let msgs = messages;
+    let fmtr = fmt;
     while (true) {
       attempts++;
       const body: Record<string, unknown> = {
         model: env.model,
-        messages,
+        messages: msgs,
         max_tokens: env.maxTokens,
         temperature: env.temperature,
         reasoning_effort: env.reasoningEffort,
       };
-      if (fmt) body.response_format = fmt;
+      if (fmtr) body.response_format = fmtr;
 
       try {
         const res = await fetch(`${env.baseUrl}/chat/completions`, {
@@ -160,6 +174,19 @@ async function sendWithRetries(
         if (!res.ok) {
           const reason = await res.text().catch(() => "");
           const retryable = res.status === 429 || res.status >= 500;
+
+          // Groq strict structured outputs sometimes 400 with json_validate_failed
+          // (constrained decoding hit a trap). Treat that like a malformed response:
+          // one best-effort repair resend. Other 4xx are hard failures.
+          if (res.status === 400 && /json_validate_failed/.test(reason) && !repairUsed) {
+            console.warn(`[llm] strict json_validate_failed 400 — retrying best-effort once`);
+            repairUsed = true;
+            msgs = makeRepairMessages(msgs);
+            fmtr = relaxedFmt;
+            await sleep(exponentialBackoffMs(1));
+            continue;
+          }
+
           if (!retryable) {
             if (res.status === 401) fail("LLM_AUTH_FAILED", `Groq 401 Unauthorized — key invalid or not enabled for ${env.model}. ${reason.slice(0, 300)}`);
             if (res.status === 404) fail("LLM_MODEL_UNAVAILABLE", `Groq 404 — model "${env.model}" not available on this account. ${reason.slice(0, 300)}`);
@@ -214,16 +241,12 @@ async function sendWithRetries(
 
         // Invalid JSON or shape mismatch: exactly one stricter repair re-send.
         if (!repairUsed) {
+          console.warn(`[llm] ${parseOk ? "schema mismatch" : "unparseable JSON"} — retrying with strict instruction once`);
           repairUsed = true;
-          const lastContent = messages[messages.length - 1]!.content;
-          const repairMessages: GroqMessage[] = [
-            ...messages.slice(0, messages.length - 1),
-            { role: "user", content: env.schema ? `${lastContent}${strictInstruction}` : `${lastContent}${bareJsonInstruction}` },
-          ];
-          const relaxedFmt = env.schema
-            ? ({ type: "json_schema", json_schema: { name: "structured_response", strict: false, schema: env.schema } } as const)
-            : undefined;
-          return trySend(repairMessages, relaxedFmt);
+          msgs = makeRepairMessages(msgs);
+          fmtr = relaxedFmt;
+          await sleep(exponentialBackoffMs(1));
+          continue;
         }
 
         fail("LLM_INVALID_RESPONSE", `Groq returned non-JSON or schema-mismatched content even after one strict repair. response: ${text.slice(0, 300)}`);
