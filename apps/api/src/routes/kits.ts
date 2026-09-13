@@ -148,6 +148,8 @@ kitsRouter.post(
           url: i.url,
           snippet: i.snippet,
         })),
+        // Persist which URLs robots.txt excluded (proves the rule did the work, not luck).
+        robots_blocked: result.robots_blocked.map((b) => ({ url: b.url, via: b.via, rule: b.rule })),
       },
     };
 

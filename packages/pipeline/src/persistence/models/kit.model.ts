@@ -53,6 +53,15 @@ const discussionItemSchema = new Schema(
   { _id: false },
 );
 
+const robotsBlockedItemSchema = new Schema(
+  {
+    url: { type: String, default: "" },
+    via: { type: String, default: "" },
+    rule: { type: String, default: "" },
+  },
+  { _id: false },
+);
+
 const kitContentSchema = new Schema(
   {
     source: {
@@ -65,6 +74,8 @@ const kitContentSchema = new Schema(
       pages_used: { type: [String], default: [] },
       // Extended field (add-only per contract): search-API discussion hits.
       discussion: { type: [discussionItemSchema], default: [] },
+      // Extended field: URLs skipped because robots.txt disallowed them (with the matched rule).
+      robots_blocked: { type: [robotsBlockedItemSchema], default: [] },
     },
     company_brief: {
       summary: { type: String, default: "" },

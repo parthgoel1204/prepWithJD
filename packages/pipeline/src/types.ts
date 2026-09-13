@@ -22,6 +22,8 @@ export interface KitSource {
   pages_used: string[];
   /** Extended field (add-only permitted by the contract): search-API discussion hits. */
   discussion?: Array<{ title: string; url: string; snippet: string }>;
+  /** Extended field: URLs skipped because robots.txt disallowed them (with the matched rule). */
+  robots_blocked?: RobotsBlockedPage[];
 }
 
 export interface CompanyBrief {
