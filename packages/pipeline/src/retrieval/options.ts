@@ -18,8 +18,10 @@ export function resolveRetrievalOptions(overrides?: RetrievalOptions, env: NodeJ
     allowPrivateUrls: overrides?.allowPrivateUrls ?? bool(env.ALLOW_PRIVATE_URLS, env.NODE_ENV !== "production"),
     userAgent: overrides?.userAgent ?? env.CRAWLER_USER_AGENT ?? DEFAULT_USER_AGENT,
     statusCap: clampInt(overrides?.statusCap ?? 200, 200, 0, 600),
-    searchApiKey: overrides?.searchApiKey ?? env.BRAVE_API_KEY ?? "",
-    searchBaseUrl: overrides?.searchBaseUrl ?? env.SEARCH_BASE_URL ?? "https://api.search.brave.com/res/v1/web/search",
+    // Provider is Tavily. TAVILY_API_KEY is the primary; SEARCH_API_KEY is a
+    // generic override for tests/tooling.
+    searchApiKey: overrides?.searchApiKey ?? env.TAVILY_API_KEY ?? env.SEARCH_API_KEY ?? "",
+    searchBaseUrl: overrides?.searchBaseUrl ?? env.SEARCH_BASE_URL ?? "https://api.tavily.com/search",
     searchTopK: clampInt(overrides?.searchTopK ?? 8, 8, 1, 20),
     searchRatePerSecond: clampInt(overrides?.searchRatePerSecond ?? 2, 2, 0.1, 60),
     searchBurst: clampInt(overrides?.searchBurst ?? 8, 8, 1, 100),
