@@ -16,6 +16,7 @@ import type { CompanyBrief, CrawledPage, Flashcard, Question, QuestionCategory, 
 import { PipelineNotImplementedError } from "../errors";
 import { callLLM, type LLMCallResult } from "../llm/client";
 import { matchesShape, type JsonSchema } from "../llm/shape";
+import { computeUncovered, coverageResult, type CoverageResult } from "../coverage";
 import { dedupeByIdentity, formatRequirements, sanitizeFlashcards, sanitizeQuestions } from "./pure";
 
 export interface GenerationContext {
@@ -152,14 +153,65 @@ export class LlmGenerator implements Generator {
   /** Cards written during generateQuestions, surfaced by generateFlashcards without a new call. */
   private lastCards: Flashcard[] = [];
 
+  /**
+   * First draft only (no second pass). Kept for interface compatibility and
+   * verification; the production path is generateSet() which owns the coverage
+   * loop.
+   */
   async generateQuestions(ctx: GenerationContext, requirements: Requirement[]): Promise<Question[]> {
-    // Thin/honest: an empty requirement list yields zero questions without spending
-    // the 4 category calls. Padding to a minimum count would be dishonest.
     if (requirements.length === 0) {
       console.log(`[generation] pass1: 0 questions (no requirements to anchor to)`);
       this.lastCards = [];
       return [];
     }
+    const pass1 = await this.pass1(ctx, requirements);
+    this.lastCards = dedupeByIdentity(pass1.cards);
+    console.log(`[generation] pass1: ${pass1.questions.length} questions, ${this.lastCards.length} flashcards`);
+    return dedupeByIdentity(pass1.questions);
+  }
+
+  /**
+   * Full orchestration with the coverage second-pass loop (Step 5):
+   *   pass1 (4 category calls) -> pure coverage check -> if uncovered "must"
+   *   requirements exist, ONE gap-batch call targeting only those -> merge ->
+   *   re-check. Capped at `maxPasses` generations total.
+   *
+   * Why cap at 2: a second pass catches systematic category misses; further
+   * gap passes on the free tier burn tokens for marginal recall and tend to
+   * reproduce the same miss pattern against the same retrieved context. Honest
+   * leftovers are kept listed in coverage.uncovered_requirement_ids.
+   */
+  async generateSet(ctx: GenerationContext, requirements: Requirement[], maxPasses = 2): Promise<{ questions: Question[]; flashcards: Flashcard[]; coverage: CoverageResult }> {
+    if (requirements.length === 0) {
+      console.log(`[generation] pass1: 0 questions (no requirements to anchor to)`);
+      this.lastCards = [];
+      const coverage = coverageResult({ requirements, questions: [] }, 1);
+      return { questions: [], flashcards: [], coverage };
+    }
+
+    const pass1 = await this.pass1(ctx, requirements);
+    let questions = pass1.questions;
+    let cards = pass1.cards;
+    let passes = 1;
+    const uncovered = computeUncovered({ requirements, questions });
+    console.log(`[generation] pass1: ${questions.length} questions, uncovered musts: ${JSON.stringify(uncovered)}`);
+
+    if (uncovered.length > 0 && passes < maxPasses) {
+      const gap = await this.generateGapBatch(ctx, requirements, uncovered, questions.length, cards.length);
+      for (const d of gap.dropped) console.warn(`[generation] pass2: ${d}`);
+      questions = dedupeByIdentity([...questions, ...gap.questions]);
+      cards = dedupeByIdentity([...cards, ...gap.flashcards]);
+      passes++;
+      const after = computeUncovered({ requirements, questions });
+      console.log(`[generation] pass2: ${gap.questions.length} gap questions closed ${uncovered.length - after.length}/${uncovered.length} gaps; still uncovered: ${JSON.stringify(after)}`);
+    }
+
+    this.lastCards = cards;
+    const coverage = coverageResult({ requirements, questions }, passes);
+    return { questions, flashcards: cards, coverage };
+  }
+
+  private async pass1(ctx: GenerationContext, requirements: Requirement[]): Promise<{ questions: Question[]; cards: Flashcard[] }> {
     const known = new Set(requirements.map((r) => r.id));
     const allQuestions: Question[] = [];
     const allCards: Flashcard[] = [];
@@ -173,9 +225,7 @@ export class LlmGenerator implements Generator {
     }
 
     for (const d of dropped) console.warn(`[generation] ${d}`);
-    this.lastCards = dedupeByIdentity(allCards);
-    console.log(`[generation] pass1: ${allQuestions.length} questions, ${this.lastCards.length} flashcards`);
-    return dedupeByIdentity(allQuestions);
+    return { questions: dedupeByIdentity(allQuestions), cards: dedupeByIdentity(allCards) };
   }
 
   async generateFlashcards(ctx: GenerationContext, requirements: Requirement[], questions: Question[]): Promise<Flashcard[]> {
@@ -192,7 +242,7 @@ export class LlmGenerator implements Generator {
   }
 
   /** Second-pass: questions ONLY for the given gap requirement ids (single call). */
-  async generateGapBatch(ctx: GenerationContext, requirements: Requirement[], targetIds: string[]): Promise<CategoryBatchOutcome> {
+  async generateGapBatch(ctx: GenerationContext, requirements: Requirement[], targetIds: string[], qStart = 0, fStart = 0): Promise<CategoryBatchOutcome> {
     const known = new Set(requirements.map((r) => r.id));
     const targets = targetIds.filter((id) => known.has(id));
     const prompt =
@@ -203,8 +253,8 @@ export class LlmGenerator implements Generator {
 
     const res = await callLLM(prompt, { system: Q_SYSTEM_BASE, schema: gapCallSchema, schemaName: "gap_questions" });
     const parsed = res.json as { questions?: Array<{ requirement_ids?: string[]; prompt?: string; answer_outline?: string; difficulty?: number }>; flashcards?: Array<{ front?: string; back?: string; requirement_ids?: string[] }> };
-    const q = sanitizeQuestions(parsed.questions ?? [], known, 0);
-    const f = sanitizeFlashcards(parsed.flashcards ?? [], known, 0);
+    const q = sanitizeQuestions(parsed.questions ?? [], known, qStart);
+    const f = sanitizeFlashcards(parsed.flashcards ?? [], known, fStart);
     return { questions: q.questions, flashcards: f.flashcards, dropped: [...q.dropped, ...f.dropped] };
   }
 

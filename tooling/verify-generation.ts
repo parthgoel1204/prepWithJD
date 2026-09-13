@@ -95,6 +95,20 @@ async function main() {
   console.log(`  -> ${questions.length} questions (d=avg ${(counts / Math.max(1, questions.length)).toFixed(1)}), ${flashcards.length} flashcards, ${cats.length} categories`);
   console.log(`  -> sample [${byCategory.get("system-design")}] ${questions.find((q) => q.category === "system-design")?.prompt ?? "none"}`);
 
+  // --- Step 5: generateSet() owns the coverage second-pass loop ---
+  const stressReqs: Requirement[] = Array.from({ length: 10 }, (_, i) => ({
+    id: `r${i + 1}`,
+    text: `must-${i + 1}: backend requirement ${i + 1} (Go, Postgres, Kafka, gRPC, observability, security, testing, APIs, scaling, reliability)`,
+    kind: "technical" as const,
+    priority: "must" as const,
+  }));
+  const mustIds = new Set(stressReqs.map((r) => r.id));
+  const set = await new LlmGenerator().generateSet(ctx, stressReqs, 2);
+  check("loop: uncovered ids are real must requirements", set.coverage.uncovered_requirement_ids.every((id) => mustIds.has(id)), JSON.stringify(set.coverage.uncovered_requirement_ids));
+  check("loop: passes within the 1..2 cap", set.coverage.passes >= 1 && set.coverage.passes <= 2, `passes=${set.coverage.passes}`);
+  check("loop: merged ids stay contiguous q1..qf", set.questions.every((q, i) => q.id === `q${i + 1}`), `q=${set.questions.length} f=${set.flashcards.length}`);
+  console.log(`  -> generateSet closed ${stressReqs.length - set.coverage.uncovered_requirement_ids.length}/${stressReqs.length} musts across ${set.coverage.passes} pass(es)`);
+
   // sanity: a two-line stub JD yields no questions (thin-and-honest end-to-end)
   const thin = new LlmGenerator();
   const thinQs = await thin.generateQuestions({ jd: "we are hiring", company: "x", company_brief: { summary: "", what_they_do: "", sources: [] }, role: { title: "", seniority: "", responsibilities: [], requirements: [] } }, []);
