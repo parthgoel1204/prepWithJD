@@ -227,6 +227,12 @@ async function main() {
         `persisted=${persisted.length} returned=${retrieve.json.retrieval.search_hits.length}`,
       );
     }
+    const persistedRobots = detail.json.kit.content.source.robots_blocked ?? [];
+    check(
+      "ITEM 6: persisted source.robots_blocked reports /private rule",
+      persistedRobots.some((b) => b.url === `${FIXTURE_URL}/private` && b.rule === "Disallow: /private"),
+      JSON.stringify(persistedRobots.slice(0, 3)),
+    );
 
     // --- failures endpoint works (diagnostics read path) ---
     const failuresBefore = await apiCall<{ failures: Array<{ code: string }> }>(`/api/kits/${kitId}/failures`);
