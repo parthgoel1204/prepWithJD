@@ -34,6 +34,7 @@ interface RetrievalResultResponse {
     pages_used: string[];
     pages: Array<{ url: string; title: string; depth: number }>;
     search_hits: SearchHit[];
+    robots_blocked: Array<{ url: string; via: string; rule: string }>;
     failures: RetrievalFailure[];
   };
 }
@@ -156,8 +157,8 @@ export default function KitDetail() {
       <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-base font-semibold text-slate-800">Research (Day 1)</h2>
         <p className="mt-1 text-sm text-slate-500">
-          Crawls the company home page, ranks internal links (careers/culture/blog), respects robots.txt, and searches
-          Brave for interview-process discussion.
+          Crawls the company home page, ranks internal links (careers/culture/blog), respects robots.txt, and uses Tavily
+          to find interview-process discussion.
         </p>
         <button
           onClick={() => void runRetrieval()}
@@ -190,7 +191,7 @@ export default function KitDetail() {
 
             {retrieval.search_hits.length > 0 && (
               <div>
-                <h3 className="text-sm font-semibold text-slate-700">Interview-process discussion (Brave) — {retrieval.search_hits.length} results</h3>
+                <h3 className="text-sm font-semibold text-slate-700">Interview-process discussion (Tavily) — {retrieval.search_hits.length} results</h3>
                 <ul className="mt-2 space-y-1.5">
                   {retrieval.search_hits.map((s) => (
                     <li key={s.url} className="text-sm">
@@ -198,6 +199,24 @@ export default function KitDetail() {
                         {s.title}
                       </a>
                       {s.snippet && <p className="text-xs text-slate-500">{s.snippet}</p>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {retrieval.robots_blocked.length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold text-slate-700">
+                  robots.txt-blocked pages{" "}
+                  <span className="font-normal text-slate-500">({retrieval.robots_blocked.length} — skipped by this rule, not by accident)</span>
+                </h3>
+                <ul className="mt-2 space-y-1">
+                  {retrieval.robots_blocked.map((b) => (
+                    <li key={`${b.url}-${b.rule}`} className="truncate text-xs text-slate-600">
+                      <span className="rounded bg-amber-50 px-1.5 py-0.5 font-mono text-[10px] text-amber-700">{b.rule}</span>{" "}
+                      <span className="font-mono">{b.url}</span>
+                      <span className="text-slate-400"> (linked from {b.via})</span>
                     </li>
                   ))}
                 </ul>
