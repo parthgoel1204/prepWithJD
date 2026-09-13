@@ -67,7 +67,8 @@ authRouter.post(
 
     const user = await findUserByEmail(email);
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
-      throw new HttpError(401, "BAD_CREDENTIALS", "Email or password is incorrect");
+      // Generic on purpose — never reveal which field was wrong.
+      throw new HttpError(401, "BAD_CREDENTIALS", "Invalid email or password");
     }
 
     const token = randomBytes(32).toString("hex");

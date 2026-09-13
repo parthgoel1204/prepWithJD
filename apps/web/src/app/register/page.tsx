@@ -1,9 +1,12 @@
+import { Suspense } from "react";
 import AuthForm from "@/components/auth-form";
 
 export default function RegisterPage() {
   return (
     <main className="min-h-screen px-4">
-      <AuthForm mode="register" />
+      <Suspense fallback={null}>
+        <AuthForm mode="register" />
+      </Suspense>
     </main>
   );
 }

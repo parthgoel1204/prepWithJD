@@ -29,9 +29,12 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 
   const session = await findSession(token);
   if (!session || session.expiresAt.getTime() <= Date.now()) {
+    // Two failure modes, one outcome: token not found in sessions collection, OR its
+    // expiresAt passed. Both mean "this session is dead" -> delete it and answer
+    // SESSION_EXPIRED. Distinct from login's BAD_CREDENTIALS by design.
     if (session && session.expiresAt.getTime() <= Date.now()) await deleteSession(token);
     res.clearCookie(config.sessionName, { path: "/" });
-    res.status(401).json({ error: "SESSION_EXPIRED", message: "Your session has expired — please log in again" });
+    res.status(401).json({ error: "SESSION_EXPIRED", message: "Session expired, please log in again" });
     return;
   }
 

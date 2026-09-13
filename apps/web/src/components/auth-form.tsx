@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api";
 
@@ -13,6 +13,9 @@ interface AuthFormFields {
 
 export default function AuthForm({ mode }: { mode: "login" | "register" }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // After an expired/invalid session the fetch wrapper redirects here with a reason.
+  const sessionExpired = searchParams.get("reason") === "session_expired";
   const isLogin = mode === "login";
   const [form, setForm] = useState<AuthFormFields>({ name: "", email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +46,12 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
     <div className="mx-auto mt-16 w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
       <h1 className="text-xl font-semibold text-slate-900">{isLogin ? "Log in" : "Create account"}</h1>
       <p className="mt-1 text-sm text-slate-500">{isLogin ? "Welcome back — continue your prep." : "New here? Your kits are saved to your account."}</p>
+
+      {sessionExpired && (
+        <div role="status" className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          Session expired, please log in again.
+        </div>
+      )}
 
       <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
         {!isLogin && (
