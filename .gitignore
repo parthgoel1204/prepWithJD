@@ -26,5 +26,6 @@ logs/
 # misc
 .DS_Store
 coverage/
+!packages/pipeline/src/coverage/
 .idea/
 .vscode/
