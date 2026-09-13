@@ -70,15 +70,6 @@ export async function fetchPage(
         });
 
         const contentType = res.headers.get("content-type") ?? "";
-        const baseType = contentType.split(";")[0]!.trim().toLowerCase();
-        if (!accepted.includes(baseType)) {
-          return { ok: false, failure: makeFailure(rawUrl, "fetch", "CONTENT_TYPE_REJECTED", `Unsupported content-type "${baseType}"`, attempt) };
-        }
-
-        const sizeHeader = res.headers.get("content-length");
-        if (sizeHeader && Number(sizeHeader) > opts.maxBytes) {
-          return { ok: false, failure: makeFailure(rawUrl, "fetch", "CONTENT_TOO_LARGE", `Response exceeds ${opts.maxBytes} bytes`, attempt) };
-        }
 
         if (!res.ok && res.status !== 404) {
           const retryable = res.status === 429 || res.status >= 500;
@@ -94,7 +85,19 @@ export async function fetchPage(
           }
         }
 
+        // HTTP status wins over body sniffing: a 404 even with a weird content-type
+        // is a not-found, not a type-rejection.
         if (res.status === 404) return { ok: false, failure: makeFailure(rawUrl, "fetch", "HTTP_404", "Not found", attempt) };
+
+        const baseType = contentType.split(";")[0]!.trim().toLowerCase();
+        if (!accepted.includes(baseType)) {
+          return { ok: false, failure: makeFailure(rawUrl, "fetch", "CONTENT_TYPE_REJECTED", `Unsupported content-type "${baseType}"`, attempt) };
+        }
+
+        const sizeHeader = res.headers.get("content-length");
+        if (sizeHeader && Number(sizeHeader) > opts.maxBytes) {
+          return { ok: false, failure: makeFailure(rawUrl, "fetch", "CONTENT_TOO_LARGE", `Response exceeds ${opts.maxBytes} bytes`, attempt) };
+        }
 
         // Re-validate the final URL after redirects (defence against redirect-to-private).
         const progressed = checkUrl(res.url, { allowPrivateUrls: opts.allowPrivateUrls, isProduction: process.env.NODE_ENV === "production" });
