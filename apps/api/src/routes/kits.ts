@@ -3,11 +3,13 @@ import { Types } from "mongoose";
 import { z } from "zod";
 import {
   runRetrieval,
+  runPipeline,
   createKit,
   listKits,
   findKitById,
   updateKitStatus,
   persistRetrieval,
+  persistGeneratedKit,
   persistFailedKit,
   recordSourceFailures,
   listSourceFailures,
@@ -166,5 +168,31 @@ kitsRouter.post(
         failures: result.failures,
       },
     });
+  }),
+);
+
+// Generate the real kit for a saved draft: runs the FULL pipeline (retrieval ->
+// extraction -> generation(+coverage loop) -> scheduling -> validation) on the
+// saved input. Same code path as the batch CLI. Minimal wire — the full builder
+// UI (edit/reorder/regenerate-one-section) is Day 3 scope.
+kitsRouter.post(
+  "/:id/generate",
+  asyncH(async (req: Request, res: Response) => {
+    const kit = await findKitById(paramStr(req, "id"));
+    if (!kit || !kit.userId.equals(req.user!._id)) throw new HttpError(404, "NOT_FOUND", "Kit not found");
+    if (kit.status !== "retrieved") throw new HttpError(409, "PRECONDITION", "Run retrieval first");
+
+    try {
+      const content = await runPipeline({
+        jd: kit.input.jd,
+        company_url: kit.input.company_url,
+        days: kit.input.days,
+      });
+      await persistGeneratedKit(paramStr(req, "id"), content);
+      res.json({ kit: { ...kit.toObject(), status: "generated", content } });
+    } catch (err) {
+      await persistFailedKit(paramStr(req, "id"), err instanceof Error ? err.message : String(err));
+      throw err;
+    }
   }),
 );

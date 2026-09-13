@@ -25,6 +25,7 @@ export {
   updateKitStatus,
   deleteKit,
   persistRetrieval,
+  persistGeneratedKit,
   persistFailedKit,
   recordSourceFailures,
   listSourceFailures,

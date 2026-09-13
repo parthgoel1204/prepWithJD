@@ -93,6 +93,10 @@ export async function persistRetrieval(kitId: string, content: KitContent): Prom
   await KitModel.updateOne({ _id: kitId }, { $set: { status: "retrieved", content } });
 }
 
+export async function persistGeneratedKit(kitId: string, content: KitContent): Promise<void> {
+  await KitModel.updateOne({ _id: kitId }, { $set: { status: "generated", content } });
+}
+
 export async function persistFailedKit(id: string, error: string): Promise<void> {
   await KitModel.updateOne({ _id: id }, { $set: { status: "failed" } });
   await KitModel.updateOne({ _id: id }, { $push: { errorLog: error } });

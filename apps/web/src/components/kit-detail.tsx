@@ -39,7 +39,29 @@ interface RetrievalResultResponse {
   };
 }
 
+// Pipeline output (the generated KitContent) rendered by the Day-2 Generate action.
+interface PipelineContent {
+  role?: { title: string; seniority: string; responsibilities: string[]; requirements: Array<{ id: string; text: string; kind: string; priority: string }> };
+  questions?: Array<{ id: string; requirement_ids: string[]; category: string; prompt: string; answer_outline: string; difficulty: number }>;
+  flashcards?: Array<{ id: string; front: string; back: string; requirement_ids: string[] }>;
+  schedule?: { days_available: number; days: Array<{ day: number; focus: string; question_ids: string[]; minutes: number }> };
+  coverage?: { uncovered_requirement_ids: string[]; passes: number };
+  stage_errors?: Array<{ stage: string; code: string; message: string; occurred_at: string }>;
+}
+
 type LoadState = "loading" | "loaded" | "error";
+
+const CATEGORY_LABELS: Record<string, string> = {
+  technical: "Technical deep-dive",
+  behavioural: "Behavioural",
+  "system-design": "System design",
+  "company-fit": "Company fit",
+};
+
+const PRIORITY_STYLES: Record<string, string> = {
+  must: "bg-rose-100 text-rose-700",
+  nice: "bg-amber-100 text-amber-700",
+};
 
 export default function KitDetail() {
   const params = useParams<{ id: string }>();
@@ -52,6 +74,9 @@ export default function KitDetail() {
   const [retrieving, setRetrieving] = useState(false);
   const [retrieval, setRetrieval] = useState<RetrievalResultResponse["retrieval"] | null>(null);
   const [retrievalError, setRetrievalError] = useState<string | null>(null);
+
+  const [generating, setGenerating] = useState(false);
+  const [generateError, setGenerateError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoadState("loading");
@@ -85,6 +110,19 @@ export default function KitDetail() {
     }
   };
 
+  const runGenerate = async () => {
+    setGenerating(true);
+    setGenerateError(null);
+    try {
+      const res = await apiFetch<{ kit: KitFull }>(`/api/kits/${id}/generate`, { method: "POST" });
+      setKit(res.kit);
+    } catch (err) {
+      setGenerateError(err instanceof Error ? err.message : "Generation failed");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   if (loadState === "loading") {
     return (
       <main className="mx-auto max-w-4xl px-4 py-8">
@@ -105,6 +143,17 @@ export default function KitDetail() {
       </main>
     );
   }
+
+  const content = kit.content as PipelineContent;
+  const generated = kit.status === "generated";
+  const reqs = content.role?.requirements ?? [];
+  const questions = content.questions ?? [];
+  const catCount = new Set(questions.map((q) => q.category)).size;
+  const schedule = content.schedule?.days ?? [];
+  const scheduleDays = content.schedule?.days_available ?? 0;
+  const flashes = content.flashcards ?? [];
+  const coverage = content.coverage;
+  const stageErrors = content.stage_errors ?? [];
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
@@ -246,7 +295,114 @@ export default function KitDetail() {
       </section>
 
       <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-base font-semibold text-slate-800">Stored kit document (contract shape)</h2>
+        <h2 className="text-base font-semibold text-slate-800">Pipeline (Day 2)</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          Runs the real pipeline on this job: requirement extraction → per-category question generation → coverage loop →
+          schedule → validation. Re-runs retrieval for the saved input (LLM calls take ~1–2 minutes).
+        </p>
+        <button
+          onClick={() => void runGenerate()}
+          disabled={generating || kit.status !== "retrieved"}
+          className="mt-4 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {generating
+            ? "Generating… (requirement extraction + 4 category calls back-to-back)"
+            : kit.status === "retrieved"
+              ? "Generate kit"
+              : generated
+                ? "Kit generated"
+                : "Run retrieval first"}
+        </button>
+
+        {generateError && (
+          <div role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {generateError}
+          </div>
+        )}
+
+        {generated && (
+          <div className="mt-6 space-y-6">
+            <div>
+              <h3 className="text-sm font-semibold text-slate-700">
+                Requirements — {reqs.length} extracted
+              </h3>
+              <ul className="mt-2 grid grid-cols-1 gap-2">
+                {reqs.map((r) => (
+                  <li key={r.id} className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-sm">
+                    <span className="mr-2 rounded bg-white px-1.5 py-0.5 font-mono text-[10px] text-slate-500">{r.id}</span>
+                    <span className={`mr-2 rounded px-1.5 py-0.5 text-[10px] font-medium ${PRIORITY_STYLES[r.priority] ?? "bg-slate-100 text-slate-600"}`}>
+                      {r.priority}
+                    </span>
+                    <span className="text-slate-800">{r.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-slate-700">
+                Questions — {questions.length} across {catCount} categories
+              </h3>
+              <ul className="mt-2 space-y-3">
+                {questions.map((q) => (
+                  <li key={q.id} className="rounded-lg border border-slate-100 p-3">
+                    <div className="flex flex-wrap items-center gap-2 text-sm">
+                      <span className="font-mono text-[10px] text-slate-400">{q.id}</span>
+                      <span className="rounded bg-indigo-50 px-1.5 py-0.5 text-[10px] font-medium text-indigo-700">
+                        {CATEGORY_LABELS[q.category] ?? q.category}
+                      </span>
+                      <span className="text-xs text-amber-600">{"★".repeat(Math.max(0, Math.min(3, q.difficulty)))}{"☆".repeat(Math.max(0, 3 - Math.min(3, q.difficulty)))}</span>
+                      <span className="ml-auto font-mono text-[10px] text-slate-400">{q.requirement_ids.join(", ")}</span>
+                    </div>
+                    <p className="mt-1 text-sm text-slate-800">{q.prompt}</p>
+                    <details className="mt-1">
+                      <summary className="cursor-pointer text-xs font-medium text-slate-500">Answer outline</summary>
+                      <p className="mt-1 whitespace-pre-wrap text-xs text-slate-600">{q.answer_outline}</p>
+                    </details>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-slate-700">
+                Schedule — {flashes.length} flashcards, {scheduleDays} days planned
+              </h3>
+              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+                {schedule.map((d) =>
+                  d.question_ids.length === 0 ? null : (
+                    <div key={d.day} className="rounded-lg border border-slate-100 bg-slate-50 p-2.5 text-xs">
+                      <div className="font-semibold text-slate-700">Day {d.day} · {d.minutes} min</div>
+                      <div className="text-slate-500">{d.focus}</div>
+                      <div className="mt-0.5 font-mono text-[10px] text-slate-400">{d.question_ids.join(", ")}</div>
+                    </div>
+                  ),
+                )}
+              </div>
+              {coverage && coverage.uncovered_requirement_ids.length > 0 && (
+                <p className="mt-2 rounded bg-amber-50 px-2 py-1 text-xs text-amber-700">
+                  Coverage left uncovered (honest): {coverage.uncovered_requirement_ids.join(", ")} after {coverage.passes} pass(es)
+                </p>
+              )}
+            </div>
+
+            {stageErrors.length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold text-slate-700">Stage degradations (log-and-continue)</h3>
+                <ul className="mt-2 space-y-1">
+                  {stageErrors.map((e, i) => (
+                    <li key={`${e.stage}-${i}`} className="truncate text-xs text-slate-600">
+                      <span className="rounded bg-red-50 px-1.5 py-0.5 font-mono text-[10px] text-red-600">{e.code}</span> [{e.stage}] {e.message}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
+      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <p className="mt-1 text-sm text-slate-500">Raw model as persisted in MongoDB — confirms the save path and output contract fields.</p>
         <pre className="mt-3 max-h-96 overflow-auto rounded-lg bg-slate-900 p-4 text-xs text-slate-100">
           {JSON.stringify(kit, null, 2)}
