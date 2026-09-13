@@ -10,6 +10,7 @@ import {
   persistRetrieval,
   persistFailedKit,
   recordSourceFailures,
+  listSourceFailures,
   deleteKit,
   resolveRetrievalOptions,
 } from "@prepwithjd/pipeline";
@@ -90,6 +91,24 @@ kitsRouter.delete(
   }),
 );
 
+// Failure records for a kit (log-and-continue source diagnostics, newest first).
+kitsRouter.get(
+  "/:id/failures",
+  asyncH(async (req: Request, res: Response) => {
+    const id = paramStr(req, "id");
+    const kit = await findKitById(id);
+    if (!kit || !kit.userId.equals(req.user!._id)) throw new HttpError(404, "NOT_FOUND", "Kit not found");
+    const failures = await listSourceFailures(id, req.user!._id);
+    res.json({ failures });
+  }),
+);
+
+// Retrieval-override knobs (e.g. shrink timeoutMs for timeout tests); default otherwise.
+const retryOptsSchema = z.object({
+  timeoutMs: z.coerce.number().int().min(500).max(60_000).optional(),
+  retries: z.coerce.number().int().min(0).max(6).optional(),
+});
+
 // Run retrieval for a saved draft. Persists pages_used + source failures.
 kitsRouter.post(
   "/:id/retrieve",
@@ -99,7 +118,11 @@ kitsRouter.post(
     const kit = id ? await findKitById(id) : null;
     if (!kit || !kit.userId.equals(req.user!._id)) throw new HttpError(404, "NOT_FOUND", "Kit not found");
 
-    const opts = resolveRetrievalOptions({});
+    const parsedOpts = retryOptsSchema.safeParse(req.body ?? {});
+    if (!parsedOpts.success) {
+      throw new HttpError(400, "VALIDATION", parsedOpts.error.issues.map((i) => i.message).join("; "));
+    }
+    const opts = resolveRetrievalOptions(parsedOpts.data);
     await updateKitStatus(id, "retrieving");
 
     let result;
@@ -119,6 +142,12 @@ kitsRouter.post(
         jd_chars: kit.input.jd.length,
         researched_at: new Date().toISOString(),
         pages_used: result.pages_used,
+        // Persist each search-API discussion hit alongside pages_used (extended field).
+        discussion: result.search_hits.items.map((i) => ({
+          title: i.title,
+          url: i.url,
+          snippet: i.snippet,
+        })),
       },
     };
 
@@ -131,6 +160,7 @@ kitsRouter.post(
         pages_used: result.pages_used,
         pages: result.pages.map((p) => ({ url: p.url, title: p.title, depth: p.depth })),
         search_hits: result.search_hits.items,
+        robots_blocked: result.robots_blocked,
         failures: result.failures,
       },
     });

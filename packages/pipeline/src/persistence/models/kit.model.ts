@@ -44,6 +44,15 @@ const scheduleDaySchema = new Schema(
   { _id: false },
 );
 
+const discussionItemSchema = new Schema(
+  {
+    title: { type: String, default: "" },
+    url: { type: String, default: "" },
+    snippet: { type: String, default: "" },
+  },
+  { _id: false },
+);
+
 const kitContentSchema = new Schema(
   {
     source: {
@@ -54,6 +63,8 @@ const kitContentSchema = new Schema(
       jd_chars: { type: Number, default: 0 },
       researched_at: { type: String, default: "" },
       pages_used: { type: [String], default: [] },
+      // Extended field (add-only per contract): search-API discussion hits.
+      discussion: { type: [discussionItemSchema], default: [] },
     },
     company_brief: {
       summary: { type: String, default: "" },
