@@ -17,10 +17,11 @@ export interface JsonSchema {
   items?: JsonSchema;
   // string
   enum?: (string | number)[];
+  minimumLength?: number;
+  maximumLength?: number;
   // number
   minimum?: number;
   maximum?: number;
-  maximumLength?: number;
 }
 
 export type ShapeCheck = { ok: true; value: unknown } | { ok: false; errors: string[] };
@@ -62,6 +63,9 @@ export function matchesShape(value: unknown, schema: JsonSchema, path = "$"): Sh
   if (schema.type === "string") {
     if (typeof value !== "string") return { ok: false, errors: [`${path}: expected string, got ${typeof value}`] };
     if (schema.enum && !schema.enum.includes(value)) errors.push(`${path}: "${value}" not in enum ${JSON.stringify(schema.enum)}`);
+    if (schema.minimumLength && (value as string).length < schema.minimumLength) {
+      errors.push(`${path}: length ${(value as string).length} below minimum ${schema.minimumLength}`);
+    }
     if (schema.maximumLength && (value as string).length > schema.maximumLength) {
       errors.push(`${path}: length ${(value as string).length} exceeds ${schema.maximumLength}`);
     }
