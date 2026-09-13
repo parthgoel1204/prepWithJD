@@ -194,13 +194,13 @@ export type ValidationFail = { ok: false; errors: string[]; repairable: boolean 
 export type ValidationResult = ValidationOk | ValidationFail;
 
 /** Only these small, LLM-sourced substructures are worth a repair call. */
-const REPAIRABLE_PREFIXES = ["$.company_brief", "$.role.title", "$.role.seniority", "$.role.responsibilities", "$.source.company"];
+const REPAIRABLE_MARKERS = ["$.company_brief", '"company_brief"', "$.role.title", "$.role.seniority", "$.role.responsibilities", '"source.company"'];
 
 export function validateKitContent(kit: unknown): ValidationResult {
   const result = matchesShape(kit, kitContentSchema);
   if (result.ok) return { ok: true };
   const errors = result.errors;
-  const repairable = errors.some((e) => REPAIRABLE_PREFIXES.some((p) => e.startsWith(`${p}:`) || e.startsWith(`${p}.`)));
+  const repairable = errors.some((e) => REPAIRABLE_MARKERS.some((m) => e.includes(m)));
   return { ok: false, errors, repairable };
 }
 

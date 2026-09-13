@@ -1,0 +1,32 @@
+[
+  {
+    "id": "case-fullstack",
+    "jd": "Full-Stack Engineer at Acme — Help us build our cloud platform.\nResponsibilities:\n- Design and ship features across the React + TypeScript frontend and a Node.js API.\n- Own the Postgres data model and write efficient queries.\n- Participate in code review and on-call rotation.\nRequirements:\n- 4+ years of professional software engineering, TypeScript required.\n- Production experience with React and Node.js required.\n- Strong SQL and data-modelling skills required.\n- Experience with Kubernetes or Docker, preferred.\n- Bonus: prior fintech or payments experience, a plus.",
+    "company_url": "https://www.adobe.com",
+    "days": 14
+  },
+  {
+    "id": "case-fullstack-dup",
+    "jd": "Full-Stack Engineer at Acme — Help us build our cloud platform.\nResponsibilities:\n- Design and ship features across the React + TypeScript frontend and a Node.js API.\n- Own the Postgres data model and write efficient queries.\n- Participate in code review and on-call rotation.\nRequirements:\n- 4+ years of professional software engineering, TypeScript required.\n- Production experience with React and Node.js required.\n- Strong SQL and data-modelling skills required.\n- Experience with Kubernetes or Docker, preferred.\n- Bonus: prior fintech or payments experience, a plus.",
+    "company_url": "https://www.adobe.com",
+    "days": 14
+  },
+  {
+    "id": "case-thin",
+    "jd": "We are hiring a junior backend engineer. Apply within.",
+    "company_url": "https://example.com",
+    "days": 7
+  },
+  {
+    "id": "case-unreachable",
+    "jd": "Platform Engineer\nResponsibilities:\n- Operate and improve our Kubernetes infrastructure.\n- Build internal developer tooling and CI/CD pipelines.\nRequirements:\n- 3+ years Kubernetes administration required.\n- Bash + Go scripting required.\n- Strong Linux systems knowledge required.",
+    "company_url": "https://nonexistent-company-xyz-9235.invalid",
+    "days": 10
+  },
+  {
+    "id": "case-backend-go",
+    "jd": "Senior Backend Engineer (Go)\nResponsibilities:\n- Design high-throughput APIs and event pipelines.\n- Own reliability SLOs for core payment flows.\nRequirements:\n- 5+ years backend engineering, Go required.\n- Postgres and SQL required.\n- Event-driven architecture with Kafka required.\n- preferred: observability stack (Prometheus/Grafana).",
+    "company_url": "https://www.adobe.com",
+    "days": 21
+  }
+]

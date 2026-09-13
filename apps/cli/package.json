@@ -1,0 +1,20 @@
+{
+  "name": "@prepwithjd/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "evaluate": "./src/index.ts"
+  },
+  "scripts": {
+    "evaluate": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@prepwithjd/pipeline": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "typescript": "^5.6.0"
+  }
+}

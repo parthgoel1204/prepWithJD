@@ -45,6 +45,9 @@ export function matchesShape(value: unknown, schema: JsonSchema, path = "$"): Sh
       if (!(key in obj)) errors.push(`${path}: missing required property "${key}"`);
     }
     for (const [key, propSchema] of Object.entries(schema.properties ?? {})) {
+      // optional keys (declared but not in `required`) are skipped when absent,
+      // including keys explicitly present with value undefined
+      if (!(key in obj) || obj[key] === undefined) continue;
       const sub = matchesShape(obj[key], propSchema, `${path}.${key}`);
       if (!sub.ok) errors.push(...sub.errors);
     }

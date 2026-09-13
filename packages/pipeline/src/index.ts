@@ -31,7 +31,16 @@ export {
 } from "./persistence/repositories";
 export { resolveRetrievalOptions } from "./retrieval/options";
 export { companyNameFromUrl, hostnameOf } from "./lib/util";
-export type { RetrievalOptions, RetrievalResult } from "./types";
+export type {
+  EvaluateInput,
+  EvaluateOutput,
+  EvaluateKitResult,
+  KitContent,
+  KitInput,
+  KitStageError,
+  RetrievalOptions,
+  RetrievalResult,
+} from "./types";
 
 export const PIPELINE_VERSION = "0.2.0";
 
@@ -188,6 +197,7 @@ export async function runPipeline(input: Pick<KitInput, "jd" | "company_url" | "
 export async function evaluate(inputs: EvaluateInput[], opts?: RetrievalOptions): Promise<EvaluateOutput> {
   const kits: EvaluateOutput["kits"] = [];
   for (const input of inputs) {
+    const started = Date.now();
     try {
       const kit = await runPipeline({ jd: input.jd, company_url: input.company_url, days: input.days }, opts);
       kits.push({ id: input.id, status: "ok", kit, error: null });
@@ -195,6 +205,7 @@ export async function evaluate(inputs: EvaluateInput[], opts?: RetrievalOptions)
       const error = err instanceof Error ? err.message : String(err);
       kits.push({ id: input.id, status: "failed", kit: null, error });
     }
+    console.log(`[evaluate] ${input.id}: ${kits[kits.length - 1]!.status} in ${Date.now() - started}ms (${input.jd.length} jd chars, ${input.days} days)`);
   }
   return { version: PIPELINE_VERSION, generated_at: nowIso(), kits };
 }
