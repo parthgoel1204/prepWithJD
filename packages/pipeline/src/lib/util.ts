@@ -28,6 +28,19 @@ export function clampInt(value: number | undefined, fallback: number, min: numbe
   return Math.min(max, Math.max(min, Math.round(n)));
 }
 
+/**
+ * Exponential backoff delay between retry attempts (ms), with random jitter.
+ * THE single copy of this logic: fetchPage (HTTP retries) and callLLM (Groq
+ * 429/5xx retries) both reuse it — do not inline your own.
+ */
+export function exponentialBackoffMs(attempt: number, baseMs = 1000, capMs = 8000, jitterMs = 250): number {
+  return Math.min(baseMs * 2 ** (attempt - 1), capMs) + Math.random() * jitterMs;
+}
+
+export function sleep(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
 export function nowIso(): string {
   return new Date().toISOString();
 }

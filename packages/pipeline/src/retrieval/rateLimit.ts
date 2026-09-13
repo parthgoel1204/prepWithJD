@@ -87,12 +87,17 @@ function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-/** Shared global queue for outbound research calls (search today, LLM on Day 2). */
+/** Shared global queue for outbound research calls (search + LLM, one limiter). */
 let sharedQueue: RateLimitedQueue | null = null;
 
 export function sharedRateLimitedQueue(tokensPerSecond: number, burst?: number): RateLimitedQueue {
-  if (!sharedQueue || sharedQueue.tokensPerSecond !== tokensPerSecond) {
+  if (!sharedQueue) {
     sharedQueue = new RateLimitedQueue({ tokensPerSecond, burst });
+  } else if (sharedQueue.tokensPerSecond !== tokensPerSecond) {
+    // ONE limiter only — a divergent rate request means two limiter
+    // configurations, which would silently defeat token pacing. First rate wins;
+    // warn loudly so callers fix their constant rather than create a second limiter.
+    console.warn(`[rateLimit] ignoring rate change ${sharedQueue.tokensPerSecond} -> ${tokensPerSecond} tps; all outbound consumers must share the canonical rate (see llm/config.ts OUTBOUND_RATE)`);
   }
   return sharedQueue;
 }

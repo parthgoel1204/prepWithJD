@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
 import type { RetrievalFailure, RetrievalOptions, RetrievalStage } from "../types";
-import { nowIso } from "../lib/util";
+import { exponentialBackoffMs, nowIso, sleep } from "../lib/util";
 import { checkUrl } from "./guard";
 
 export interface FetchResult {
@@ -32,10 +32,6 @@ function makeFailure(sourceUrl: string, stage: RetrievalStage, code: string, mes
   return { source_url: sourceUrl, stage, code, message, attempt, occurred_at: nowIso() };
 }
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((r) => setTimeout(r, ms));
-}
-
 /**
  * Fetch a URL with timeout + retry-with-exponential-backoff.
  * Never throws for fetch-level problems — returns ok:false + a structured failure so
@@ -59,7 +55,7 @@ export async function fetchPage(
   try {
     for (let attempt = 0; attempt <= opts.retries; attempt++) {
       if (attempt > 0) {
-        const backoff = Math.min(1000 * 2 ** (attempt - 1), 8000) + Math.random() * 250;
+        const backoff = exponentialBackoffMs(attempt);
         await sleep(backoff);
       }
       try {

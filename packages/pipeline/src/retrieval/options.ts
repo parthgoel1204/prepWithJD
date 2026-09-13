@@ -1,5 +1,6 @@
 import type { RetrievalOptions } from "../types";
 import { clampInt } from "../lib/util";
+import { OUTBOUND_BURST, OUTBOUND_RATE } from "../llm/config";
 
 export const DEFAULT_USER_AGENT = "prepWithJD-bot/0.1 (+local-dev)";
 
@@ -23,7 +24,9 @@ export function resolveRetrievalOptions(overrides?: RetrievalOptions, env: NodeJ
     searchApiKey: overrides?.searchApiKey ?? env.TAVILY_API_KEY ?? env.SEARCH_API_KEY ?? "",
     searchBaseUrl: overrides?.searchBaseUrl ?? env.SEARCH_BASE_URL ?? "https://api.tavily.com/search",
     searchTopK: clampInt(overrides?.searchTopK ?? 8, 8, 1, 20),
-    searchRatePerSecond: clampInt(overrides?.searchRatePerSecond ?? 2, 2, 0.1, 60),
-    searchBurst: clampInt(overrides?.searchBurst ?? 8, 8, 1, 100),
+    // Shared with the LLM client on purpose: one token-accurate bucket for ALL
+    // outbound calls (see llm/config.ts OUTBOUND_RATE). Search charges a flat 1.
+    searchRatePerSecond: clampInt(overrides?.searchRatePerSecond ?? OUTBOUND_RATE, OUTBOUND_RATE, 0.1, 500),
+    searchBurst: clampInt(overrides?.searchBurst ?? OUTBOUND_BURST, OUTBOUND_BURST, 1, 500),
   };
 }
