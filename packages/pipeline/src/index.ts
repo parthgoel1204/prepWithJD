@@ -75,8 +75,12 @@ export async function runRetrieval(input: Pick<KitInput, "company_url">, opts?: 
  *
  * Validation runs before returning, so callers (API route, batch CLI) only ever
  * persist/output a structurally valid KitContent.
+ *
+ * `preRetrieved` lets a caller that already ran Stage-1 (e.g. the API's
+ * one-click draft flow) inject the result so the pipeline skips re-crawling the
+ * same site. The retrieval stage stays separate code — nothing is merged.
  */
-export async function runPipeline(input: Pick<KitInput, "jd" | "company_url" | "days">, opts?: RetrievalOptions): Promise<KitContent> {
+export async function runPipeline(input: Pick<KitInput, "jd" | "company_url" | "days">, opts?: RetrievalOptions, preRetrieved?: RetrievalResult): Promise<KitContent> {
   const started = Date.now();
   const stageErrors: KitStageError[] = [];
   const record = (stage: string, err: unknown) => {
@@ -87,19 +91,23 @@ export async function runPipeline(input: Pick<KitInput, "jd" | "company_url" | "
 
   // ---- retrieval (fail-soft; per-page failures already fail-safe inside) ----
   let retrieval: RetrievalResult;
-  try {
-    retrieval = await runRetrieval(input, opts);
-  } catch (err) {
-    record("retrieval", err);
-    console.warn(`[pipeline] retrieval degraded: ${err instanceof Error ? err.message : err}`);
-    retrieval = {
-      company: companyNameFromUrl(input.company_url),
-      pages: [],
-      pages_used: [],
-      search_hits: { items: [], failures: [] },
-      robots_blocked: [],
-      failures: [],
-    };
+  if (preRetrieved) {
+    retrieval = preRetrieved;
+  } else {
+    try {
+      retrieval = await runRetrieval(input, opts);
+    } catch (err) {
+      record("retrieval", err);
+      console.warn(`[pipeline] retrieval degraded: ${err instanceof Error ? err.message : err}`);
+      retrieval = {
+        company: companyNameFromUrl(input.company_url),
+        pages: [],
+        pages_used: [],
+        search_hits: { items: [], failures: [] },
+        robots_blocked: [],
+        failures: [],
+      };
+    }
   }
   for (const f of retrieval.failures) console.warn(`[pipeline] retrieval: ${f.source_url} -> ${f.code} ${f.message}`);
 

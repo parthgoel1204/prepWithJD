@@ -28,4 +28,4 @@ logs/
 coverage/
 !packages/pipeline/src/coverage/
 .idea/
-.vscode/
+.vscode/tooling/kits.json

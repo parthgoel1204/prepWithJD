@@ -2,7 +2,7 @@
  * Scheduling unit tests — PURE, no network, no LLM.
  * Run: npx tsx tooling/verify-scheduling.ts
  */
-import { buildSchedule, minutesForText, minutesForQuestion, sortByScheduleOrder } from "../packages/pipeline/src/scheduling/index";
+import { buildSchedule, minutesForQuestion, QUESTION_MINUTES, sortByScheduleOrder } from "../packages/pipeline/src/scheduling/index";
 import type { Question, Requirement } from "../packages/pipeline/src/types";
 
 let failCount = 0;
@@ -16,8 +16,8 @@ const requirements: Requirement[] = [
   { id: "r2", text: "Postgres", kind: "technical", priority: "must" },
   { id: "r3", text: "Bonus: Kafka", kind: "technical", priority: "nice" },
 ];
-const words5 = "a a a a a"; // 5 words -> ceil(5/40)=1
-const words120 = Array.from({ length: 120 }, () => "a").join(" "); // -> 3
+const words5 = "a a a a a";
+const words120 = Array.from({ length: 120 }, () => "a").join(" ");
 const q = (id: string, reqIds: string[], difficulty: number, category: Question["category"], outline: string): Question => ({
   id,
   requirement_ids: reqIds,
@@ -31,11 +31,13 @@ function dayIds(schedule: ReturnType<typeof buildSchedule>): string[] {
   return schedule.days.flatMap((d) => d.question_ids);
 }
 
-// --- minutes estimation (length-based, the user's decision) ---
-check("minutes: empty text -> 0", minutesForText("") === 0);
-check("minutes: 5 words -> 1", minutesForText(words5) === 1);
-check("minutes: 120 words -> 3", minutesForText(words120) === 3, minutesForText(words120));
-check("minutes: uses answer_outline", minutesForQuestion(q("q1", ["r1"], 1, "technical", words120)) === 3);
+// --- minutes estimation (difficulty-based constants, the locked user decision) ---
+check("minutes map: 1★=10, 2★=15, 3★=20", JSON.stringify(QUESTION_MINUTES) === JSON.stringify({ 1: 10, 2: 15, 3: 20 }));
+check("minutes: diff 1 -> 10", minutesForQuestion(q("q1", ["r1"], 1, "technical", words5)) === 10);
+check("minutes: diff 2 -> 15", minutesForQuestion(q("q2", ["r2"], 2, "technical", words120)) === 15);
+check("minutes: diff 3 -> 20", minutesForQuestion(q("q3", ["r3"], 3, "behavioural", words120)) === 20);
+check("minutes: ignores answer_outline length (5-word vs 500-word, same difficulty)", minutesForQuestion(q("a", ["r1"], 2, "technical", words5)) === 15 && minutesForQuestion(q("b", ["r1"], 2, "technical", Array.from({ length: 500 }, () => "a").join(" "))) === 15);
+check("minutes: clamps out-of-range difficulty", minutesForQuestion(q("c", ["r1"], 5, "technical", words5)) === 20 && minutesForQuestion(q("d", ["r1"], 0, "technical", words5)) === 10);
 
 // --- sort: must-linked first, then difficulty desc, then id asc ---
 const unsorted = [
@@ -50,7 +52,7 @@ check("sort: must first, then difficulty desc, then id", sorted.map((x) => x.id)
 const one = buildSchedule(requirements, [q("q1", ["r1"], 3, "technical", words120), q("q2", ["r2"], 2, "technical", words120), q("q3", ["r3"], 1, "behavioural", words5)], 1);
 check("days=1: exactly 1 day entry", one.days.length === 1);
 check("days=1: day1 holds all questions", dayIds(one).sort().join(",") === "q1,q2,q3");
-check("days=1: minutes totals all 3 + 3 + 1 = 7", one.days[0]!.minutes === 7, one.days[0]!.minutes);
+check("days=1: minutes totals 20+15+10 = 45 (difficulty-based)", one.days[0]!.minutes === 45, one.days[0]!.minutes);
 
 // --- days=60 with 3 questions: exactly 60 entries, front-loaded ---
 const sixty = buildSchedule(requirements, [q("q1", ["r1"], 3, "technical", words5), q("q2", ["r2"], 2, "technical", words5), q("q3", ["r3"], 1, "behavioural", words5)], 60);
@@ -58,7 +60,7 @@ check("days=60: exactly 60 day entries", sixty.days.length === 60, `days=${sixty
 check("days=60: all 3 questions scheduled exactly once", dayIds(sixty).sort().join(",") === "q1,q2,q3");
 check("days=60: only first days carry questions (front-loaded)", sixty.days[0]!.minutes > 0 && sixty.days[59]!.minutes === 0, `d1=${sixty.days[0]!.minutes} d60=${sixty.days[59]!.minutes}`);
 check("days=60: empty days flagged as buffer", sixty.days[59]!.focus === "Review / light day", sixty.days[59]!.focus);
-check("days=60: total minutes = sum of question minutes (1+1+1)", sixty.days.reduce((s, d) => s + d.minutes, 0) === 3, `total=${sixty.days.reduce((s, d) => s + d.minutes, 0)}`);
+check("days=60: total minutes = sum of difficulty minutes (20+15+10=45), independent of outline lengths", sixty.days.reduce((s, d) => s + d.minutes, 0) === 45, `total=${sixty.days.reduce((s, d) => s + d.minutes, 0)}`);
 
 // --- zero questions ---
 const zero = buildSchedule(requirements, [], 7);

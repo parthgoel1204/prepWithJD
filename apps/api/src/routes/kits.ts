@@ -16,6 +16,7 @@ import {
   deleteKit,
   resolveRetrievalOptions,
 } from "@prepwithjd/pipeline";
+import type { KitContent, RetrievalResult } from "@prepwithjd/pipeline";
 import { asyncH, HttpError, paramStr } from "../lib/http";
 import { requireAuth } from "../middleware/auth";
 
@@ -31,6 +32,24 @@ const batchSchema = z.object({
     .min(1, "at least one item is required")
     .max(100, "batch is capped at 100 items"),
 });
+
+/** Merge a fresh retrieval result into the persisted source block (shared by
+ * the standalone retrieve route and the generate route's auto-retrieve step). */
+function withSource(content: KitContent, result: RetrievalResult, jd: string, companyUrl: string): KitContent {
+  return {
+    ...content,
+    source: {
+      ...content.source,
+      company: result.company || content.source.company,
+      company_url: companyUrl,
+      jd_chars: jd.length,
+      researched_at: new Date().toISOString(),
+      pages_used: result.pages_used,
+      discussion: result.search_hits.items.map((i) => ({ title: i.title, url: i.url, snippet: i.snippet })),
+      robots_blocked: result.robots_blocked.map((b) => ({ url: b.url, via: b.via, rule: b.rule })),
+    },
+  };
+}
 
 export const kitsRouter = Router();
 kitsRouter.use(requireAuth);
@@ -135,25 +154,7 @@ kitsRouter.post(
       throw err;
     }
 
-    const content = {
-      ...kit.content,
-      source: {
-        ...kit.content.source,
-        company: result.company || kit.content.source.company,
-        company_url: kit.input.company_url,
-        jd_chars: kit.input.jd.length,
-        researched_at: new Date().toISOString(),
-        pages_used: result.pages_used,
-        // Persist each search-API discussion hit alongside pages_used (extended field).
-        discussion: result.search_hits.items.map((i) => ({
-          title: i.title,
-          url: i.url,
-          snippet: i.snippet,
-        })),
-        // Persist which URLs robots.txt excluded (proves the rule did the work, not luck).
-        robots_blocked: result.robots_blocked.map((b) => ({ url: b.url, via: b.via, rule: b.rule })),
-      },
-    };
+    const content = withSource(kit.content, result, kit.input.jd, kit.input.company_url);
 
     await persistRetrieval(id, content);
     await recordSourceFailures(req.user!._id, id, result.failures);
@@ -171,27 +172,44 @@ kitsRouter.post(
   }),
 );
 
-// Generate the real kit for a saved draft: runs the FULL pipeline (retrieval ->
-// extraction -> generation(+coverage loop) -> scheduling -> validation) on the
-// saved input. Same code path as the batch CLI. Minimal wire — the full builder
-// UI (edit/reorder/regenerate-one-section) is Day 3 scope.
+// Generate the real kit: one-click flow. If the kit is still a draft (or was
+// failed/retrying), auto-triggers the retrieval stage FIRST, persists it, and
+// only then runs extraction -> generation(+coverage loop) -> scheduling ->
+// validation. Retrieval and generation stay separate internal pipeline stages;
+// this route just chains them. The fresh retrieval result is injected into
+// runPipeline so the site is not crawled twice. Same code path as the CLI.
+// The full builder UI (edit/reorder/regenerate-one-section) is Day 3 scope.
 kitsRouter.post(
   "/:id/generate",
   asyncH(async (req: Request, res: Response) => {
-    const kit = await findKitById(paramStr(req, "id"));
+    const id = paramStr(req, "id");
+    const kit = await findKitById(id);
     if (!kit || !kit.userId.equals(req.user!._id)) throw new HttpError(404, "NOT_FOUND", "Kit not found");
-    if (kit.status !== "retrieved") throw new HttpError(409, "PRECONDITION", "Run retrieval first");
+
+    let preRetrieved: RetrievalResult | undefined;
+    if (kit.status !== "retrieved" && kit.status !== "generated") {
+      await updateKitStatus(id, "retrieving");
+      try {
+        preRetrieved = await runRetrieval({ company_url: kit.input.company_url });
+      } catch (err) {
+        await persistFailedKit(id, err instanceof Error ? err.message : String(err));
+        throw err;
+      }
+      const content = withSource(kit.content, preRetrieved, kit.input.jd, kit.input.company_url);
+      await persistRetrieval(id, content);
+      await recordSourceFailures(req.user!._id, id, preRetrieved.failures);
+    }
 
     try {
-      const content = await runPipeline({
-        jd: kit.input.jd,
-        company_url: kit.input.company_url,
-        days: kit.input.days,
-      });
-      await persistGeneratedKit(paramStr(req, "id"), content);
+      const content = await runPipeline(
+        { jd: kit.input.jd, company_url: kit.input.company_url, days: kit.input.days },
+        undefined,
+        preRetrieved,
+      );
+      await persistGeneratedKit(id, content);
       res.json({ kit: { ...kit.toObject(), status: "generated", content } });
     } catch (err) {
-      await persistFailedKit(paramStr(req, "id"), err instanceof Error ? err.message : String(err));
+      await persistFailedKit(id, err instanceof Error ? err.message : String(err));
       throw err;
     }
   }),

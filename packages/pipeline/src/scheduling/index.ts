@@ -6,8 +6,9 @@
  * then difficulty desc (hardest first), then id asc (stable tiebreak).
  * Bin-packs into exactly `days_available` day entries (front-loaded: the
  * hardest work lands on day 1 and only spills to later days when capacity runs
- * out). Minutes are a length-based estimate (user decision): each question is
- * ceil(answer_outline_words / 40) minutes.
+ * out). Minutes are a difficulty-based constant (locked user decision): 1★=10,
+ * 2★=15, 3★=20 per question, summed per day — INDEPENDENT of answer_outline
+ * length, so totals are deterministic for a fixed difficulty set.
  */
 import type { Question, Requirement, ScheduleDay, KitSchedule } from "../types";
 import { PipelineNotImplementedError } from "../errors";
@@ -27,24 +28,18 @@ export class NotImplementedScheduler implements Scheduler {
 }
 
 export const DAY_CAPACITY_MINUTES = 90;
-export const WORDS_PER_MINUTE = 40;
+
+/** Locked difficulty → minutes map. Independent of answer_outline length. */
+export const QUESTION_MINUTES: Record<number, number> = { 1: 10, 2: 15, 3: 20 };
 
 const CATEGORY_ORDER = ["technical", "system-design", "behavioural", "company-fit"] as const;
 
 // ---------- pure helpers ----------
 
-export function wordsOf(s: string): number {
-  return s ? s.split(/\s+/).filter(Boolean).length : 0;
-}
-
-/** Length-based minutes estimate: ceil(words / 40). Always >= 1 when text present. */
-export function minutesForText(text: string): number {
-  const words = wordsOf(text);
-  return words === 0 ? 0 : Math.ceil(words / WORDS_PER_MINUTE);
-}
-
+/** Question minutes = fixed difficulty-based constant (1★=10, 2★=15, 3★=20). */
 export function minutesForQuestion(q: Question): number {
-  return minutesForText(q.answer_outline);
+  const d = Math.min(3, Math.max(1, Math.round(q.difficulty)));
+  return QUESTION_MINUTES[d] ?? QUESTION_MINUTES[1]!;
 }
 
 function priorityOf(requirements: Requirement[]): Map<string, "must" | "nice" | "none"> {

@@ -75,7 +75,7 @@ export default function KitDetail() {
   const [retrieval, setRetrieval] = useState<RetrievalResultResponse["retrieval"] | null>(null);
   const [retrievalError, setRetrievalError] = useState<string | null>(null);
 
-  const [generating, setGenerating] = useState(false);
+  const [generating, setGenerating] = useState<"idle" | "retrieving" | "generating">("idle");
   const [generateError, setGenerateError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -111,15 +111,34 @@ export default function KitDetail() {
   };
 
   const runGenerate = async () => {
-    setGenerating(true);
     setGenerateError(null);
+    if (!kit) return;
+    const status = kit.status;
+
+    // One click, one flow: for a draft/failed/retrying kit, chain the retrieval
+    // stage first (distinct "Retrieving…" state), then generation. When already
+    // retrieved/generated we go straight to "Generating…". Stages stay separate.
+    if (status !== "retrieved" && status !== "generated") {
+      setGenerating("retrieving");
+      try {
+        const r = await apiFetch<RetrievalResultResponse>(`/api/kits/${id}/retrieve`, { method: "POST" });
+        setKit(r.kit);
+        setRetrieval(r.retrieval);
+      } catch (err) {
+        setGenerateError(err instanceof Error ? err.message : "Retrieval stage failed");
+        setGenerating("idle");
+        return;
+      }
+    }
+
+    setGenerating("generating");
     try {
       const res = await apiFetch<{ kit: KitFull }>(`/api/kits/${id}/generate`, { method: "POST" });
       setKit(res.kit);
     } catch (err) {
       setGenerateError(err instanceof Error ? err.message : "Generation failed");
     } finally {
-      setGenerating(false);
+      setGenerating("idle");
     }
   };
 
@@ -297,21 +316,23 @@ export default function KitDetail() {
       <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-base font-semibold text-slate-800">Pipeline (Day 2)</h2>
         <p className="mt-1 text-sm text-slate-500">
-          Runs the real pipeline on this job: requirement extraction → per-category question generation → coverage loop →
-          schedule → validation. Re-runs retrieval for the saved input (LLM calls take ~1–2 minutes).
+          One-click flow: for a draft kit, auto-runs retrieval first, then requirement extraction → per-category question
+          generation → coverage loop → schedule → validation (LLM calls take ~1–2 minutes).
         </p>
         <button
           onClick={() => void runGenerate()}
-          disabled={generating || kit.status !== "retrieved"}
+          disabled={generating !== "idle"}
           className="mt-4 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {generating
-            ? "Generating… (requirement extraction + 4 category calls back-to-back)"
-            : kit.status === "retrieved"
-              ? "Generate kit"
-              : generated
-                ? "Kit generated"
-                : "Run retrieval first"}
+          {generating === "retrieving"
+            ? "Retrieving… (crawl + search)"
+            : generating === "generating"
+              ? "Generating… (extraction + 4 category LLM calls)"
+              : kit.status === "generated"
+                ? "Regenerate kit"
+                : kit.status === "retrieved"
+                  ? "Generate kit"
+                  : "Generate kit (auto-retrieves first)"}
         </button>
 
         {generateError && (
