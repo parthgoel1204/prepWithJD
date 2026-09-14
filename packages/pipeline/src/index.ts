@@ -5,6 +5,7 @@ import { crawlSite } from "./retrieval/crawler";
 import { LlmExtractor } from "./extraction";
 import { LlmGenerator, type GenerationContext } from "./generation";
 import { buildSchedule } from "./scheduling";
+import { LLM_MODEL } from "./llm/config";
 import { validateOrRepair } from "./validation";
 import { PipelineError } from "./errors";
 
@@ -189,7 +190,7 @@ export async function runPipeline(input: Pick<KitInput, "jd" | "company_url" | "
   try {
     const validated = await validateOrRepair(kit);
     console.log(
-      `[pipeline] ${input.company_url}: ${role.requirements.length} reqs, ${questions.length} questions (${coverage.passes} pass(es), ${coverage.uncovered_requirement_ids.length} uncovered), ${flashcards.length} cards, ${schedule.days.length} days in ${Date.now() - started}ms`,
+      `[pipeline] ${input.company_url}: ${role.requirements.length} reqs, ${questions.length} questions (${coverage.passes} pass(es), ${coverage.uncovered_requirement_ids.length} uncovered), ${flashcards.length} cards, ${schedule.days.length} days in ${Date.now() - started}ms (model: ${LLM_MODEL})`,
     );
     return validated;
   } catch (err) {

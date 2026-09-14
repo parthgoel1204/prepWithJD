@@ -3,8 +3,15 @@
  * Every Groq call in this repo references LLM_MODEL; never hardcode a model string elsewhere.
  */
 
-/** Model id used for every call. Switch providers by updating this single constant. */
-export const LLM_MODEL = process.env.LLM_MODEL ?? "openai/gpt-oss-120b";
+/**
+ * Model id used for every call. Override via env:
+ *   LLM_MODEL=...        → use that model (overrides everything)
+ *   LLM_FALLBACK=1        → use openai/gpt-oss-20b (Groq quota relief valve)
+ *   (neither set)         → openai/gpt-oss-120b (default)
+ */
+export const LLM_MODEL =
+  process.env.LLM_MODEL ??
+  (process.env.LLM_FALLBACK === "1" ? "openai/gpt-oss-20b" : "openai/gpt-oss-120b");
 
 /** Base URL for the OpenAI-compatible endpoint (append /chat/completions). */
 export const GROQ_BASE_URL = (process.env.GROQ_BASE_URL ?? "https://api.groq.com/openai/v1").replace(/\/$/, "");

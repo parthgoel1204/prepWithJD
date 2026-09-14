@@ -174,6 +174,8 @@ export default function KitDetail() {
   const coverage = content.coverage;
   const stageErrors = content.stage_errors ?? [];
 
+  const noScheduleMaterial = questions.length === 0 || schedule.every((d) => d.minutes === 0);
+
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
       <Link href="/dashboard" className="text-sm font-medium text-indigo-600 hover:underline">
@@ -248,7 +250,7 @@ export default function KitDetail() {
               <h3 className="text-sm font-semibold text-slate-700">Pages used ({retrieval.pages_used.length})</h3>
               <ul className="mt-2 space-y-1">
                 {retrieval.pages.map((p, i) => (
-                  <li key={p.url} className="truncate text-sm text-slate-600">
+                  <li key={`${p.url}-${i}`} className="truncate text-sm text-slate-600">
                     <span className="mr-2 inline-block w-6 text-right text-xs text-slate-400">{i + 1}</span>
                     <span className="font-medium text-slate-800">{p.title || "(untitled)"}</span>{" "}
                     <span className="text-slate-400">· d{p.depth}</span> — <span className="text-xs">{p.url}</span>
@@ -261,8 +263,8 @@ export default function KitDetail() {
               <div>
                 <h3 className="text-sm font-semibold text-slate-700">Interview-process discussion (Tavily) — {retrieval.search_hits.length} results</h3>
                 <ul className="mt-2 space-y-1.5">
-                  {retrieval.search_hits.map((s) => (
-                    <li key={s.url} className="text-sm">
+                  {retrieval.search_hits.map((s, i) => (
+                    <li key={`${s.url}-${i}`} className="text-sm">
                       <a href={s.url} target="_blank" rel="noopener noreferrer" className="font-medium text-indigo-600 hover:underline">
                         {s.title}
                       </a>
@@ -406,13 +408,19 @@ export default function KitDetail() {
               </ul>
             </div>
 
+            {noScheduleMaterial && (
+              <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                This job description didn't contain enough detail to generate a study plan.
+              </p>
+            )}
+
             <div>
               <h3 className="text-sm font-semibold text-slate-700">
                 Schedule — {scheduleDays} days planned
               </h3>
               <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
                 {schedule.map((d) => {
-                  const isEmpty = d.question_ids.length === 0;
+                  const isEmpty = d.minutes === 0 || d.question_ids.length === 0;
                   return (
                     <div
                       key={d.day}
@@ -422,10 +430,17 @@ export default function KitDetail() {
                           : "rounded-lg border border-slate-100 bg-slate-50 p-2.5 text-xs"
                       }
                     >
-                      <div className="font-semibold text-slate-700">Day {d.day} · {d.minutes} min</div>
-                      <div className="text-slate-500">{d.focus}</div>
-                      {!isEmpty && (
-                        <div className="mt-0.5 font-mono text-[10px] text-slate-400">{d.question_ids.join(", ")}</div>
+                      <div className="font-semibold text-slate-700">
+                        Day {d.day}
+                        {!isEmpty && <span className="text-slate-400"> · {d.minutes} min</span>}
+                      </div>
+                      {isEmpty ? (
+                        <div className="italic text-slate-400">Review day — no new material scheduled</div>
+                      ) : (
+                        <>
+                          <div className="text-slate-500">{d.focus}</div>
+                          <div className="mt-0.5 font-mono text-[10px] text-slate-400">{d.question_ids.join(", ")}</div>
+                        </>
                       )}
                     </div>
                   );
