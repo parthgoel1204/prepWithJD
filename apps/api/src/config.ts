@@ -19,7 +19,8 @@ function boolEnv(name: string, fallback: boolean): boolean {
 }
 
 export const config = {
-  port: intEnv("API_PORT", 4000),
+  // Render sets PORT dynamically; honor it as a fallback when API_PORT is unset (local default 4000).
+  port: intEnv("API_PORT", 0) || intEnv("PORT", 4000),
   mongodbUri: process.env.MONGODB_URI ?? "",
   sessionName: process.env.SESSION_NAME ?? "sid",
   sessionTtlMs: intEnv("SESSION_TTL_DAYS", 7) * 24 * 60 * 60 * 1000,

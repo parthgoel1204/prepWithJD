@@ -1,0 +1,1831 @@
+{
+  "version": "0.2.0",
+  "generated_at": "2026-09-14T08:03:07.826Z",
+  "kits": [
+    {
+      "id": "case-fullstack",
+      "status": "ok",
+      "kit": {
+        "source": {
+          "company": "adobe",
+          "company_url": "https://www.adobe.com",
+          "role": "Full-Stack Engineer",
+          "location": "",
+          "jd_chars": 572,
+          "researched_at": "2026-09-14T07:57:10.966Z",
+          "pages_used": [
+            "https://www.adobe.com/",
+            "https://www.adobe.com/acrobat.html",
+            "https://www.adobe.com/creativecloud.html",
+            "https://www.adobe.com/education/students/creativecloud.html",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/all-products-card/all-products-card",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/customer-testimonials/customer-testimonials",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/en-lingo/marquee-sub-copy/acrobat/default",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/en-lingo/marquee-sub-copy/cc-pro/default",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/en-lingo/marquee-sub-copy/ste/default",
+            "https://www.adobe.com/acrobat/generative-ai-pdf.html"
+          ],
+          "discussion": [
+            {
+              "title": "Top 10 Adobe Interview Questions (And Winning Answers That Actually Get Job Offers) - The Interview Guys",
+              "url": "https://blog.theinterviewguys.com/adobe-interview-question",
+              "snippet": "Adobe’s culture emphasizes collaboration and the belief that great ideas come from anywhere in the organization. When answering behavioral questions, highlight examples where you worked cross-functionally, incorporated feedback, or elevated others’ ideas. This aligns with their “Involved” core value and shows you understand that innovation happens through teams, not individuals. Learn more about what it’s like to work there on Adobe’s official interviewing guide. [...] This question assesses your resilience, accountability, and ability to learn from mistakes. Adobe’s culture values innovation, and innovation requires taking risks that sometimes don’t work out.\n\nChoose a real failure, but not a catastrophic one. Take full ownership without blaming others. Emphasize the concrete lesson you learned and how you’ve applied it since. [...] This question separates candidates who genuinely want to work at Adobe from those who just want any big tech job. Your interviewer has heard countless generic answers about “great company culture” and “impressive products.”\n\nYou need to connect your personal passion to Adobe’s mission and specific innovations. Reference products you actually use or teams you’ve followed. Explain what excites you about the particular role, not just the company."
+            },
+            {
+              "title": "Adobe’s Interview Process & Questions",
+              "url": "https://interviewing.io/adobe-interview-questions",
+              "snippet": "The hiring manager (HM) screen lasts 45-60 minutes and typically includes a discussion of your background and projects, a technical deep dive into your experience, and culture fit and team alignment questions. Occasionally, you'll get a light coding problem or technical scenario, too.\n\nThe goal is for the hiring manager to answer two questions:\n\n Can this person do the job technically?\n Will this person thrive on my team?\n\nAs a senior engineer at Adobe put it: [...] Adobe's hiring process is hybrid. Centralized recruiting handles screening and logistics, but the interview experience and team matching vary significantly depending on the product team. The average timeline is 3-6 weeks from application to offer.\n\n### AI Usage\n\nAI use in Adobe interviews is not currently permitted.\n\n### Step 1: Online Assessment (OA) [...] Published:\n\n## Adobe's Interview Process for Software Engineers: 4-5 Steps\n\nMid to senior-level engineers interviewing at Adobe can expect the following process:\n\n Resume screen (1-2 weeks)\n Online assessment - if required (60-90 minutes)\n Recruiter call (30-45 minutes)\n Hiring manager screen (45-60 minutes)\n Virtual onsite (3-5 hours)\n\nGeneral tips:"
+            },
+            {
+              "title": "5 Stages of Adobe Interview Process Explained",
+              "url": "https://www.finalroundai.com/blog/adobe-interview-process",
+              "snippet": "Stages: Application → Phone Screen → Hiring Manager Interview → Technical Assessment → Final Round (3–5 interviews)\n Timeline: 2–6 weeks total; most candidates hear back within 1–2 weeks after final round\n Key tip: Adobe weighs cultural fit (innovation, collaboration, customer focus) as heavily as technical ability , prepare behavioral stories using STAR format for every round\n\n## What is Adobe's Interview Process Step by Step? [...] Adobe's hiring process typically takes 2–6 weeks from application to offer. Most candidates hear back within 1–2 weeks after completing the final round of interviews.\n\nWhat questions does Adobe ask in interviews?\n\nAdobe asks a mix of behavioral questions (STAR-format), technical coding problems (data structures, algorithms, system design), and role-specific questions. Common themes include innovation, cross-functional collaboration, and customer focus.\n\nIs Adobe hard to get hired at? [...] Adobe's hiring process follows 5 defined stages. Here is exactly what happens in each one:\n\n### 1. Application\n\nSubmit through Adobe's careers portal. Adobe receives thousands of applications per role , tailor your resume to the job description with measurable results and role-specific keywords. For technical roles, showcase relevant projects. For creative roles, your portfolio impact matters as much as your CV. Use an AI resume builder to tailor your resume quickly for each Adobe job posting."
+            },
+            {
+              "title": "Get a Job at Adobe: Interview Process and Top Questions - Aced (formerly Exponent)",
+              "url": "https://www.tryexponent.com/blog/adobe-interview-process",
+              "snippet": "The interview process at Adobe is relatively standardized, but there may be some variance across teams.\n\nℹ️\n\nAdobe’s interview process differs slightly from that of similar tech companies because it typically includes a preliminary hiring manager screen as a second step before the technical online assessment. It also includes a presentation for most roles at the end of the final round.\n\nThe Adobe interview process typically takes about 2–4 weeks and involves: [...] It also has a caring work culture and offers generous employee benefits. If you’re passionate about innovation and creativity, Adobe could be a great workplace for you.\n\nBelow, we summarize the Adobe interview process and the top questions you should expect to answer.\n\n👋\n\nAdobe Interview Guides: Get role-specific insights for Adobe interviews.  \n  \n- Adobe Data Scientist Interview Guide  \n- Adobe Product Manager (PM) Interview Guide\n\n## Adobe Interview Process [...] To show off your soft skills, prepare real stories from your previous experience, demonstrating your skills in innovation, collaboration, adapting to ambiguity, and putting the customer first.\n\nGet to know Adobe and its current ventures, and study Adobe’s core values and culture. Prepare more anecdotes that highlight your alignment with the culture.\n\nConsider what excites you about Adobe and this particular team, and let that excitement shine, especially in this round."
+            },
+            {
+              "title": "How We Hire | Adobe",
+              "url": "https://careers.adobe.com/us/en/hiring-process",
+              "snippet": "•    We do not ask for bank account information, Social Security number or similar sensitive personal information during the recruiting or interview process, nor when issuing an offer of employment.  \n•    We do not request money to participate in the hiring process (e.g., an application fee or equipment costs).  \n•    If you believe you’ve been a victim of fraudulent recruiting, you can report the issue to the Federal Trade Commission. [...] ### \n\nDepending on the role or job function, you may be asked to complete a variety of assessments during the interview process. Below are a few examples:  \n   \n Technical: Coding challenges, system design discussions, or portfolio reviews  \n   \n Sales: Scenario-based discussions, presentation exercises, or collaborative problem-solving  \n   \n Creative: Creative brief responses, design thinking exercises, or case-study presentations\n\n### [...] If your profile matches, you’ll receive an invitation to talk with a Talent Partner to learn more about the role and the hiring team. This is your opportunity to share your qualifications for the role and interest in working for Adobe.\n\nSee what to expect +\n\n You'll have an in-depth conversation about your background and career goals.\n We'll discuss the role, team dynamics, and what success looks like.\n You can ask questions about Adobe's culture and growth opportunities.\n\nHowweHire1"
+            },
+            {
+              "title": "Adobe Interview Questions  and Answers | How to Pass the Interview",
+              "url": "https://www.youtube.com/watch?v=mQ1-DhhWuZA&vl=en",
+              "snippet": "Top Adobe behavioral and technical interview questions\n\nBest ways to structure your answers using STAR method\n\nTips to highlight your creativity, innovation, and problem-solving skills\n\nKey insights into Adobe’s work culture and hiring approach\n\nThis video is perfect for fresh graduates, experienced professionals, and anyone looking to succeed in an Adobe job interview. Watch till the end for expert tips and examples that will help you stand out. [...] and identify specific actions I can take to improve. I appreciate feedback as an opportunity for development and I strive to apply insights in future projects fostering a culture of continuous improvement. Seven, describe a situation where you had to solve a problem creatively. In a previous project, our team faced a significant delay due to unexpected technical issues with our software integration. Instead of following traditional troubleshooting methods, I proposed a brainstorming session [...] Top 25 Adobe interview questions and answers. In this video, we will explore the top 25 interview questions commonly asked by Adobe. These questions will help candidates prepare effectively for their interviews and gain insights into what interviewers are looking for in potential hires. Additionally, we will provide thorough answers to each question, highlighting key concepts and best practices. This will ensure you feel confident and ready to showcase your skills during the interview process."
+            },
+            {
+              "title": "Adobe Interview Experience & Questions (2026)",
+              "url": "https://www.glassdoor.com/Interview/Adobe-Interview-Questions-E1090.htm",
+              "snippet": "Process included a hiring manager round, case study, and four panel interviews. All interviewers were warm and professional. Completed final interview mid June"
+            }
+          ]
+        },
+        "company_brief": {
+          "summary": "Adobe is a global software company that provides creative, marketing, and document management solutions.",
+          "what_they_do": "Adobe offers the Creative Cloud suite, which includes industry‑standard tools such as Photoshop, Illustrator, and Premiere for design, video, and visual content creation. It also provides Acrobat, a PDF platform enhanced with AI features for editing, signing, and generating documents. Additionally, Adobe integrates AI models like Firefly to generate and edit images, video, audio, and designs across its product portfolio.",
+          "sources": [
+            "https://www.adobe.com/",
+            "https://www.adobe.com/creativecloud.html",
+            "https://www.adobe.com/acrobat.html"
+          ]
+        },
+        "role": {
+          "title": "Full-Stack Engineer",
+          "seniority": "",
+          "responsibilities": [
+            "Design and ship features across the React + TypeScript frontend and a Node.js API.",
+            "Own the Postgres data model and write efficient queries.",
+            "Participate in code review and on-call rotation."
+          ],
+          "requirements": [
+            {
+              "id": "r1",
+              "text": "4+ years of professional software engineering, TypeScript required.",
+              "kind": "technical",
+              "priority": "must"
+            },
+            {
+              "id": "r2",
+              "text": "Production experience with React and Node.js required.",
+              "kind": "technical",
+              "priority": "must"
+            },
+            {
+              "id": "r3",
+              "text": "Strong SQL and data-modelling skills required.",
+              "kind": "technical",
+              "priority": "must"
+            },
+            {
+              "id": "r4",
+              "text": "Experience with Kubernetes or Docker, preferred.",
+              "kind": "technical",
+              "priority": "nice"
+            },
+            {
+              "id": "r5",
+              "text": "Prior fintech or payments experience, a plus.",
+              "kind": "domain",
+              "priority": "nice"
+            }
+          ]
+        },
+        "questions": [
+          {
+            "id": "q1",
+            "requirement_ids": [
+              "r1",
+              "r2"
+            ],
+            "category": "technical",
+            "prompt": "Describe how you would structure a new feature that adds a real‑time data table to a React + TypeScript frontend, including the API contract, state management, and type safety considerations.",
+            "answer_outline": "- Define a TypeScript interface for the data rows and use it in both frontend and Node.js API.\n- Choose a state‑management approach (e.g., React Query or Redux Toolkit) that handles loading, caching, and updates.\n- Design a REST endpoint (or GraphQL) that returns paginated JSON matching the interface, and explain error handling and validation.",
+            "difficulty": 2
+          },
+          {
+            "id": "q2",
+            "requirement_ids": [
+              "r3"
+            ],
+            "category": "technical",
+            "prompt": "Given a PostgreSQL schema for transactions (id, user_id, amount, status, created_at), write an efficient query to retrieve the total settled amount per user for the last 30 days, and explain any indexing strategy you would apply.",
+            "answer_outline": "- Use a GROUP BY on user_id with a WHERE clause filtering status='settled' and created_at >= now() - interval '30 days'.\n- Return user_id and SUM(amount) as total_settled.\n- Recommend a composite index on (status, created_at, user_id) to speed the filter and grouping.",
+            "difficulty": 3
+          },
+          {
+            "id": "q3",
+            "requirement_ids": [
+              "r4"
+            ],
+            "category": "technical",
+            "prompt": "Explain how you would containerize the Node.js API and the React build using Docker, and outline the steps to deploy them to a Kubernetes cluster with zero‑downtime rolling updates.",
+            "answer_outline": "- Write separate Dockerfiles: one for the Node.js API (using a slim node base) and one for the React static build (served by nginx).\n- Create Kubernetes Deployment and Service manifests for each, using readiness probes.\n- Use a rolling update strategy with maxSurge and maxUnavailable settings to ensure no downtime during image rollout.",
+            "difficulty": 2
+          },
+          {
+            "id": "q4",
+            "requirement_ids": [
+              "r1",
+              "r2"
+            ],
+            "category": "behavioural",
+            "prompt": "Tell me about a time you delivered a feature end‑to‑end on a React + TypeScript frontend while collaborating with backend engineers. What was the situation, your actions, and the outcome?",
+            "answer_outline": "- Set the context: feature scope, cross‑functional team, deadline.\n- Describe your specific contributions: wrote TypeScript components, coordinated API contracts, held sync meetings.\n- Highlight collaboration: incorporated feedback from backend, resolved integration bugs.\n- Quantify impact: shipped on schedule, improved user metric or reduced bugs.",
+            "difficulty": 2
+          },
+          {
+            "id": "q5",
+            "requirement_ids": [
+              "r3",
+              "r1"
+            ],
+            "category": "behavioural",
+            "prompt": "Describe a situation where you had to redesign a Postgres data model to improve query performance. How did you identify the problem, what steps did you take, and what were the results?",
+            "answer_outline": "- Explain the performance issue (slow query, scaling need) and its business impact.\n- Detail your analysis (EXPLAIN, indexing, normalization) and the redesign decisions.\n- Outline implementation steps: migration plan, testing, communication with the team.\n- Share measurable outcomes: query speed‑up, reduced latency, or cost savings.",
+            "difficulty": 2
+          },
+          {
+            "id": "q6",
+            "requirement_ids": [
+              "r1",
+              "r2",
+              "r4"
+            ],
+            "category": "behavioural",
+            "prompt": "Give an example of when you were on‑call and had to troubleshoot a production incident involving both the Node.js API and its Docker/Kubernetes deployment. What was your approach and what did you learn?",
+            "answer_outline": "- Set the scene: incident severity, services affected, on‑call responsibilities.\n- Walk through your immediate actions: log analysis, container inspection, rollback or scaling.\n- Discuss communication with stakeholders and post‑mortem creation.\n- Reflect on lessons learned: improvements to monitoring, deployment scripts, or team processes.",
+            "difficulty": 3
+          },
+          {
+            "id": "q7",
+            "requirement_ids": [
+              "r2",
+              "r3"
+            ],
+            "category": "system-design",
+            "prompt": "Design a RESTful API endpoint for creating and retrieving transaction records in a fintech application, using Node.js and PostgreSQL. Explain how you would model the data, handle validation, and ensure efficient queries for retrieving a user's transaction history.",
+            "answer_outline": "- Define a Transaction table with appropriate columns (id, user_id, amount, currency, status, timestamps) and indexes on user_id and timestamps for fast history queries.\n- Show a Node.js/Express route schema, using TypeScript types for request/response bodies and validation (e.g., Zod or Joi).\n- Describe query patterns: INSERT with RETURNING for creation, SELECT with WHERE user_id and ORDER BY timestamp DESC, using LIMIT/OFFSET or cursor pagination for scalability.",
+            "difficulty": 2
+          },
+          {
+            "id": "q8",
+            "requirement_ids": [
+              "r1",
+              "r2",
+              "r4"
+            ],
+            "category": "system-design",
+            "prompt": "Sketch a high‑level architecture for deploying a React + TypeScript front‑end and a Node.js API behind Docker containers orchestrated by Kubernetes. Highlight how you would manage configuration, scaling, and zero‑downtime deployments.",
+            "answer_outline": "- Outline separate Docker images for the React SPA (served via Nginx) and the Node.js API, each with its own Dockerfile.\n- Describe a Kubernetes cluster with Deployments, Services, and Ingress; use ConfigMaps/Secrets for environment variables.\n- Explain horizontal pod autoscaling based on CPU/RAM, rolling updates with readiness probes for zero‑downtime, and canary releases using separate Deployment versions.",
+            "difficulty": 3
+          },
+          {
+            "id": "q9",
+            "requirement_ids": [
+              "r3",
+              "r5"
+            ],
+            "category": "system-design",
+            "prompt": "Given a payments platform that must support real‑time balance updates for users, design a data model and flow that ensures consistency between transaction records and account balances, considering PostgreSQL's ACID guarantees.",
+            "answer_outline": "- Propose an Account table with a balance column and a Transactions table; use a single database transaction to insert a transaction and update the related account balance atomically.\n- Discuss using PostgreSQL row‑level locking (SELECT … FOR UPDATE) to prevent race conditions on concurrent updates.\n- Mention eventual consistency alternatives (event sourcing, outbox pattern) if scaling beyond a single DB instance, but emphasize ACID compliance for core balance updates.",
+            "difficulty": 3
+          }
+        ],
+        "flashcards": [
+          {
+            "id": "f1",
+            "front": "What TypeScript construct ensures the same data shape is used in both React frontend and Node.js API?",
+            "back": "A shared interface or type definition that is imported by both projects.",
+            "requirement_ids": [
+              "r1",
+              "r2"
+            ]
+          },
+          {
+            "id": "f2",
+            "front": "Which PostgreSQL index best supports a query filtering by status and recent date range then grouping by user_id?",
+            "back": "A composite index on (status, created_at, user_id).",
+            "requirement_ids": [
+              "r3"
+            ]
+          },
+          {
+            "id": "f3",
+            "front": "In Kubernetes, what deployment settings enable zero‑downtime rolling updates?",
+            "back": "Configure rollingUpdate strategy with maxSurge and maxUnavailable values, plus readiness probes.",
+            "requirement_ids": [
+              "r4"
+            ]
+          },
+          {
+            "id": "f4",
+            "front": "Which two technologies are required for production experience in this Full‑Stack Engineer role?",
+            "back": "React (frontend) and Node.js (backend).",
+            "requirement_ids": [
+              "r2"
+            ]
+          },
+          {
+            "id": "f5",
+            "front": "What is a key metric to demonstrate the impact of a data‑model redesign?",
+            "back": "Query execution time reduction (e.g., X ms to Y ms) or latency improvement percentage.",
+            "requirement_ids": [
+              "r3"
+            ]
+          },
+          {
+            "id": "f6",
+            "front": "What indexes are essential for fast user transaction history queries in PostgreSQL?",
+            "back": "Create indexes on `user_id` and on `timestamp` (or a composite index on both) to enable quick filtering and ordering of a user's transactions.",
+            "requirement_ids": [
+              "r3"
+            ]
+          },
+          {
+            "id": "f7",
+            "front": "Which Kubernetes objects enable zero‑downtime rolling updates for a Node.js API?",
+            "back": "Deployments with rolling update strategy, readiness probes, and an Ingress or Service to route traffic; updates replace pods gradually while keeping the service available.",
+            "requirement_ids": [
+              "r4"
+            ]
+          },
+          {
+            "id": "f8",
+            "front": "How does PostgreSQL ensure atomic balance updates when recording a payment?",
+            "back": "By wrapping the INSERT into the Transactions table and the UPDATE to the Account balance in a single transaction, optionally using `SELECT … FOR UPDATE` to lock the account row.",
+            "requirement_ids": [
+              "r3"
+            ]
+          }
+        ],
+        "schedule": {
+          "days_available": 14,
+          "days": [
+            {
+              "day": 1,
+              "focus": "System design sprint",
+              "question_ids": [
+                "q2",
+                "q6",
+                "q8",
+                "q9"
+              ],
+              "minutes": 80
+            },
+            {
+              "day": 2,
+              "focus": "Technical deep-dive",
+              "question_ids": [
+                "q1",
+                "q4",
+                "q5",
+                "q7",
+                "q3"
+              ],
+              "minutes": 75
+            },
+            {
+              "day": 3,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 4,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 5,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 6,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 7,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 8,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 9,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 10,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 11,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 12,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 13,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 14,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            }
+          ]
+        },
+        "coverage": {
+          "uncovered_requirement_ids": [],
+          "passes": 1
+        },
+        "stage_errors": []
+      },
+      "error": null
+    },
+    {
+      "id": "case-fullstack-dup",
+      "status": "ok",
+      "kit": {
+        "source": {
+          "company": "adobe",
+          "company_url": "https://www.adobe.com",
+          "role": "Full-Stack Engineer at Acme — Help us build our cloud platform.",
+          "location": "",
+          "jd_chars": 572,
+          "researched_at": "2026-09-14T07:59:02.561Z",
+          "pages_used": [
+            "https://www.adobe.com/",
+            "https://www.adobe.com/acrobat.html",
+            "https://www.adobe.com/creativecloud.html",
+            "https://www.adobe.com/education/students/creativecloud.html",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/all-products-card/all-products-card",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/customer-testimonials/customer-testimonials",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/en-lingo/marquee-sub-copy/acrobat/default",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/en-lingo/marquee-sub-copy/cc-pro/default",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/en-lingo/marquee-sub-copy/ste/default",
+            "https://www.adobe.com/acrobat/generative-ai-pdf.html"
+          ],
+          "discussion": [
+            {
+              "title": "Adobe's Interview Process & Questions",
+              "url": "https://interviewing.io/adobe-interview-questions",
+              "snippet": "The hiring manager (HM) screen lasts 45-60 minutes and typically includes a discussion of your background and projects, a technical deep dive into your experience, and culture fit and team alignment questions. Occasionally, you'll get a light coding problem or technical scenario, too.\n\nThe goal is for the hiring manager to answer two questions:\n\n Can this person do the job technically?\n Will this person thrive on my team?\n\nAs a senior engineer at Adobe put it: [...] Adobe's hiring process is hybrid. Centralized recruiting handles screening and logistics, but the interview experience and team matching vary significantly depending on the product team. The average timeline is 3-6 weeks from application to offer.\n\n### AI Usage\n\nAI use in Adobe interviews is not currently permitted.\n\n### Step 1: Online Assessment (OA) [...] Published:\n\n## Adobe's Interview Process for Software Engineers: 4-5 Steps\n\nMid to senior-level engineers interviewing at Adobe can expect the following process:\n\n Resume screen (1-2 weeks)\n Online assessment - if required (60-90 minutes)\n Recruiter call (30-45 minutes)\n Hiring manager screen (45-60 minutes)\n Virtual onsite (3-5 hours)\n\nGeneral tips:"
+            },
+            {
+              "title": "Top 10 Adobe Interview Questions (And Winning Answers ...",
+              "url": "https://blog.theinterviewguys.com/adobe-interview-question",
+              "snippet": "Adobe’s culture emphasizes collaboration and the belief that great ideas come from anywhere in the organization. When answering behavioral questions, highlight examples where you worked cross-functionally, incorporated feedback, or elevated others’ ideas. This aligns with their “Involved” core value and shows you understand that innovation happens through teams, not individuals. Learn more about what it’s like to work there on Adobe’s official interviewing guide. [...] This question assesses your resilience, accountability, and ability to learn from mistakes. Adobe’s culture values innovation, and innovation requires taking risks that sometimes don’t work out.\n\nChoose a real failure, but not a catastrophic one. Take full ownership without blaming others. Emphasize the concrete lesson you learned and how you’ve applied it since. [...] This question separates candidates who genuinely want to work at Adobe from those who just want any big tech job. Your interviewer has heard countless generic answers about “great company culture” and “impressive products.”\n\nYou need to connect your personal passion to Adobe’s mission and specific innovations. Reference products you actually use or teams you’ve followed. Explain what excites you about the particular role, not just the company."
+            },
+            {
+              "title": "5 Stages of Adobe Interview Process Explained",
+              "url": "https://www.finalroundai.com/blog/adobe-interview-process",
+              "snippet": "Stages: Application → Phone Screen → Hiring Manager Interview → Technical Assessment → Final Round (3–5 interviews)\n Timeline: 2–6 weeks total; most candidates hear back within 1–2 weeks after final round\n Key tip: Adobe weighs cultural fit (innovation, collaboration, customer focus) as heavily as technical ability , prepare behavioral stories using STAR format for every round\n\n## What is Adobe's Interview Process Step by Step? [...] Adobe's hiring process typically takes 2–6 weeks from application to offer. Most candidates hear back within 1–2 weeks after completing the final round of interviews.\n\nWhat questions does Adobe ask in interviews?\n\nAdobe asks a mix of behavioral questions (STAR-format), technical coding problems (data structures, algorithms, system design), and role-specific questions. Common themes include innovation, cross-functional collaboration, and customer focus.\n\nIs Adobe hard to get hired at? [...] Adobe's hiring process follows 5 defined stages. Here is exactly what happens in each one:\n\n### 1. Application\n\nSubmit through Adobe's careers portal. Adobe receives thousands of applications per role , tailor your resume to the job description with measurable results and role-specific keywords. For technical roles, showcase relevant projects. For creative roles, your portfolio impact matters as much as your CV. Use an AI resume builder to tailor your resume quickly for each Adobe job posting."
+            },
+            {
+              "title": "Get a Job at Adobe: Interview Process and Top Questions",
+              "url": "https://www.tryexponent.com/blog/adobe-interview-process",
+              "snippet": "The interview process at Adobe is relatively standardized, but there may be some variance across teams.\n\nℹ️\n\nAdobe’s interview process differs slightly from that of similar tech companies because it typically includes a preliminary hiring manager screen as a second step before the technical online assessment. It also includes a presentation for most roles at the end of the final round.\n\nThe Adobe interview process typically takes about 2–4 weeks and involves: [...] To show off your soft skills, prepare real stories from your previous experience, demonstrating your skills in innovation, collaboration, adapting to ambiguity, and putting the customer first.\n\nGet to know Adobe and its current ventures, and study Adobe’s core values and culture. Prepare more anecdotes that highlight your alignment with the culture.\n\nConsider what excites you about Adobe and this particular team, and let that excitement shine, especially in this round. [...] It also has a caring work culture and offers generous employee benefits. If you’re passionate about innovation and creativity, Adobe could be a great workplace for you.\n\nBelow, we summarize the Adobe interview process and the top questions you should expect to answer.\n\n👋\n\nAdobe Interview Guides: Get role-specific insights for Adobe interviews.  \n  \n- Adobe Data Scientist Interview Guide  \n- Adobe Product Manager (PM) Interview Guide\n\n## Adobe Interview Process"
+            },
+            {
+              "title": "How We Hire | Adobe",
+              "url": "https://careers.adobe.com/us/en/hiring-process",
+              "snippet": "•    We do not ask for bank account information, Social Security number or similar sensitive personal information during the recruiting or interview process, nor when issuing an offer of employment.  \n•    We do not request money to participate in the hiring process (e.g., an application fee or equipment costs).  \n•    If you believe you’ve been a victim of fraudulent recruiting, you can report the issue to the Federal Trade Commission. [...] ### \n\nDepending on the role or job function, you may be asked to complete a variety of assessments during the interview process. Below are a few examples:  \n   \n Technical: Coding challenges, system design discussions, or portfolio reviews  \n   \n Sales: Scenario-based discussions, presentation exercises, or collaborative problem-solving  \n   \n Creative: Creative brief responses, design thinking exercises, or case-study presentations\n\n### [...] If your profile matches, you’ll receive an invitation to talk with a Talent Partner to learn more about the role and the hiring team. This is your opportunity to share your qualifications for the role and interest in working for Adobe.\n\nSee what to expect +\n\n You'll have an in-depth conversation about your background and career goals.\n We'll discuss the role, team dynamics, and what success looks like.\n You can ask questions about Adobe's culture and growth opportunities.\n\nHowweHire1"
+            },
+            {
+              "title": "Adobe Interview Questions and Answers | How to Pass the ...",
+              "url": "https://www.youtube.com/watch?v=mQ1-DhhWuZA&vl=en",
+              "snippet": "Top Adobe behavioral and technical interview questions\n\nBest ways to structure your answers using STAR method\n\nTips to highlight your creativity, innovation, and problem-solving skills\n\nKey insights into Adobe’s work culture and hiring approach\n\nThis video is perfect for fresh graduates, experienced professionals, and anyone looking to succeed in an Adobe job interview. Watch till the end for expert tips and examples that will help you stand out. [...] Top 25 Adobe interview questions and answers. In this video, we will explore the top 25 interview questions commonly asked by Adobe. These questions will help candidates prepare effectively for their interviews and gain insights into what interviewers are looking for in potential hires. Additionally, we will provide thorough answers to each question, highlighting key concepts and best practices. This will ensure you feel confident and ready to showcase your skills during the interview process. [...] and identify specific actions I can take to improve. I appreciate feedback as an opportunity for development and I strive to apply insights in future projects fostering a culture of continuous improvement. Seven, describe a situation where you had to solve a problem creatively. In a previous project, our team faced a significant delay due to unexpected technical issues with our software integration. Instead of following traditional troubleshooting methods, I proposed a brainstorming session"
+            },
+            {
+              "title": "Adobe Interview Experience & Questions (2026)",
+              "url": "https://www.glassdoor.com/Interview/Adobe-Interview-Questions-E1090.htm",
+              "snippet": "Process included a hiring manager round, case study, and four panel interviews. All interviewers were warm and professional. Completed final interview mid June"
+            }
+          ]
+        },
+        "company_brief": {
+          "summary": "Adobe is a global software company that provides creative, marketing, and document management solutions through its suite of applications and cloud services.",
+          "what_they_do": "Adobe offers Creative Cloud, a subscription-based platform that includes industry‑standard tools such as Photoshop, Illustrator, Premiere Pro, and many others for design, video, and web creation. It also provides Adobe Acrobat, which enables users to create, edit, sign, and enhance PDFs with AI‑driven features like document insights and automated content generation. Across its portfolio, Adobe integrates AI models from multiple partners to power generative capabilities for images, video, audio, and design.",
+          "sources": [
+            "https://www.adobe.com/",
+            "https://www.adobe.com/acrobat.html",
+            "https://www.adobe.com/creativecloud.html"
+          ]
+        },
+        "role": {
+          "title": "Full-Stack Engineer at Acme — Help us build our cloud platform.",
+          "seniority": "",
+          "responsibilities": [
+            "Design and ship features across the React + TypeScript frontend and a Node.js API.",
+            "Own the Postgres data model and write efficient queries.",
+            "Participate in code review and on-call rotation."
+          ],
+          "requirements": [
+            {
+              "id": "r1",
+              "text": "4+ years of professional software engineering, TypeScript required.",
+              "kind": "technical",
+              "priority": "must"
+            },
+            {
+              "id": "r2",
+              "text": "Production experience with React and Node.js required.",
+              "kind": "technical",
+              "priority": "must"
+            },
+            {
+              "id": "r3",
+              "text": "Strong SQL and data-modelling skills required.",
+              "kind": "technical",
+              "priority": "must"
+            },
+            {
+              "id": "r4",
+              "text": "Experience with Kubernetes or Docker, preferred.",
+              "kind": "technical",
+              "priority": "nice"
+            },
+            {
+              "id": "r5",
+              "text": "Prior fintech or payments experience, a plus.",
+              "kind": "domain",
+              "priority": "nice"
+            }
+          ]
+        },
+        "questions": [
+          {
+            "id": "q1",
+            "requirement_ids": [
+              "r1",
+              "r2"
+            ],
+            "category": "technical",
+            "prompt": "Explain how you would structure a new feature that adds a real‑time notification panel to the React + TypeScript frontend while exposing the necessary endpoints in a Node.js API. Include considerations for type safety, state management, and API contract design.",
+            "answer_outline": "- Describe creating a shared TypeScript interface for the notification payload used by both client and server.\n- Outline React component hierarchy, using a state‑management solution (e.g., Context or Redux) to handle live updates.\n- Explain adding a REST or WebSocket endpoint in Node.js, ensuring request validation and proper response typing.\n- Mention testing the integration with unit and end‑to‑end tests.",
+            "difficulty": 2
+          },
+          {
+            "id": "q2",
+            "requirement_ids": [
+              "r3"
+            ],
+            "category": "technical",
+            "prompt": "Given a PostgreSQL table `transactions(id, user_id, amount, created_at)`, write an efficient query to retrieve the total transaction amount per user for the last 30 days, and discuss indexing strategies to keep the query performant as the table grows.",
+            "answer_outline": "- Provide the SQL query using `SUM` and `GROUP BY` with a `WHERE created_at >= now() - interval '30 days'` filter.\n- Recommend a composite index on `(created_at, user_id)` or a partial index on recent rows.\n- Explain why the index helps the filter and grouping, and note potential trade‑offs with write overhead.",
+            "difficulty": 2
+          },
+          {
+            "id": "q3",
+            "requirement_ids": [
+              "r4"
+            ],
+            "category": "technical",
+            "prompt": "Describe how you would containerize the Node.js API and the React build using Docker, and outline the steps to deploy them to a Kubernetes cluster, highlighting any challenges specific to a full‑stack application.",
+            "answer_outline": "- Detail Dockerfiles for the API (Node base image, copy source, install deps, expose port) and for the React app (build static files, serve via Nginx).\n- Explain creating Kubernetes Deployment and Service manifests for each component, including environment variables and health probes.\n- Discuss networking between front‑end and API services, handling static asset serving, and managing config via ConfigMaps/Secrets.\n- Note challenges such as coordinating build pipelines, image size, and ensuring zero‑downtime rollouts.",
+            "difficulty": 3
+          },
+          {
+            "id": "q4",
+            "requirement_ids": [
+              "r1",
+              "r2"
+            ],
+            "category": "behavioural",
+            "prompt": "Tell me about a time when you had to quickly learn a new feature in a React + TypeScript codebase to meet a tight deadline. How did you approach the learning, implementation, and delivery?",
+            "answer_outline": "- Explain the context and deadline, showing ownership of the feature.\n- Describe the steps you took to ramp up on React/TypeScript (e.g., reading docs, pairing, code reviews).\n- Highlight how you delivered a clean, functional implementation and any feedback you incorporated.\n- Reflect on the outcome and what you learned for future fast‑track work.",
+            "difficulty": 2
+          },
+          {
+            "id": "q5",
+            "requirement_ids": [
+              "r3",
+              "r1"
+            ],
+            "category": "behavioural",
+            "prompt": "Describe a situation where you identified a performance problem in a PostgreSQL query and had to redesign the data model or query to fix it. What was your process and how did you communicate the change to the team?",
+            "answer_outline": "- Set the scene: production issue, impact on users, and your role.\n- Walk through analysis (EXPLAIN, indexing, data‑model review) and the redesign you chose.\n- Explain how you presented the solution, got buy‑in, and updated documentation/code.\n- Share the measurable performance improvement and any follow‑up actions.",
+            "difficulty": 2
+          },
+          {
+            "id": "q6",
+            "requirement_ids": [
+              "r2",
+              "r4"
+            ],
+            "category": "behavioural",
+            "prompt": "Give an example of a time you participated in an on‑call rotation and had to troubleshoot a production incident involving a Node.js service running in Docker/Kubernetes. How did you handle the incident and what improvements did you implement afterward?",
+            "answer_outline": "- Describe the incident, its severity, and your immediate response steps.\n- Detail the debugging process within Docker/K8s (logs, metrics, pod restarts).\n- Discuss communication with stakeholders and post‑mortem actions (e.g., alerts, health checks, documentation).\n- Highlight the lasting changes that reduced future incidents.",
+            "difficulty": 3
+          },
+          {
+            "id": "q7",
+            "requirement_ids": [
+              "r2",
+              "r4"
+            ],
+            "category": "system-design",
+            "prompt": "Design a scalable, containerized deployment pipeline for a React + TypeScript frontend and a Node.js API that can be run on Kubernetes. Include how you would handle CI/CD, service discovery, and zero‑downtime deployments.",
+            "answer_outline": "- Choose Docker for both frontend and API, push images to a registry.\n- Use Helm/Kustomize to define Deployments, Services, and Ingress; leverage readiness/liveness probes.\n- Implement CI (e.g., GitHub Actions) that builds, tests, and pushes images; use rolling updates with maxSurge/maxUnavailable for zero‑downtime.\n- Explain service discovery via Kubernetes DNS and optional service mesh for traffic routing.",
+            "difficulty": 2
+          },
+          {
+            "id": "q8",
+            "requirement_ids": [
+              "r3",
+              "r4"
+            ],
+            "category": "system-design",
+            "prompt": "Sketch the data model and partitioning strategy for a high‑throughput payments system stored in PostgreSQL, and describe how you would scale reads/writes using Docker/Kubernetes.",
+            "answer_outline": "- Identify core entities (User, Account, Transaction, Merchant) and relationships; use UUID primary keys.\n- Apply normalization for consistency, add indexes on frequent query columns (e.g., account_id, status).\n- Discuss sharding by tenant or time range, and read replicas for scaling reads.\n- Deploy PostgreSQL in Docker containers managed by Kubernetes StatefulSets with persistent volumes and automated failover.",
+            "difficulty": 3
+          },
+          {
+            "id": "q9",
+            "requirement_ids": [
+              "r1",
+              "r2"
+            ],
+            "category": "system-design",
+            "prompt": "Explain how you would design a feature flag system that allows front‑end React components and back‑end Node.js services to toggle functionality in real time without redeploying.",
+            "answer_outline": "- Store flags in a central store (e.g., Redis or a Postgres table) with versioning.\n- Expose a lightweight API for Node.js services to fetch flags; cache locally with TTL.\n- For React, use a context/provider that pulls flags at app start and subscribes to SSE/WebSocket updates.\n- Ensure type safety with TypeScript interfaces and fallback defaults.",
+            "difficulty": 2
+          },
+          {
+            "id": "q10",
+            "requirement_ids": [
+              "r5"
+            ],
+            "category": "company-fit",
+            "prompt": "Adobe emphasizes collaboration and the belief that great ideas can come from anyone. How do you see yourself contributing to that culture while working on a cloud platform that serves fintech customers?",
+            "answer_outline": "- Highlight past cross‑functional projects where you solicited input from diverse teammates.\n- Explain how you share knowledge (e.g., code reviews, documentation) to surface ideas.\n- Connect your fintech exposure (or eagerness to learn) to delivering value for Adobe’s customers.",
+            "difficulty": 2
+          },
+          {
+            "id": "q11",
+            "requirement_ids": [
+              "r4"
+            ],
+            "category": "company-fit",
+            "prompt": "Adobe values innovation and continuous improvement. Can you describe a time you introduced a new tool or process (e.g., Docker/Kubernetes) that improved team productivity or product quality?",
+            "answer_outline": "- Briefly set the context and the problem you were solving.\n- Detail the tool/process you introduced and how you advocated for its adoption.\n- Quantify the impact (e.g., faster deployments, fewer bugs) and reflect on the collaborative effort.",
+            "difficulty": 2
+          },
+          {
+            "id": "q12",
+            "requirement_ids": [
+              "r1",
+              "r2"
+            ],
+            "category": "company-fit",
+            "prompt": "During Adobe’s hiring manager screen, they often ask how your background aligns with the team’s mission. Summarize how your 4+ years of TypeScript‑focused full‑stack work prepares you to help build Adobe’s cloud platform.",
+            "answer_outline": "- Mention years of experience with TypeScript, React, and Node.js in production.\n- Cite specific feature work or scaling challenges you’ve solved.\n- Tie those experiences to Adobe’s goal of delivering reliable, innovative cloud services.",
+            "difficulty": 1
+          }
+        ],
+        "flashcards": [
+          {
+            "id": "f1",
+            "front": "What TypeScript construct ensures the same data shape is used by both React frontend and Node.js API?",
+            "back": "A shared interface or type definition that is imported by both projects.",
+            "requirement_ids": [
+              "r1",
+              "r2"
+            ]
+          },
+          {
+            "id": "f2",
+            "front": "Which PostgreSQL index pattern best supports a query filtering by recent `created_at` and grouping by `user_id`?",
+            "back": "A composite index on `(created_at, user_id)` or a partial index on recent rows.",
+            "requirement_ids": [
+              "r3"
+            ]
+          },
+          {
+            "id": "f3",
+            "front": "Name two key Kubernetes resources needed to run a containerized full‑stack app.",
+            "back": "Deployment (for pod management) and Service (for networking).",
+            "requirement_ids": [
+              "r4"
+            ]
+          },
+          {
+            "id": "f4",
+            "front": "What core technical skills are mandatory for the Full‑Stack Engineer role at Acme?",
+            "back": "4+ years of professional software engineering, TypeScript, production experience with React and Node.js, and strong SQL/data‑modelling skills.",
+            "requirement_ids": [
+              "r1",
+              "r2",
+              "r3"
+            ]
+          },
+          {
+            "id": "f5",
+            "front": "Which nice‑to‑have experience is mentioned for this role?",
+            "back": "Experience with Kubernetes or Docker, and prior fintech or payments domain experience.",
+            "requirement_ids": [
+              "r4",
+              "r5"
+            ]
+          },
+          {
+            "id": "f6",
+            "front": "What responsibilities does the role include regarding the data layer?",
+            "back": "Own the Postgres data model and write efficient queries.",
+            "requirement_ids": [
+              "r3"
+            ]
+          },
+          {
+            "id": "f7",
+            "front": "What Kubernetes object is best for managing stateful databases like PostgreSQL?",
+            "back": "StatefulSet, because it provides stable network IDs and ordered pod deployment with persistent storage.",
+            "requirement_ids": [
+              "r4"
+            ]
+          },
+          {
+            "id": "f8",
+            "front": "Which CI/CD tool can build Docker images and push them to a registry for Kubernetes deployments?",
+            "back": "GitHub Actions (or similar) can run Docker build steps, run tests, and push images to a container registry.",
+            "requirement_ids": [
+              "r2"
+            ]
+          },
+          {
+            "id": "f9",
+            "front": "Name two common strategies to scale PostgreSQL reads.",
+            "back": "Read replicas and connection pooling (e.g., PgBouncer).",
+            "requirement_ids": [
+              "r3"
+            ]
+          },
+          {
+            "id": "f10",
+            "front": "Which requirement is considered a nice‑to‑have but aligns with Adobe’s innovation focus?",
+            "back": "Experience with Kubernetes or Docker (r4).",
+            "requirement_ids": [
+              "r4"
+            ]
+          }
+        ],
+        "schedule": {
+          "days_available": 14,
+          "days": [
+            {
+              "day": 1,
+              "focus": "Technical deep-dive",
+              "question_ids": [
+                "q6",
+                "q8",
+                "q1",
+                "q2",
+                "q4"
+              ],
+              "minutes": 85
+            },
+            {
+              "day": 2,
+              "focus": "System design sprint",
+              "question_ids": [
+                "q5",
+                "q7",
+                "q9",
+                "q12",
+                "q3",
+                "q10"
+              ],
+              "minutes": 90
+            },
+            {
+              "day": 3,
+              "focus": "Company-fit & storytelling",
+              "question_ids": [
+                "q11"
+              ],
+              "minutes": 15
+            },
+            {
+              "day": 4,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 5,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 6,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 7,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 8,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 9,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 10,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 11,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 12,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 13,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 14,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            }
+          ]
+        },
+        "coverage": {
+          "uncovered_requirement_ids": [],
+          "passes": 1
+        },
+        "stage_errors": []
+      },
+      "error": null
+    },
+    {
+      "id": "case-thin",
+      "status": "ok",
+      "kit": {
+        "source": {
+          "company": "example",
+          "company_url": "https://example.com",
+          "role": "",
+          "location": "",
+          "jd_chars": 54,
+          "researched_at": "2026-09-14T07:59:32.666Z",
+          "pages_used": [],
+          "discussion": [
+            {
+              "title": "49 Best Interview Questions to Check for Culture Fit",
+              "url": "https://www.hrmorning.com/articles/culture-fit-interview-questions",
+              "snippet": "For instance, if your company values innovation and creativity, you’ll want any potential hires to possess traits that align with those beliefs. Someone who fits well within your company’s culture is more likely to stay on board for the long term. They’ll enjoy their work and have a high level of productivity. [...] You should tailor your culture-fit questions to address the needs of each role. For example, if you’re seeking a data analyst, values like work ethic and accuracy are likely important. In your search for sales agents, you might seek individuals who are comfortable with criticism, place a premium on collaboration and value relationships.\n\nThe number of culture-fit questions you include in your interviews should vary by company needs and the role itself. [...] For instance, consider an SaaS company seeking a new marketing director. The SaaS company includes values such as innovation, creativity and customer service in its mission statement. The company considers itself a disruptor, and they want someone with a lot of energy and the ability to shake things up in the marketing department."
+            },
+            {
+              "title": "Top 5 Interview Questions to Test Culture Fit in 2026",
+              "url": "https://www.youtube.com/watch?v=fMnCTYg2_XE",
+              "snippet": "I’ve helped dozens of founders hire smarter, and this approach consistently improves retention and team morale by focusing on what people do, not what they claim. Think of it as a simple framework: 1) Values Alignment, 2) Behavior Evidence, 3) Retention Signals. Ask for real examples, verify actions, and map answers to your core values. Model this process in your next interview by using the five questions, scoring each response against these three pillars, and moving forward only when all three [...] upfront helps you avoid hiring someone who might create long-term friction. Question four, owning mistakes. What's one mistake you've made at work and how did you handle it? This question isn't about catching them off guard. It's about humility and growth. The best candidates admit to something real, then explain how they fixed or learned from it. For example, maybe they missed a deadline, but then they created a system so it wouldn't happen again. If someone says, \"I've never made a mistake,\" [...] In this video, I go over the top 5 culture fit interview questions that founders and small business owners can use to reduce mis-hires and build a stronger team by testing values, teamwork, conflict style, ownership, and long‑term motivation. We’ll cover Best Team Experience, Ideal Company Culture, Handling Conflict, Owning Mistakes, and Long‑Term Motivation, then finish with a quick look at TopStack Resume so you can interview beyond a polished resume."
+            },
+            {
+              "title": "25 Cultural Fit Interview Questions Plus Sample Answers ...",
+              "url": "https://www.aihr.com/blog/cultural-fit-interview-questions",
+              "snippet": "> #### HR tip\n>\n> Social hiring: In organizations with strong cultures, the employees are often the top ambassadors of the company’s values. Consider involving your most engaged employees in the interviewing process to get their take on whether candidates are a good cultural fit or not.\n\n[](\n\n### To sum up [...] [](\n\n### To sum up\n\nHiring for cultural fit boosts engagement and reduces turnover because it creates a shared sense of purpose, belonging, and smooth collaboration. People feel valued, motivated, and empowered, leading to less friction and stress.\n\nLower churn rates and higher productivity also boost your bottom line. But remember to balance cultural fit with diversity for optimal hiring.\n\nFollow us on social media to stay up to date with the latest HR news and trends [...] ✅ Run structured job intake sessions and clarify hiring requirements with managers  \n✅ Apply consistent candidate screening and evaluation methods  \n✅ Use assessments and reference checks to identify best-fit candidates  \n✅ Analyze recruitment data to improve candidate quality and funnel performance\n\n🎓 Explore the AIHR Demo Portal to preview the learning content and explore what you could study next.\n\nPREVIEW LESSONS\n\n### Work environment cultural fit interview question"
+            },
+            {
+              "title": "62 Common Cultural Fit Interview Questions",
+              "url": "https://www.indeed.com/career-advice/interviewing/cultural-fit-interview-questions",
+              "snippet": "In this article, we discuss why culture fit interview questions are important and provide example questions a hiring manager may ask you"
+            },
+            {
+              "title": "10 Questions to Ask About Company Culture in an Interview",
+              "url": "https://executiveeducation.wharton.upenn.edu/thought-leadership/wharton-online-insights/questions-to-ask-during-interview",
+              "snippet": "There are, however, some critics of the current focus on culture fit in hiring. Patty McCord, Netflix’s chief talent officer from 1998 to 2012, wrote in the Harvard Business Review that culture fit is just code for liking someone socially. McCord went on to say the focus on culture fit in hiring can lead to a lack of diversity in the workplace. She writes that hiring should be about finding the right people for jobs, not social environments.\n\nThe Career-Switching Handbook for 30-Somethings [...] Culture fit is an important part of the recruiting process for employers and job seekers. A good culture fit can make employees more productive and reduce job turnover. For job seekers, a bad culture fit can make you leave a position and return to job searching much faster. [...] Employers care about culture fit as well. In 2008, Harvard Business Review reported that Zappo’s offers new hires more than $1,000 to quit after their first week in hopes of keeping people who are energized about the company and aligned on values.\n\nIf you’re interviewing and want to keep culture in the forefront of the conversation, these interview questions can help you determine if you’re a good match.\n\n### 1. How would you describe the work environment?"
+            },
+            {
+              "title": "Medium",
+              "url": "https://neilmathew.medium.com/what-your-interview-process-reveals-about-company-culture-e2c7e6a5f263",
+              "snippet": "Here’s the truth: How a company handles its interview process tells you everything you need to know about its culture, leadership, and values.\n\nI’m a freelance copywriter and ghostwriter, so these days (gratefully), I spend much less time in job interviews. Still, I’ve certainly gone through enough of them to spot some clear red flags.\n\nLet me break down 9 warning signs that could save you from a career mistake:\n\n## 1. The Mystery Role [...] Sign up\n\nSign in\n\nSign up\n\nSign in\n\nUnknown user\n\nMember-only story\n\n# What Your Interview Process Reveals About Company Culture\n\nNeil Mathew\n\n--\n\nListen\n\nShare\n\nThe interview process is a two-way street.\n\nUnfortunately, most candidates forget this fundamental truth. They’re so focused on impressing their potential employer that they miss the glaring red flags waving right in front of them. [...] You know what’s worse than a bad job? A job that’s nothing like what you signed up for.\n\nWhen a hiring manager can’t clearly articulate your role, it’s not because they’re being mysterious. It’s because they don’t know what they want. Or worse — they know exactly what they want but aren’t being upfront about it.\n\n--\n\n--\n\nNeil Mathew\nNeil Mathew\n\n## Written by Neil Mathew\n\nFractional CMO & Strategic Marketing Leader | Executive Ghostwriter. 1 million+ views. neil-mathew.com\n\nHelp\n\nStatus\n\nAbout"
+            },
+            {
+              "title": "Interview Questions and How to Prepare",
+              "url": "https://careercenter.ucdavis.edu/interviews-and-offers/questions-and-prep",
+              "snippet": "Case interviews are most typically used in the consulting industry. These questions give recruiters an opportunity to observe your analytical and problem solving skills when evaluating a hypothetical business problem. Below is a list of case interview examples and guides from industry to help you prepare for this style of interview:\n\n### Technical Interview Questions [...] ### Behavioral Interview Questions\n\nThese questions seek insight into who you are, your experience (educational, work and leadership) and how you would fit into the job and organization. Here are some examples:\n\n#### How to Answer Behavioral Interview Questions: The S.A.R. Method\n\nUse the S.A.R. method to structure your answer to behavioral questions:\n\nQuestion: “Give me an example of a time when you took the initiative to improve a project.”\n\n### Case Interview Questions [...] UC Davis Logo\nUC Davis Logo\n\n# Interview Questions and How to Prepare\n\nInterviews are a crucial part of the hiring process, and the tips below can help you stand out from the competition. For additional strategies and practice exercises, refer to our Career Resource Manuals and our Interview Prep Checklist. \n\n## How To Prepare\n\n### Know the Role"
+            },
+            {
+              "title": "100+ Job Interview Questions and Answers",
+              "url": "https://www.monster.com/career-advice/interviewing/common-interview-questions-and-answers",
+              "snippet": "Explore 100+ job interview questions and answers, including behavioral, situational, and leadership, plus sample questions to ask interviewers."
+            }
+          ],
+          "robots_blocked": [
+            {
+              "url": "https://example.com/",
+              "via": "manual-input",
+              "rule": "Disallow: *"
+            }
+          ]
+        },
+        "company_brief": {
+          "summary": "",
+          "what_they_do": "",
+          "sources": []
+        },
+        "role": {
+          "title": "",
+          "seniority": "",
+          "responsibilities": [],
+          "requirements": []
+        },
+        "questions": [],
+        "flashcards": [],
+        "schedule": {
+          "days_available": 7,
+          "days": [
+            {
+              "day": 1,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 2,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 3,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 4,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 5,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 6,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 7,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            }
+          ]
+        },
+        "coverage": {
+          "uncovered_requirement_ids": [],
+          "passes": 1
+        },
+        "stage_errors": []
+      },
+      "error": null
+    },
+    {
+      "id": "case-unreachable",
+      "status": "ok",
+      "kit": {
+        "source": {
+          "company": "nonexistent-company-xyz-9235",
+          "company_url": "https://nonexistent-company-xyz-9235.invalid",
+          "role": "Platform Engineer",
+          "location": "",
+          "jd_chars": 280,
+          "researched_at": "2026-09-14T08:01:16.301Z",
+          "pages_used": [],
+          "discussion": [
+            {
+              "title": "What Your Interview Process Reveals About Company Culture",
+              "url": "https://neilmathew.medium.com/what-your-interview-process-reveals-about-company-culture-e2c7e6a5f263",
+              "snippet": "You know what’s worse than a bad job? A job that’s nothing like what you signed up for.\n\nWhen a hiring manager can’t clearly articulate your role, it’s not because they’re being mysterious. It’s because they don’t know what they want. Or worse — they know exactly what they want but aren’t being upfront about it.\n\n--\n\n--\n\nNeil Mathew\nNeil Mathew\n\n## Written by Neil Mathew\n\nFractional CMO & Strategic Marketing Leader | Executive Ghostwriter. 1 million+ views. neil-mathew.com\n\nHelp\n\nStatus\n\nAbout [...] Sign up\n\nSign in\n\nSign up\n\nSign in\n\nUnknown user\n\nMember-only story\n\n# What Your Interview Process Reveals About Company Culture\n\nNeil Mathew\n\n--\n\nListen\n\nShare\n\nThe interview process is a two-way street.\n\nUnfortunately, most candidates forget this fundamental truth. They’re so focused on impressing their potential employer that they miss the glaring red flags waving right in front of them. [...] Status\n\nAbout\n\nCareers\n\nPress\n\nBlog\n\nStore\n\nPrivacy\n\nRules\n\nTerms\n\nText to speech"
+            },
+            {
+              "title": "Questions and Answers about XYZ Corporation Hiring Process | Indeed.com",
+              "url": "https://www.indeed.com/cmp/Xyz-Corporation/faq/hiring-process",
+              "snippet": "XYZ Corporation logo\n\n# Questions and Answers about XYZ Corporation Hiring Process\n\n## Popular topics\n\n## Tips to get helpful answers"
+            },
+            {
+              "title": "I Thought I Was Cracking the Interview… Then I Realized the Entire Company Was Fake",
+              "url": "https://blog.stackademic.com/i-thought-i-was-cracking-the-interview-then-i-realized-the-entire-company-was-fake-033a74bd417a",
+              "snippet": "This particular interview started like every other remote hiring process I had gone through recently. A recruiter reached out after seeing my backend engineering profile. The message referenced my work with Spring Boot, Kafka, distributed systems, and cloud infrastructure. They even mentioned one of my technical articles online.\n\n## Create an account to read the full story.\n\nThe author made this story available to Medium members only. [...] If you’re new to Medium, create a new account to read this story on us.\n\nContinue in app\n\nOr, continue in mobile web\n\nSign up with Google\n\nSign up with Facebook\n\nSign up with email\n\nAlready have an account? Sign in\n\n[](\n\n52\n\n[](\n\n52\n\n[](\n\n[](\n\nImage 5: Stackademic\n\nImage 6: Stackademic\n\nFollow\n\n## Published in Stackademic\n\n87K followers\n\n·Last published 5 hours ago [...] Sitemap\n\nOpen in app\n\nSign up\n\nSign in\n\n[](\n\nGet app\n\nWrite\n\nSearch\n\nSign up\n\nSign in\n\nImage 1: Unknown user\n\n## Stackademic\n\n·\nFollow publication\n\nImage 2: Stackademic\nStackademic is a learning hub for programmers, devs, coders, and engineers. Our goal is to democratize free coding education for the world.\n\nFollow publication\n\nPress enter or click to view image in full size\n\nImage 3\n\nMember-only story\n\nSoftware Engineering\n\nBackend Development\n\nProgramming\n\nSoftware Development\n\nJava"
+            },
+            {
+              "title": "How to tell if a software company has a bad work culture ...",
+              "url": "https://www.quora.com/How-can-you-tell-if-a-software-company-has-a-bad-work-culture-during-their-hiring-interview",
+              "snippet": "How can you tell if a software company has a bad work culture during their hiring interview?"
+            },
+            {
+              "title": "Do you think the interview process reflects the company ...",
+              "url": "https://www.reddit.com/r/corporate/comments/1ramems/do_you_think_the_interview_process_reflects_the",
+              "snippet": "I had an interview process that lasted 5 rounds plus intensive reference checks (yes, they actually called them all). Overall a very long and intense"
+            },
+            {
+              "title": "How to Spot and Avoid Fake Hiring Processes",
+              "url": "https://www.youtube.com/watch?v=1ABaBtG6IxU",
+              "snippet": "use the data from the AI to discern that. There's all other things that they may want to try to study to try to make positions better to make their culture better. Is that am I on the right track here, Russ? Yeah, I'm gonna get beat up for this. I don't care. If I got that resume in the mail, unless it's for an highlevel position, I'm not even going to look at it because it's going to have to apply anyway. I have got to have you in our system to move you to that next level. All right? Cuz say I [...] In this episode, Ashley, Russ, and I discuss the hiring process in detail so you can know what feels right and when it’s suspicious. Discernment is key throughout the entire interview process, not just before you apply. Russ is mostly featured in the discussion because he is generously offering 25 years of HR experience in his current HR director role. \n\nThere were a few powerful moments as we dissected the hiring process during this episode. \n\nHere are a few of the highlights: [...] I say get into the hundreds of that kind of thing. But none of them are discounted. Nothing is automatically erased. Nothing is judged by race. In fact, we can't see race. We can't see age. We can't see any of that. That's all title six stuff. It's sent to some kind of clearing house that fills out forms for us. So, I think people are using the AI boogeyman when there is no boogeyman. Yeah. Yeah. How about your experience as a recruiter, Ashley? You could probably even talk to about specifying"
+            },
+            {
+              "title": "Do You Know Who You Are Hiring? Spotting Fraudulent Job Seekers",
+              "url": "https://www.it-isac.org/post/do-you-know-who-you-are-hiring-spotting-fraudulent-job-seekers",
+              "snippet": "A culture of healthy skepticism is essential when it comes to hiring remote workers. Trust should be earned over time and reinforced by evidence, not granted solely based on credentials or interview performance. From identity verification to post-hire audits, a cautious and methodical approach means the difference between hiring a valuable team member and unwittingly aiding a hostile foreign operation. In today’s world, protecting your organization requires not just a strong cybersecurity [...] Train Your Recruiters: If your organization works with recruiters, they are your first line of due diligence against fake applicants. Proper training is key – which includes ensuring that your team is familiar with the markers that may appear, flagging a fake resume or applicant. Use trusted platforms for collecting resumes, ideally ones that require verified identities and that maintain their own strong security protocols.\n\n#### Investigating the Interview Process [...] Mandate an In-Person Meeting: Seeing is believing – if possible, at least one of your interviews with each candidate should take place in person. If an on-premise interview isn’t possible, you might ask the candidate to come to the office after they’ve been hired – or even send an existing employee to meet with them if they live in the same area. Often setting the expectation of an in-person meeting will discourage fake IT workers from applying or continuing the interview process."
+            },
+            {
+              "title": "Job Hiring Based on Intangibles Not Skills",
+              "url": "https://www.linkedin.com/posts/professortom_this-poster-clearly-doesnt-know-how-companies-activity-7491559364059893760-btaw",
+              "snippet": "It's about whether or not the candidate gives the company an \"ick\" factor or tingles/vibes. No tingle/vibes, no job. Companies will tell you"
+            }
+          ],
+          "robots_blocked": [
+            {
+              "url": "https://nonexistent-company-xyz-9235.invalid/",
+              "via": "manual-input",
+              "rule": "Disallow: *"
+            }
+          ]
+        },
+        "company_brief": {
+          "summary": "",
+          "what_they_do": "",
+          "sources": []
+        },
+        "role": {
+          "title": "Platform Engineer",
+          "seniority": "",
+          "responsibilities": [
+            "Operate and improve our Kubernetes infrastructure.",
+            "Build internal developer tooling and CI/CD pipelines."
+          ],
+          "requirements": [
+            {
+              "id": "r1",
+              "text": "3+ years Kubernetes administration required.",
+              "kind": "technical",
+              "priority": "must"
+            },
+            {
+              "id": "r2",
+              "text": "Bash + Go scripting required.",
+              "kind": "technical",
+              "priority": "must"
+            },
+            {
+              "id": "r3",
+              "text": "Strong Linux systems knowledge required.",
+              "kind": "technical",
+              "priority": "must"
+            }
+          ]
+        },
+        "questions": [
+          {
+            "id": "q1",
+            "requirement_ids": [
+              "r1"
+            ],
+            "category": "technical",
+            "prompt": "Describe the process you would follow to troubleshoot a failing pod in a production Kubernetes cluster, including how you would use kubectl and logs to identify the root cause.",
+            "answer_outline": "- Check pod status with `kubectl get pod` and describe details with `kubectl describe pod`.\n- Retrieve container logs via `kubectl logs` (and `-p` for previous instance) to spot errors.\n- Examine events, node health, and resource limits; use `kubectl exec` for interactive debugging if needed.\n- Propose remediation steps based on findings (e.g., adjust resources, fix config, redeploy).",
+            "difficulty": 2
+          },
+          {
+            "id": "q2",
+            "requirement_ids": [
+              "r2"
+            ],
+            "category": "technical",
+            "prompt": "Write a short Bash script that invokes a Go binary to build a Docker image, tags it with the current Git commit SHA, and pushes it to a private registry, handling errors at each step.",
+            "answer_outline": "- Use `set -euo pipefail` for robust error handling.\n- Capture `git rev-parse --short HEAD` for the tag.\n- Call the Go binary (e.g., `./builder`) with appropriate args.\n- Build the image with `docker build -t registry/repo:${SHA}`.\n- Push with `docker push`; check exit codes after each command and output meaningful messages.",
+            "difficulty": 3
+          },
+          {
+            "id": "q3",
+            "requirement_ids": [
+              "r3"
+            ],
+            "category": "technical",
+            "prompt": "Explain how you would configure Linux kernel parameters and systemd settings on a Kubernetes node to optimize network performance for high‑throughput workloads.",
+            "answer_outline": "- Adjust sysctl values such as `net.core.somaxconn`, `net.ipv4.tcp_tw_reuse`, and `net.ipv4.ip_local_port_range` via `/etc/sysctl.d/` and apply with `sysctl -p`.\n- Tune systemd limits (`LimitNOFILE`, `LimitNPROC`) in the kubelet service unit.\n- Ensure CPU governor set to performance and disable swap (`swapoff -a`).\n- Validate changes with `sysctl -a` and monitor using `ss`, `netstat`, and node metrics.",
+            "difficulty": 2
+          },
+          {
+            "id": "q4",
+            "requirement_ids": [
+              "r1"
+            ],
+            "category": "behavioural",
+            "prompt": "Tell me about a time you identified a performance bottleneck in a Kubernetes cluster and how you resolved it using your administration skills.",
+            "answer_outline": "- Describe the specific issue (e.g., pod latency, node resource exhaustion). - Explain the diagnostic steps (kubectl, metrics server, logs). - Detail the remediation (scaling, config changes, upgrades). - Highlight the outcome (improved latency, stability) and any lessons learned.",
+            "difficulty": 2
+          },
+          {
+            "id": "q5",
+            "requirement_ids": [
+              "r2"
+            ],
+            "category": "behavioural",
+            "prompt": "Give an example of a script you wrote in Bash or Go that automated a recurring developer workflow. What problem did it solve and how did you ensure its reliability?",
+            "answer_outline": "- State the workflow (e.g., CI pipeline trigger, environment provisioning). - Summarize the script’s core logic and language choice. - Discuss testing, error handling, and logging implemented. - Share the impact (time saved, reduced errors) and feedback from the team.",
+            "difficulty": 2
+          },
+          {
+            "id": "q6",
+            "requirement_ids": [
+              "r3"
+            ],
+            "category": "behavioural",
+            "prompt": "Describe a situation where deep Linux systems knowledge helped you troubleshoot a production incident. What steps did you take and what was the result?",
+            "answer_outline": "- Outline the incident (e.g., disk I/O spike, networking issue). - Detail Linux‑level diagnostics used (strace, dmesg, sysctl, netstat). - Explain the fix (kernel tuning, service restart, configuration change). - Quantify the resolution (downtime reduced, service restored) and any preventive measures added.",
+            "difficulty": 2
+          },
+          {
+            "id": "q7",
+            "requirement_ids": [
+              "r1",
+              "r3"
+            ],
+            "category": "system-design",
+            "prompt": "Design a highly available Kubernetes cluster for a mid‑size SaaS platform, describing how you would handle node failures, network partitions, and storage resilience.",
+            "answer_outline": "- Explain using multiple control‑plane nodes across availability zones for HA.\n- Detail node auto‑repair, pod disruption budgets, and anti‑affinity rules for failure isolation.\n- Discuss storage options (e.g., CSI drivers with replicated volumes) and backup strategies.\n- Mention monitoring and alerting to detect and respond to failures.",
+            "difficulty": 2
+          },
+          {
+            "id": "q8",
+            "requirement_ids": [
+              "r2",
+              "r1"
+            ],
+            "category": "system-design",
+            "prompt": "Outline the architecture of an internal CI/CD pipeline that builds, tests, and deploys Go services onto Kubernetes, emphasizing how Bash and Go scripts are integrated at each stage.",
+            "answer_outline": "- Describe a pipeline (e.g., GitHub Actions or Jenkins) that triggers on push.\n- Show Bash scripts for environment setup and Go scripts for custom build steps or image generation.\n- Explain artifact storage, container image registry, and Kubernetes deployment via Helm or kubectl.\n- Highlight security (secrets handling) and rollback mechanisms.",
+            "difficulty": 2
+          },
+          {
+            "id": "q9",
+            "requirement_ids": [
+              "r3",
+              "r1"
+            ],
+            "category": "system-design",
+            "prompt": "Propose a monitoring and logging solution for a Kubernetes‑based platform, detailing how Linux system metrics and container logs are collected, processed, and visualized.",
+            "answer_outline": "- Recommend node‑level collectors (node‑exporter, journald) for Linux metrics.\n- Use sidecar or DaemonSet agents (e.g., Prometheus, Fluentd) to gather pod logs and metrics.\n- Describe central storage (Prometheus TSDB, Loki/Elastic) and dashboards (Grafana).\n- Include alerting rules and how to troubleshoot using Linux tools (e.g., strace, tcpdump).",
+            "difficulty": 2
+          },
+          {
+            "id": "q10",
+            "requirement_ids": [
+              "r1",
+              "r3"
+            ],
+            "category": "company-fit",
+            "prompt": "How does your experience managing Kubernetes clusters align with our emphasis on reliable infrastructure, and what would you do in the first 30 days to improve our platform stability?",
+            "answer_outline": "- Highlight 3+ years of Kubernetes admin work, focusing on reliability and scaling.\n- Mention specific practices (e.g., health checks, automated rollouts) you’d apply early.\n- Connect those actions to improving platform stability for internal developers.",
+            "difficulty": 2
+          },
+          {
+            "id": "q11",
+            "requirement_ids": [
+              "r2"
+            ],
+            "category": "company-fit",
+            "prompt": "Our team builds internal tooling with Bash and Go. Can you describe a recent script or tool you created that streamlined a developer workflow, and why you chose those languages?",
+            "answer_outline": "- Summarize the problem and the tool’s impact on developer productivity.\n- Explain why Bash handled the glue logic while Go provided performance/maintainability.\n- Relate the choice to the company’s focus on fast, reliable internal tooling.",
+            "difficulty": 2
+          },
+          {
+            "id": "q12",
+            "requirement_ids": [
+              "r3"
+            ],
+            "category": "company-fit",
+            "prompt": "Strong Linux systems knowledge is essential for our platform. What Linux performance‑tuning techniques have you used in production, and how would you apply them to support our CI/CD pipelines?",
+            "answer_outline": "- List key tuning steps (e.g., kernel parameters, I/O scheduler, cgroup limits).\n- Provide a concrete example where tuning reduced build times or increased pipeline throughput.\n- Tie the benefits back to supporting fast, reliable CI/CD for internal teams.",
+            "difficulty": 2
+          }
+        ],
+        "flashcards": [
+          {
+            "id": "f1",
+            "front": "What kubectl commands are essential for diagnosing a failing pod?",
+            "back": "`kubectl get pod`, `kubectl describe pod`, `kubectl logs` (and `-p`), and optionally `kubectl exec` for interactive checks.",
+            "requirement_ids": [
+              "r1"
+            ]
+          },
+          {
+            "id": "f2",
+            "front": "Which Bash options improve script robustness for CI/CD pipelines?",
+            "back": "`set -euo pipefail` to exit on errors, treat unset variables as errors, and fail on pipeline errors.",
+            "requirement_ids": [
+              "r2"
+            ]
+          },
+          {
+            "id": "f3",
+            "front": "Name two Linux sysctl parameters that affect network throughput on a Kubernetes node.",
+            "back": "`net.core.somaxconn` and `net.ipv4.tcp_tw_reuse` (among others like `net.ipv4.ip_local_port_range`).",
+            "requirement_ids": [
+              "r3"
+            ]
+          },
+          {
+            "id": "f4",
+            "front": "What core responsibilities does a Platform Engineer have with Kubernetes?",
+            "back": "Operate and improve the Kubernetes infrastructure, ensuring cluster health, scaling, upgrades, and reliability.",
+            "requirement_ids": [
+              "r1"
+            ]
+          },
+          {
+            "id": "f5",
+            "front": "Which scripting languages are required for this Platform Engineer role?",
+            "back": "Bash and Go scripting are required for building tooling and automating pipelines.",
+            "requirement_ids": [
+              "r2"
+            ]
+          },
+          {
+            "id": "f6",
+            "front": "Why is strong Linux systems knowledge essential for a Platform Engineer?",
+            "back": "Linux knowledge underpins container runtimes, networking, storage, and troubleshooting on the underlying nodes of Kubernetes.",
+            "requirement_ids": [
+              "r3"
+            ]
+          },
+          {
+            "id": "f7",
+            "front": "What are the key components for achieving high availability in a Kubernetes control plane?",
+            "back": "Multiple control‑plane nodes across zones, etcd quorum, load‑balanced API servers, and automated health checks.",
+            "requirement_ids": [
+              "r1"
+            ]
+          },
+          {
+            "id": "f8",
+            "front": "How can Bash and Go scripts be combined in a CI/CD pipeline for Go services?",
+            "back": "Bash handles environment setup and orchestration, while Go scripts perform custom build logic, binary packaging, or validation steps.",
+            "requirement_ids": [
+              "r2"
+            ]
+          },
+          {
+            "id": "f9",
+            "front": "Which Linux tools are essential for troubleshooting node‑level issues in a Kubernetes cluster?",
+            "back": "Tools like `journalctl`, `top/htop`, `strace`, `tcpdump`, and `systemd‑cgtop` help diagnose logs, performance, and network problems.",
+            "requirement_ids": [
+              "r3"
+            ]
+          },
+          {
+            "id": "f10",
+            "front": "What are two core responsibilities of a Platform Engineer working with Kubernetes?",
+            "back": "Operate and improve Kubernetes infrastructure; build internal developer tooling and CI/CD pipelines.",
+            "requirement_ids": [
+              "r1"
+            ]
+          },
+          {
+            "id": "f11",
+            "front": "Why combine Bash and Go for internal tooling?",
+            "back": "Bash excels at quick scripting and glue tasks; Go provides compiled performance, strong concurrency, and maintainable code for larger tools.",
+            "requirement_ids": [
+              "r2"
+            ]
+          },
+          {
+            "id": "f12",
+            "front": "Name one Linux system‑tuning method that can speed up CI/CD pipelines.",
+            "back": "Adjusting kernel parameters (e.g., vm.swappiness) or configuring cgroup resource limits to reduce build latency.",
+            "requirement_ids": [
+              "r3"
+            ]
+          }
+        ],
+        "schedule": {
+          "days_available": 10,
+          "days": [
+            {
+              "day": 1,
+              "focus": "Company-fit & storytelling",
+              "question_ids": [
+                "q2",
+                "q1",
+                "q10",
+                "q11",
+                "q12"
+              ],
+              "minutes": 80
+            },
+            {
+              "day": 2,
+              "focus": "Behavioural practise",
+              "question_ids": [
+                "q3",
+                "q4",
+                "q5",
+                "q6",
+                "q7",
+                "q8"
+              ],
+              "minutes": 90
+            },
+            {
+              "day": 3,
+              "focus": "System design sprint",
+              "question_ids": [
+                "q9"
+              ],
+              "minutes": 15
+            },
+            {
+              "day": 4,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 5,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 6,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 7,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 8,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 9,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 10,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            }
+          ]
+        },
+        "coverage": {
+          "uncovered_requirement_ids": [],
+          "passes": 1
+        },
+        "stage_errors": []
+      },
+      "error": null
+    },
+    {
+      "id": "case-backend-go",
+      "status": "ok",
+      "kit": {
+        "source": {
+          "company": "adobe",
+          "company_url": "https://www.adobe.com",
+          "role": "Senior Backend Engineer (Go)",
+          "location": "",
+          "jd_chars": 336,
+          "researched_at": "2026-09-14T08:03:07.825Z",
+          "pages_used": [
+            "https://www.adobe.com/",
+            "https://www.adobe.com/acrobat.html",
+            "https://www.adobe.com/creativecloud.html",
+            "https://www.adobe.com/education/students/creativecloud.html",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/all-products-card/all-products-card",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/customer-testimonials/customer-testimonials",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/en-lingo/marquee-sub-copy/acrobat/default",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/en-lingo/marquee-sub-copy/cc-pro/default",
+            "https://www.adobe.com/homepage/fragments/loggedout/redesign/default/en-lingo/marquee-sub-copy/ste/default",
+            "https://www.adobe.com/acrobat/generative-ai-pdf.html"
+          ],
+          "discussion": [
+            {
+              "title": "Adobe's Interview Process & Questions",
+              "url": "https://interviewing.io/adobe-interview-questions",
+              "snippet": "The hiring manager (HM) screen lasts 45-60 minutes and typically includes a discussion of your background and projects, a technical deep dive into your experience, and culture fit and team alignment questions. Occasionally, you'll get a light coding problem or technical scenario, too.\n\nThe goal is for the hiring manager to answer two questions:\n\n Can this person do the job technically?\n Will this person thrive on my team?\n\nAs a senior engineer at Adobe put it: [...] Adobe's hiring process is hybrid. Centralized recruiting handles screening and logistics, but the interview experience and team matching vary significantly depending on the product team. The average timeline is 3-6 weeks from application to offer.\n\n### AI Usage\n\nAI use in Adobe interviews is not currently permitted.\n\n### Step 1: Online Assessment (OA) [...] Published:\n\n## Adobe's Interview Process for Software Engineers: 4-5 Steps\n\nMid to senior-level engineers interviewing at Adobe can expect the following process:\n\n Resume screen (1-2 weeks)\n Online assessment - if required (60-90 minutes)\n Recruiter call (30-45 minutes)\n Hiring manager screen (45-60 minutes)\n Virtual onsite (3-5 hours)\n\nGeneral tips:"
+            },
+            {
+              "title": "Top 10 Adobe Interview Questions (And Winning Answers ...",
+              "url": "https://blog.theinterviewguys.com/adobe-interview-question",
+              "snippet": "Adobe’s culture emphasizes collaboration and the belief that great ideas come from anywhere in the organization. When answering behavioral questions, highlight examples where you worked cross-functionally, incorporated feedback, or elevated others’ ideas. This aligns with their “Involved” core value and shows you understand that innovation happens through teams, not individuals. Learn more about what it’s like to work there on Adobe’s official interviewing guide. [...] This question assesses your resilience, accountability, and ability to learn from mistakes. Adobe’s culture values innovation, and innovation requires taking risks that sometimes don’t work out.\n\nChoose a real failure, but not a catastrophic one. Take full ownership without blaming others. Emphasize the concrete lesson you learned and how you’ve applied it since. [...] This question separates candidates who genuinely want to work at Adobe from those who just want any big tech job. Your interviewer has heard countless generic answers about “great company culture” and “impressive products.”\n\nYou need to connect your personal passion to Adobe’s mission and specific innovations. Reference products you actually use or teams you’ve followed. Explain what excites you about the particular role, not just the company."
+            },
+            {
+              "title": "5 Stages of Adobe Interview Process Explained",
+              "url": "https://www.finalroundai.com/blog/adobe-interview-process",
+              "snippet": "Stages: Application → Phone Screen → Hiring Manager Interview → Technical Assessment → Final Round (3–5 interviews)\n Timeline: 2–6 weeks total; most candidates hear back within 1–2 weeks after final round\n Key tip: Adobe weighs cultural fit (innovation, collaboration, customer focus) as heavily as technical ability , prepare behavioral stories using STAR format for every round\n\n## What is Adobe's Interview Process Step by Step? [...] Adobe's hiring process typically takes 2–6 weeks from application to offer. Most candidates hear back within 1–2 weeks after completing the final round of interviews.\n\nWhat questions does Adobe ask in interviews?\n\nAdobe asks a mix of behavioral questions (STAR-format), technical coding problems (data structures, algorithms, system design), and role-specific questions. Common themes include innovation, cross-functional collaboration, and customer focus.\n\nIs Adobe hard to get hired at? [...] Adobe's hiring process follows 5 defined stages. Here is exactly what happens in each one:\n\n### 1. Application\n\nSubmit through Adobe's careers portal. Adobe receives thousands of applications per role , tailor your resume to the job description with measurable results and role-specific keywords. For technical roles, showcase relevant projects. For creative roles, your portfolio impact matters as much as your CV. Use an AI resume builder to tailor your resume quickly for each Adobe job posting."
+            },
+            {
+              "title": "Get a Job at Adobe: Interview Process and Top Questions",
+              "url": "https://www.tryexponent.com/blog/adobe-interview-process",
+              "snippet": "The interview process at Adobe is relatively standardized, but there may be some variance across teams.\n\nℹ️\n\nAdobe’s interview process differs slightly from that of similar tech companies because it typically includes a preliminary hiring manager screen as a second step before the technical online assessment. It also includes a presentation for most roles at the end of the final round.\n\nThe Adobe interview process typically takes about 2–4 weeks and involves: [...] To show off your soft skills, prepare real stories from your previous experience, demonstrating your skills in innovation, collaboration, adapting to ambiguity, and putting the customer first.\n\nGet to know Adobe and its current ventures, and study Adobe’s core values and culture. Prepare more anecdotes that highlight your alignment with the culture.\n\nConsider what excites you about Adobe and this particular team, and let that excitement shine, especially in this round. [...] It also has a caring work culture and offers generous employee benefits. If you’re passionate about innovation and creativity, Adobe could be a great workplace for you.\n\nBelow, we summarize the Adobe interview process and the top questions you should expect to answer.\n\n👋\n\nAdobe Interview Guides: Get role-specific insights for Adobe interviews.  \n  \n- Adobe Data Scientist Interview Guide  \n- Adobe Product Manager (PM) Interview Guide\n\n## Adobe Interview Process"
+            },
+            {
+              "title": "How We Hire | Adobe",
+              "url": "https://careers.adobe.com/us/en/hiring-process",
+              "snippet": "•    We do not ask for bank account information, Social Security number or similar sensitive personal information during the recruiting or interview process, nor when issuing an offer of employment.  \n•    We do not request money to participate in the hiring process (e.g., an application fee or equipment costs).  \n•    If you believe you’ve been a victim of fraudulent recruiting, you can report the issue to the Federal Trade Commission. [...] ### \n\nDepending on the role or job function, you may be asked to complete a variety of assessments during the interview process. Below are a few examples:  \n   \n Technical: Coding challenges, system design discussions, or portfolio reviews  \n   \n Sales: Scenario-based discussions, presentation exercises, or collaborative problem-solving  \n   \n Creative: Creative brief responses, design thinking exercises, or case-study presentations\n\n### [...] If your profile matches, you’ll receive an invitation to talk with a Talent Partner to learn more about the role and the hiring team. This is your opportunity to share your qualifications for the role and interest in working for Adobe.\n\nSee what to expect +\n\n You'll have an in-depth conversation about your background and career goals.\n We'll discuss the role, team dynamics, and what success looks like.\n You can ask questions about Adobe's culture and growth opportunities.\n\nHowweHire1"
+            },
+            {
+              "title": "Adobe Interview Questions and Answers | How to Pass the ...",
+              "url": "https://www.youtube.com/watch?v=mQ1-DhhWuZA&vl=en",
+              "snippet": "Top Adobe behavioral and technical interview questions\n\nBest ways to structure your answers using STAR method\n\nTips to highlight your creativity, innovation, and problem-solving skills\n\nKey insights into Adobe’s work culture and hiring approach\n\nThis video is perfect for fresh graduates, experienced professionals, and anyone looking to succeed in an Adobe job interview. Watch till the end for expert tips and examples that will help you stand out. [...] Top 25 Adobe interview questions and answers. In this video, we will explore the top 25 interview questions commonly asked by Adobe. These questions will help candidates prepare effectively for their interviews and gain insights into what interviewers are looking for in potential hires. Additionally, we will provide thorough answers to each question, highlighting key concepts and best practices. This will ensure you feel confident and ready to showcase your skills during the interview process. [...] and identify specific actions I can take to improve. I appreciate feedback as an opportunity for development and I strive to apply insights in future projects fostering a culture of continuous improvement. Seven, describe a situation where you had to solve a problem creatively. In a previous project, our team faced a significant delay due to unexpected technical issues with our software integration. Instead of following traditional troubleshooting methods, I proposed a brainstorming session"
+            },
+            {
+              "title": "Don't Interview with this company - they are highly disrespectful to ...",
+              "url": "https://www.reddit.com/r/Adobe/comments/1o7gouu/dont_interview_with_this_company_they_are_highly",
+              "snippet": "I recently interviewed with a Adobe and had a terrible experience that I think other candidates should be aware of."
+            },
+            {
+              "title": "How long is the Adobe hiring process? - Quora",
+              "url": "https://www.quora.com/How-long-is-the-Adobe-hiring-process",
+              "snippet": "For me it took about 2 months. This will be 4–7 days from the final interview. you might get it from 5 - 15 days from the confirmation day due"
+            }
+          ]
+        },
+        "company_brief": {
+          "summary": "Adobe is a global software company that provides creative, marketing, and document management solutions.",
+          "what_they_do": "Adobe offers the Creative Cloud suite, which includes industry‑standard tools such as Photoshop, Illustrator, and Premiere for design, video, and visual content creation. It also provides Acrobat, a PDF platform enhanced with AI features for editing, signing, and generating documents. Additionally, Adobe integrates generative AI across its products, enabling users to create and edit images, video, audio, and designs using advanced models.",
+          "sources": [
+            "https://www.adobe.com/",
+            "https://www.adobe.com/acrobat.html",
+            "https://www.adobe.com/creativecloud.html"
+          ]
+        },
+        "role": {
+          "title": "Senior Backend Engineer (Go)",
+          "seniority": "Senior",
+          "responsibilities": [
+            "Design high-throughput APIs and event pipelines.",
+            "Own reliability SLOs for core payment flows."
+          ],
+          "requirements": [
+            {
+              "id": "r1",
+              "text": "5+ years backend engineering, Go required.",
+              "kind": "technical",
+              "priority": "must"
+            },
+            {
+              "id": "r2",
+              "text": "Postgres and SQL required.",
+              "kind": "technical",
+              "priority": "must"
+            },
+            {
+              "id": "r3",
+              "text": "Event-driven architecture with Kafka required.",
+              "kind": "technical",
+              "priority": "must"
+            },
+            {
+              "id": "r4",
+              "text": "observability stack (Prometheus/Grafana) preferred.",
+              "kind": "technical",
+              "priority": "nice"
+            }
+          ]
+        },
+        "questions": [
+          {
+            "id": "q1",
+            "requirement_ids": [
+              "r1",
+              "r2"
+            ],
+            "category": "technical",
+            "prompt": "Describe how you would design a high‑throughput REST API in Go that reads and writes data to PostgreSQL while ensuring low latency and safe concurrent access.",
+            "answer_outline": "- Explain using Go’s net/http or a framework (e.g., chi) with context‑aware handlers.\n- Detail connection pooling, prepared statements, and transaction handling for PostgreSQL.\n- Discuss concurrency control (goroutine safety, mutexes or channel patterns) and request throttling.\n- Mention performance tuning such as query indexing, read‑replicas, and response compression.",
+            "difficulty": 2
+          },
+          {
+            "id": "q2",
+            "requirement_ids": [
+              "r3",
+              "r2"
+            ],
+            "category": "technical",
+            "prompt": "How would you implement an event‑driven payment processing pipeline using Kafka and PostgreSQL, and what strategies would you use to guarantee exactly‑once processing semantics?",
+            "answer_outline": "- Outline producing payment events to Kafka topics with appropriate partitioning.\n- Describe a consumer service in Go that reads events, validates them, and writes results to PostgreSQL within a transaction.\n- Explain using Kafka transactional producers and idempotent consumers, plus DB constraints or outbox pattern to achieve exactly‑once.\n- Cover error handling, dead‑letter queues, and monitoring of lag.",
+            "difficulty": 3
+          },
+          {
+            "id": "q3",
+            "requirement_ids": [
+              "r4",
+              "r1"
+            ],
+            "category": "technical",
+            "prompt": "What observability metrics would you expose for a Go‑based payment API, and how would you integrate Prometheus and Grafana to monitor SLO compliance?",
+            "answer_outline": "- List key metrics: request latency, error rates, throughput, DB query latency, Kafka consumer lag, Go runtime stats.\n- Show exposing metrics via Prometheus client library and HTTP endpoint.\n- Explain Grafana dashboards, alert rules for SLO breach (e.g., 99.9% success, 200 ms p95 latency).\n- Mention alerting on resource usage and correlation with logs/traces.",
+            "difficulty": 2
+          },
+          {
+            "id": "q4",
+            "requirement_ids": [
+              "r1",
+              "r3"
+            ],
+            "category": "behavioural",
+            "prompt": "Tell me about a time you designed a high‑throughput API in Go that had to handle a large volume of events. How did you ensure the system remained reliable and met its performance targets?",
+            "answer_outline": "- Describe the API’s purpose, traffic volume, and Go features used (goroutines, channels, etc.).\n- Explain how you modeled the event flow, any back‑pressure or batching mechanisms, and how you measured throughput.\n- Detail the reliability safeguards you put in place (timeouts, retries, circuit breakers) and the SLOs you defined/monitored.\n- Summarize the outcome (e.g., met or exceeded targets, lessons learned).",
+            "difficulty": 2
+          },
+          {
+            "id": "q5",
+            "requirement_ids": [
+              "r2",
+              "r4"
+            ],
+            "category": "behavioural",
+            "prompt": "Give an example of when you had to improve observability for a payment‑related service that relied on Postgres. What metrics did you add, and how did they help you meet reliability goals?",
+            "answer_outline": "- Set the scene: a payment service with latency or error issues tied to Postgres queries.\n- List the specific Prometheus/Grafana metrics you introduced (query latency, connection pool usage, error rates).\n- Explain how dashboards and alerts enabled you to detect problems early and drive SLO compliance.\n- Highlight the impact: reduced incidents, faster mean‑time‑to‑recovery, or improved stakeholder confidence.",
+            "difficulty": 2
+          },
+          {
+            "id": "q6",
+            "requirement_ids": [
+              "r3"
+            ],
+            "category": "behavioural",
+            "prompt": "Describe a situation where you owned the reliability SLOs for an event‑driven payment flow built on Kafka. How did you collaborate with other teams to define, monitor, and improve those SLOs?",
+            "answer_outline": "- Outline the payment flow, the Kafka topics involved, and the SLOs you were accountable for (e.g., delivery latency, data loss).\n- Detail cross‑functional collaboration (product, ops, QA) to agree on targets and instrumentation.\n- Discuss monitoring setup, incident response, and any process changes you led to improve the SLOs.\n- Conclude with measurable results (e.g., % reduction in SLA breaches).",
+            "difficulty": 3
+          },
+          {
+            "id": "q7",
+            "requirement_ids": [
+              "r1",
+              "r2",
+              "r3"
+            ],
+            "category": "system-design",
+            "prompt": "Design a high‑throughput payment API that writes transaction data to PostgreSQL and publishes events to Kafka. Explain how you would structure the Go services, handle back‑pressure, and ensure data consistency between the database and the event stream.",
+            "answer_outline": "- Outline a Go HTTP service layer that validates requests and uses a worker pool to decouple DB writes from Kafka publishing.\n- Describe a transactional outbox pattern (or two‑phase commit) to guarantee that a row is persisted in Postgres before the corresponding event is emitted to Kafka.\n- Explain back‑pressure handling via bounded channels, rate limiting, and retry queues, plus how to scale horizontally with load balancers.",
+            "difficulty": 2
+          },
+          {
+            "id": "q8",
+            "requirement_ids": [
+              "r3",
+              "r4"
+            ],
+            "category": "system-design",
+            "prompt": "Sketch an event‑driven pipeline for processing payment events that must meet a 99.9% SLO for end‑to‑end latency. Include Kafka topology, consumer groups, and how you would use Prometheus/Grafana to monitor and alert on latency breaches.",
+            "answer_outline": "- Define Kafka topics (raw payments, enriched, fraud‑check) and partition strategy to support parallelism.\n- Detail consumer group design, processing guarantees (at‑least‑once vs exactly‑once), and checkpointing.\n- Show Prometheus metrics (consumer lag, processing time) and Grafana dashboards; describe alert rules that trigger when latency exceeds the SLO.",
+            "difficulty": 3
+          },
+          {
+            "id": "q9",
+            "requirement_ids": [
+              "r1",
+              "r2",
+              "r4"
+            ],
+            "category": "system-design",
+            "prompt": "How would you design observability for a Go‑based payment service that uses PostgreSQL? List the key metrics, logs, and traces you would collect, and how they feed into SLO tracking and incident response.",
+            "answer_outline": "- Identify Go runtime metrics (goroutine count, GC pause), HTTP latency, DB query latency, and error rates.\n- Recommend structured logging with request IDs, and OpenTelemetry tracing spanning API → DB.\n- Explain how Prometheus scrapes these metrics, Grafana visualizes them, and SLO burn‑rate alerts are derived.",
+            "difficulty": 1
+          },
+          {
+            "id": "q10",
+            "requirement_ids": [
+              "r1",
+              "r2",
+              "r3"
+            ],
+            "category": "company-fit",
+            "prompt": "Adobe emphasizes collaboration and the belief that great ideas can come from anywhere. How have you contributed to a collaborative environment in past backend teams, especially when designing high‑throughput APIs or event pipelines?",
+            "answer_outline": "- Describe a concrete project where you worked cross‑functionally (e.g., with product, front‑end, or data teams). - Explain how you shared design decisions, solicited feedback, and iterated on the API/event pipeline. - Highlight outcomes such as improved performance, reduced bugs, or stronger team alignment.",
+            "difficulty": 2
+          },
+          {
+            "id": "q11",
+            "requirement_ids": [
+              "r4"
+            ],
+            "category": "company-fit",
+            "prompt": "Adobe values innovation and continuous improvement. Can you give an example of how you introduced or enhanced observability (e.g., Prometheus/Grafana) for a critical payment flow, and what impact it had on reliability SLOs?",
+            "answer_outline": "- Summarize the observability gap you identified in a payment‑related service. - Detail the metrics, dashboards, or alerts you implemented using Prometheus/Grafana. - Quantify the improvement (e.g., faster incident detection, SLO compliance increase).",
+            "difficulty": 2
+          }
+        ],
+        "flashcards": [
+          {
+            "id": "f1",
+            "front": "What Go features help safely handle concurrent HTTP requests?",
+            "back": "Goroutine per request, context propagation, sync primitives (mutex, channel), and built‑in race detector.",
+            "requirement_ids": [
+              "r1"
+            ]
+          },
+          {
+            "id": "f2",
+            "front": "Which Kafka feature enables exactly‑once semantics for producers?",
+            "back": "Transactional producer API with idempotent writes and commit/abort semantics.",
+            "requirement_ids": [
+              "r3"
+            ]
+          },
+          {
+            "id": "f3",
+            "front": "Name three core metrics to monitor for a payment API SLO.",
+            "back": "Request latency (p95), error rate (5xx), and throughput (requests per second).",
+            "requirement_ids": [
+              "r4"
+            ]
+          },
+          {
+            "id": "f4",
+            "front": "Which observability tools are preferred for monitoring backend services at Adobe?",
+            "back": "Prometheus for metrics collection and Grafana for visualization.",
+            "requirement_ids": [
+              "r4"
+            ]
+          },
+          {
+            "id": "f5",
+            "front": "What core backend technologies are mandatory for the Senior Backend Engineer role?",
+            "back": "Go programming language, PostgreSQL/SQL, and event‑driven architecture with Kafka.",
+            "requirement_ids": [
+              "r1",
+              "r2",
+              "r3"
+            ]
+          },
+          {
+            "id": "f6",
+            "front": "What pattern ensures DB write and Kafka event stay in sync?",
+            "back": "Transactional outbox (or two‑phase commit) writes to a DB table that a separate process reads and publishes to Kafka.",
+            "requirement_ids": [
+              "r2",
+              "r3"
+            ]
+          },
+          {
+            "id": "f7",
+            "front": "Which Kafka topology element helps achieve parallel processing for payment events?",
+            "back": "Partitioned topics with consumer groups; each partition is processed by a single consumer instance, enabling horizontal scaling.",
+            "requirement_ids": [
+              "r3"
+            ]
+          },
+          {
+            "id": "f8",
+            "front": "Name three Prometheus metrics useful for monitoring a Go payment service's SLO.",
+            "back": "HTTP request latency, PostgreSQL query latency, and Kafka consumer lag.",
+            "requirement_ids": [
+              "r4"
+            ]
+          },
+          {
+            "id": "f9",
+            "front": "Which observability tools are preferred for senior backend engineers at Adobe?",
+            "back": "Prometheus and Grafana.",
+            "requirement_ids": [
+              "r4"
+            ]
+          }
+        ],
+        "schedule": {
+          "days_available": 21,
+          "days": [
+            {
+              "day": 1,
+              "focus": "Technical deep-dive",
+              "question_ids": [
+                "q2",
+                "q6",
+                "q8",
+                "q1",
+                "q10"
+              ],
+              "minutes": 90
+            },
+            {
+              "day": 2,
+              "focus": "System design sprint",
+              "question_ids": [
+                "q3",
+                "q4",
+                "q5",
+                "q7",
+                "q9",
+                "q11"
+              ],
+              "minutes": 85
+            },
+            {
+              "day": 3,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 4,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 5,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 6,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 7,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 8,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 9,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 10,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 11,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 12,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 13,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 14,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 15,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 16,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 17,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 18,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 19,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 20,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            },
+            {
+              "day": 21,
+              "focus": "Review / light day",
+              "question_ids": [],
+              "minutes": 0
+            }
+          ]
+        },
+        "coverage": {
+          "uncovered_requirement_ids": [],
+          "passes": 1
+        },
+        "stage_errors": []
+      },
+      "error": null
+    }
+  ]
+}
