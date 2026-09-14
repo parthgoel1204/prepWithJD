@@ -6,8 +6,28 @@ import { authRouter } from "./routes/auth";
 import { kitsRouter } from "./routes/kits";
 import { serializeError } from "./lib/http";
 
+/**
+ * Atlas DNS (SRV) resolution can blip at startup ("querySrv EREFUSED"),
+ * which previously killed npm run dev with process.exit(1) after a single
+ * failed attempt. Retry the initial connect so a transient resolver hiccup
+ * doesn't take the whole stack down.
+ */
+async function connectWithRetry(attempts = 5, delayMs = 3000): Promise<void> {
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      await connectDb(config.mongodbUri);
+      return;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (i === attempts) throw err;
+      console.error(`[api] mongo connect attempt ${i}/${attempts} failed (${msg}) — retrying in ${delayMs}ms`);
+      await new Promise((r) => setTimeout(r, delayMs));
+    }
+  }
+}
+
 async function main(): Promise<void> {
-  await connectDb(config.mongodbUri);
+  await connectWithRetry();
   await deleteExpiredSessions();
 
   const app = express();

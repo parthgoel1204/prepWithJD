@@ -387,7 +387,28 @@ export default function KitDetail() {
 
             <div>
               <h3 className="text-sm font-semibold text-slate-700">
-                Schedule — {flashes.length} flashcards, {scheduleDays} days planned
+                Flashcards — {flashes.length} cards
+              </h3>
+              <ul className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {flashes.map((f) => (
+                  <li key={f.id} className="rounded-lg border border-slate-100 bg-slate-50 p-3">
+                    <div className="flex flex-wrap items-center gap-2 text-sm">
+                      <span className="font-mono text-[10px] text-slate-400">{f.id}</span>
+                      <span className="ml-auto font-mono text-[10px] text-slate-400">{f.requirement_ids.join(", ")}</span>
+                    </div>
+                    <p className="mt-1 text-sm font-medium text-slate-800">{f.front}</p>
+                    <details className="mt-1">
+                      <summary className="cursor-pointer text-xs font-medium text-slate-500">Reveal answer</summary>
+                      <p className="mt-1 whitespace-pre-wrap text-xs text-slate-600">{f.back}</p>
+                    </details>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-slate-700">
+                Schedule — {scheduleDays} days planned
               </h3>
               <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
                 {schedule.map((d) =>

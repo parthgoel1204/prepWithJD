@@ -207,7 +207,9 @@ kitsRouter.post(
         preRetrieved,
       );
       await persistGeneratedKit(id, content);
-      res.json({ kit: { ...kit.toObject(), status: "generated", content } });
+      // kit comes from findKitById() which already returns a lean plain object
+      // (same as the retrieve route) — never .toObject() here.
+      res.json({ kit: { ...kit, status: "generated", content } });
     } catch (err) {
       await persistFailedKit(id, err instanceof Error ? err.message : String(err));
       throw err;
