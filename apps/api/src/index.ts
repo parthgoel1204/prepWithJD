@@ -1,5 +1,6 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import { connectDb, disconnectDb, deleteExpiredSessions } from "@prepwithjd/pipeline";
 import { config } from "./config";
 import { authRouter } from "./routes/auth";
@@ -32,6 +33,23 @@ async function main(): Promise<void> {
 
   const app = express();
   app.disable("x-powered-by");
+
+  // Cross-origin browser access: Vercel frontend (production) + localhost:3000 (local dev).
+  // Trailing-slash-insensitive exact match; credentials require an explicit origin (never "*").
+  const allowedOrigins = [
+    "https://prep-with-jd-web.vercel.app",
+    "http://localhost:3000",
+  ];
+  app.use(
+    cors({
+      origin: (origin, cb) => {
+        if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+        return cb(null, false);
+      },
+      credentials: true,
+    }),
+  );
+
   app.use(express.json({ limit: "4mb" }));
   app.use(cookieParser());
 

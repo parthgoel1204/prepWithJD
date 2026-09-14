@@ -30,7 +30,9 @@ export const config = {
 
 export const cookieOptions = {
   httpOnly: true,
-  sameSite: "lax" as const,
+  // Cross-site (Vercel frontend → Render API) cookies need SameSite=None + Secure.
+  // Local dev stays same-site (http://localhost) so lax/unsecured is correct there.
+  sameSite: config.isProduction ? ("none" as const) : ("lax" as const),
   secure: config.isProduction,
   path: "/",
 };
