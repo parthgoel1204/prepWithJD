@@ -4,11 +4,20 @@
  * Inputs: requirements, questions, days_available.
  * Deterministic sort: must-linked questions first (prioritise real coverage),
  * then difficulty desc (hardest first), then id asc (stable tiebreak).
- * Bin-packs into exactly `days_available` day entries (front-loaded: the
- * hardest work lands on day 1 and only spills to later days when capacity runs
- * out). Minutes are a difficulty-based constant (locked user decision): 1★=10,
- * 2★=15, 3★=20 per question, summed per day — INDEPENDENT of answer_outline
- * length, so totals are deterministic for a fixed difficulty set.
+ * Packs into exactly `days_available` day entries toward an ADAPTIVE per-day
+ * target = ceil(total scheduled minutes / days available), with a sane floor of
+ * ~15 min/day whenever there is material and NO hard ceiling. That means:
+ *   - few days + heavy material -> high per-day minutes (cramming is realistic)
+ *   - many days + light material -> the same material spreads thin across most
+ *    /all days instead of clustering into the first 2-3.
+ * Front-loading is preserved: must/harder questions still land on earlier days,
+ * but they pack toward the adaptive target rather than a fixed 90-minute cap, so
+ * material is never left over because packing stopped too early. If material
+ * genuinely runs out before all days are used, later days stay at 0 min
+ * ("Review / light day") — honest, not a bug.
+ * Minutes are a difficulty-based constant (locked user decision): 1★=10, 2★=15,
+ * 3★=20 per question, summed per day — INDEPENDENT of answer_outline length, so
+ * totals are deterministic for a fixed difficulty set.
  */
 import type { Question, Requirement, ScheduleDay, KitSchedule } from "../types";
 import { PipelineNotImplementedError } from "../errors";
@@ -27,10 +36,25 @@ export class NotImplementedScheduler implements Scheduler {
   }
 }
 
-export const DAY_CAPACITY_MINUTES = 90;
-
 /** Locked difficulty → minutes map. Independent of answer_outline length. */
 export const QUESTION_MINUTES: Record<number, number> = { 1: 10, 2: 15, 3: 20 };
+
+/**
+ * Never plan less than ~15 min/day while there is material at all: a thin
+ * 60-day plan should still give each used day a real review-sized chunk rather
+ * than shaving every day to a meaningless few minutes.
+ */
+export const MIN_DAILY_MINUTES = 15;
+
+/**
+ * Adaptive per-day target. ceil(total / days) with the floor above and no hard
+ * ceiling: heavy material over few days legitimately targets 100+ min/day.
+ * Returns 0 when there is no material (everything is a review day).
+ */
+export function adaptiveTargetMinutes(totalMinutes: number, days: number): number {
+  if (totalMinutes <= 0 || days <= 0) return 0;
+  return Math.max(Math.ceil(totalMinutes / days), MIN_DAILY_MINUTES);
+}
 
 const CATEGORY_ORDER = ["technical", "system-design", "behavioural", "company-fit"] as const;
 
@@ -94,7 +118,6 @@ export function buildSchedule(
   requirements: Requirement[],
   questions: Question[],
   daysAvailable: number,
-  capacityMinutes: number = DAY_CAPACITY_MINUTES,
 ): KitSchedule {
   const days = Math.max(1, Math.floor(daysAvailable));
   const byId = new Map(questions.map((q) => [q.id, q]));
@@ -107,16 +130,29 @@ export function buildSchedule(
     minutes: 0,
   }));
 
+  if (sorted.length === 0) {
+    return { days_available: days, days: dayEntries };
+  }
+
+  const totalMinutes = sorted.reduce((sum, q) => sum + minutesForQuestion(q), 0);
+  const target = adaptiveTargetMinutes(totalMinutes, days);
+
+  // Front-loaded pack toward the adaptive target: a question goes on the
+  // current day unless it would push that day measurably past target — only
+  // then do we roll to the next day. An empty day always accepts a question
+  // (no ceiling), so a single question larger than a small target still lands.
   let cur = 0;
   for (const q of sorted) {
     const mins = minutesForQuestion(q);
-    // find the first day (front-load) that still fits; spill only when it doesn't
-    while (cur + 1 < days && dayEntries[cur]!.minutes + mins > capacityMinutes) cur++;
+    while (
+      cur + 1 < days &&
+      dayEntries[cur]!.minutes > 0 &&
+      dayEntries[cur]!.minutes + mins > target
+    ) {
+      cur++;
+    }
     dayEntries[cur]!.question_ids.push(q.id);
     dayEntries[cur]!.minutes += mins;
-    if (dayEntries[cur]!.minutes > capacityMinutes) {
-      console.warn(`[schedule] day ${cur + 1} oversubscribed (${dayEntries[cur]!.minutes} min > ${capacityMinutes}) — days_available too small`);
-    }
   }
 
   for (const d of dayEntries) {

@@ -411,15 +411,25 @@ export default function KitDetail() {
                 Schedule — {scheduleDays} days planned
               </h3>
               <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                {schedule.map((d) =>
-                  d.question_ids.length === 0 ? null : (
-                    <div key={d.day} className="rounded-lg border border-slate-100 bg-slate-50 p-2.5 text-xs">
+                {schedule.map((d) => {
+                  const isEmpty = d.question_ids.length === 0;
+                  return (
+                    <div
+                      key={d.day}
+                      className={
+                        isEmpty
+                          ? "rounded-lg border border-dashed border-slate-200 bg-white p-2.5 text-xs"
+                          : "rounded-lg border border-slate-100 bg-slate-50 p-2.5 text-xs"
+                      }
+                    >
                       <div className="font-semibold text-slate-700">Day {d.day} · {d.minutes} min</div>
                       <div className="text-slate-500">{d.focus}</div>
-                      <div className="mt-0.5 font-mono text-[10px] text-slate-400">{d.question_ids.join(", ")}</div>
+                      {!isEmpty && (
+                        <div className="mt-0.5 font-mono text-[10px] text-slate-400">{d.question_ids.join(", ")}</div>
+                      )}
                     </div>
-                  ),
-                )}
+                  );
+                })}
               </div>
               {coverage && coverage.uncovered_requirement_ids.length > 0 && (
                 <p className="mt-2 rounded bg-amber-50 px-2 py-1 text-xs text-amber-700">

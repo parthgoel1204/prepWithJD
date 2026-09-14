@@ -208,7 +208,13 @@ export async function evaluate(inputs: EvaluateInput[], opts?: RetrievalOptions)
   for (const input of inputs) {
     const started = Date.now();
     try {
-      const kit = await runPipeline({ jd: input.jd, company_url: input.company_url, days: input.days }, opts);
+      const daysNum = Number(input.days);
+      if (!Number.isInteger(daysNum) || daysNum < 1 || daysNum > 60) {
+        kits.push({ id: input.id, status: "failed", kit: null, error: `days must be an integer between 1 and 60 (got ${JSON.stringify(input.days)})` });
+        console.log(`[evaluate] ${input.id}: failed in 0ms (days=${JSON.stringify(input.days)}, validation)`);
+        continue;
+      }
+      const kit = await runPipeline({ jd: input.jd, company_url: input.company_url, days: daysNum }, opts);
       kits.push({ id: input.id, status: "ok", kit, error: null });
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
