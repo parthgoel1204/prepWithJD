@@ -144,6 +144,91 @@ const PRIORITY_STYLES: Record<string, string> = {
   nice: "bg-amber-100 text-amber-700",
 };
 
+/** Small inline "add by hand" form. Scope: questions (category/prompt/outline) + flashcards (front/back). */
+function AddItemForm({
+  kind,
+  onAdd,
+}: {
+  kind: "question" | "flashcard";
+  onAdd: (payload: Record<string, unknown>) => Promise<void>;
+}) {
+  const isQuestion = kind === "question";
+  const [category, setCategory] = useState(isQuestion ? "technical" : "");
+  const [prompt, setPrompt] = useState("");
+  const [outline, setOutline] = useState("");
+  const [front, setFront] = useState("");
+  const [back, setBack] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const payload = isQuestion
+      ? { op: "add-question", category, prompt: prompt.trim(), answer_outline: outline.trim() }
+      : { op: "add-flashcard", front: front.trim(), back: back.trim() };
+    setSaving(true);
+    setError(null);
+    try {
+      await onAdd(payload);
+      if (isQuestion) {
+        setPrompt("");
+        setOutline("");
+      } else {
+        setFront("");
+        setBack("");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Add failed");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="mt-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+      <p className="text-xs font-semibold text-slate-600">Add {kind} by hand</p>
+      <div className="mt-2 flex flex-wrap items-start gap-2">
+        {isQuestion && (
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="rounded-md border border-slate-200 bg-white px-2 py-1 text-sm"
+          >
+            {Object.keys(CATEGORY_LABELS).map((c) => (
+              <option key={c} value={c}>
+                {CATEGORY_LABELS[c]}
+              </option>
+            ))}
+          </select>
+        )}
+        <input
+          value={isQuestion ? prompt : front}
+          onChange={(e) => (isQuestion ? setPrompt(e.target.value) : setFront(e.target.value))}
+          placeholder={isQuestion ? "Question prompt" : "Card front"}
+          maxLength={isQuestion ? 10_000 : 1_000}
+          className="w-full flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-sm sm:w-64"
+        />
+        <button
+          type="submit"
+          disabled={saving || (isQuestion ? !prompt.trim() : !front.trim())}
+          className="rounded-md bg-violet-700 px-3 py-1 text-sm font-medium text-white transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {saving ? "Adding…" : "Add"}
+        </button>
+      </div>
+      <textarea
+        value={isQuestion ? outline : back}
+        onChange={(e) => (isQuestion ? setOutline(e.target.value) : setBack(e.target.value))}
+        placeholder={isQuestion ? "Answer outline (optional)" : "Card back"}
+        maxLength={isQuestion ? 20_000 : 5_000}
+        className="mt-2 w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm"
+        rows={2}
+      />
+      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+    </form>
+  );
+}
+
 export default function KitDetail() {
   const params = useParams<{ id: string }>();
   const id = params.id;
@@ -485,7 +570,8 @@ export default function KitDetail() {
               <h3 className="text-sm font-semibold text-slate-700">
                 Questions — {questions.length} across {catCount} categories
               </h3>
-              <ul className="mt-2 space-y-3">
+              <AddItemForm kind="question" onAdd={(payload) => patchContent(payload)} />
+              <ul className="mt-3 space-y-3">
                 {questions.map((q) => (
                   <li key={q.id} className="rounded-lg border border-slate-100 p-3">
                     <div className="flex flex-wrap items-center gap-2 text-sm">
@@ -523,7 +609,8 @@ export default function KitDetail() {
               <h3 className="text-sm font-semibold text-slate-700">
                 Flashcards — {flashes.length} cards
               </h3>
-              <ul className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <AddItemForm kind="flashcard" onAdd={(payload) => patchContent(payload)} />
+              <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {flashes.map((f) => (
                   <li key={f.id} className="rounded-lg border border-slate-100 bg-slate-50 p-3">
                     <div className="flex flex-wrap items-center gap-2 text-sm">
