@@ -321,13 +321,20 @@ export default function KitDetail() {
     if (id) void load();
   }, [id, load]);
 
+  const [patchBusy, setPatchBusy] = useState(false);
+
   const patchContent = useCallback(
     async (op: unknown): Promise<void> => {
-      const res = await apiFetch<{ kit: KitFull }>(`/api/kits/${id}/content`, {
-        method: "PATCH",
-        body: JSON.stringify(op),
-      });
-      setKit(res.kit);
+      setPatchBusy(true);
+      try {
+        const res = await apiFetch<{ kit: KitFull }>(`/api/kits/${id}/content`, {
+          method: "PATCH",
+          body: JSON.stringify(op),
+        });
+        setKit(res.kit);
+      } finally {
+        setPatchBusy(false);
+      }
     },
     [id],
   );
@@ -630,44 +637,85 @@ export default function KitDetail() {
                 Questions — {questions.length} across {catCount} categories
               </h3>
               <AddItemForm kind="question" onAdd={(payload) => patchContent(payload)} />
-              <ul className="mt-3 space-y-3">
-                {questions.map((q) => (
-                  <li key={q.id} className="rounded-lg border border-slate-100 p-3">
-                    <div className="flex flex-wrap items-center gap-2 text-sm">
-                      <span className="font-mono text-[10px] text-slate-400">{q.id}</span>
-                      <span className="rounded bg-indigo-50 px-1.5 py-0.5 text-[10px] font-medium text-indigo-700">
-                        {CATEGORY_LABELS[q.category] ?? q.category}
-                      </span>
-                      <span className="text-xs text-amber-600">{"★".repeat(Math.max(0, Math.min(3, q.difficulty)))}{"☆".repeat(Math.max(0, 3 - Math.min(3, q.difficulty)))}</span>
-                      <span className="ml-auto font-mono text-[10px] text-slate-400">{q.requirement_ids.join(", ")}</span>
-                      <button
-                        onClick={() => setPendingDelete({ target: "questions", id: q.id, label: "question" })}
-                        className="text-xs font-medium text-red-500 transition hover:text-red-700"
-                      >
-                        Delete
-                      </button>
+
+              {(() => {
+                const move = async (category: string, id: string, dir: -1 | 1) => {
+                  const items = questions.filter((q) => q.category === category);
+                  const idx = items.findIndex((q) => q.id === id);
+                  const swap = idx + dir;
+                  if (idx < 0 || swap < 0 || swap >= items.length) return;
+                  const next = [...items];
+                  [next[idx], next[swap]] = [next[swap], next[idx]];
+                  await patchContent({ op: "reorder-questions", category, ordered_ids: next.map((q) => q.id) });
+                };
+                const cats = [...new Set(questions.map((q) => q.category))];
+                return cats.map((category) => {
+                  const items = questions.filter((q) => q.category === category);
+                  return (
+                    <div key={category} className="mt-4">
+                      <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        {CATEGORY_LABELS[category] ?? category} <span className="text-slate-400">· {items.length}</span>
+                      </h4>
+                      <ul className="mt-2 space-y-2">
+                        {items.map((q, i) => (
+                          <li key={q.id} className="rounded-lg border border-slate-100 p-3">
+                            <div className="flex flex-wrap items-center gap-2 text-sm">
+                              <span className="flex overflow-hidden rounded border border-slate-200">
+                                <button
+                                  onClick={() => void move(category, q.id, -1)}
+                                  disabled={patchBusy || i === 0}
+                                  aria-label="Move question up"
+                                  className="px-1.5 text-xs text-slate-500 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-30"
+                                >
+                                  ↑
+                                </button>
+                                <button
+                                  onClick={() => void move(category, q.id, 1)}
+                                  disabled={patchBusy || i === items.length - 1}
+                                  aria-label="Move question down"
+                                  className="border-l border-slate-200 px-1.5 text-xs text-slate-500 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-30"
+                                >
+                                  ↓
+                                </button>
+                              </span>
+                              <span className="font-mono text-[10px] text-slate-400">{q.id}</span>
+                              <span className="rounded bg-indigo-50 px-1.5 py-0.5 text-[10px] font-medium text-indigo-700">
+                                {CATEGORY_LABELS[q.category] ?? q.category}
+                              </span>
+                              <span className="text-xs text-amber-600">{"★".repeat(Math.max(0, Math.min(3, q.difficulty)))}{"☆".repeat(Math.max(0, 3 - Math.min(3, q.difficulty)))}</span>
+                              <span className="ml-auto font-mono text-[10px] text-slate-400">{q.requirement_ids.join(", ")}</span>
+                              <button
+                                onClick={() => setPendingDelete({ target: "questions", id: q.id, label: "question" })}
+                                className="text-xs font-medium text-red-500 transition hover:text-red-700"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                            <div className="mt-1">
+                              <InlineEdit
+                                value={q.prompt}
+                                onSave={(v) => patchContent({ op: "update-item", target: "questions", id: q.id, field: "prompt", value: v })}
+                                label="question prompt"
+                              />
+                            </div>
+                            <details className="mt-1">
+                              <summary className="cursor-pointer text-xs font-medium text-slate-500">Answer outline</summary>
+                              <div className="mt-1 whitespace-pre-wrap text-xs text-slate-600">
+                                <InlineEdit
+                                  value={q.answer_outline}
+                                  onSave={(v) => patchContent({ op: "update-item", target: "questions", id: q.id, field: "answer_outline", value: v })}
+                                  label="answer outline"
+                                  textClass="text-xs text-slate-600"
+                                />
+                              </div>
+                            </details>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                    <div className="mt-1">
-                      <InlineEdit
-                        value={q.prompt}
-                        onSave={(v) => patchContent({ op: "update-item", target: "questions", id: q.id, field: "prompt", value: v })}
-                        label="question prompt"
-                      />
-                    </div>
-                    <details className="mt-1">
-                      <summary className="cursor-pointer text-xs font-medium text-slate-500">Answer outline</summary>
-                      <div className="mt-1 whitespace-pre-wrap text-xs text-slate-600">
-                        <InlineEdit
-                          value={q.answer_outline}
-                          onSave={(v) => patchContent({ op: "update-item", target: "questions", id: q.id, field: "answer_outline", value: v })}
-                          label="answer outline"
-                          textClass="text-xs text-slate-600"
-                        />
-                      </div>
-                    </details>
-                  </li>
-                ))}
-              </ul>
+                  );
+                });
+              })()}
             </div>
 
             <div>
