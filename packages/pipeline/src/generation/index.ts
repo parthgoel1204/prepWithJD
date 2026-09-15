@@ -261,7 +261,9 @@ export class LlmGenerator implements Generator {
     return { questions: q.questions, flashcards: f.flashcards, dropped: [...q.dropped, ...f.dropped] };
   }
 
-  private async generateCategory(
+  /** One category's questions+flashcards (single LLM call). Non-private so the
+   *  builder UI can regenerate a single category without re-running the others. */
+  async generateCategory(
     category: QuestionCategory,
     ctx: GenerationContext,
     requirements: Requirement[],

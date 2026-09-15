@@ -322,6 +322,20 @@ export default function KitDetail() {
   }, [id, load]);
 
   const [patchBusy, setPatchBusy] = useState(false);
+  const [regenBusy, setRegenBusy] = useState<string | null>(null);
+  const [regenError, setRegenError] = useState<string | null>(null);
+
+  const regenerate = async (op: Record<string, unknown>, label: string) => {
+    setRegenBusy(label);
+    setRegenError(null);
+    try {
+      await patchContent(op);
+    } catch (err) {
+      setRegenError(err instanceof Error ? err.message : "Regenerate failed");
+    } finally {
+      setRegenBusy(null);
+    }
+  };
 
   const patchContent = useCallback(
     async (op: unknown): Promise<void> => {
@@ -587,6 +601,12 @@ export default function KitDetail() {
           </div>
         )}
 
+        {regenError && (
+          <div role="alert" className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            {regenError}
+          </div>
+        )}
+
         {generated && (
           <div className="mt-6 space-y-6">
             {brief && (
@@ -611,6 +631,13 @@ export default function KitDetail() {
                       Sources: <span className="font-mono">{brief.sources.join(", ")}</span>
                     </div>
                   )}
+                  <button
+                    onClick={() => void regenerate({ op: "regenerate-brief" }, "brief")}
+                    disabled={regenBusy !== null}
+                    className="mt-3 rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {regenBusy === "brief" ? "Regenerating brief…" : "Regenerate brief"}
+                  </button>
                 </div>
               </div>
             )}
@@ -656,6 +683,13 @@ export default function KitDetail() {
                       <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                         {CATEGORY_LABELS[category] ?? category} <span className="text-slate-400">· {items.length}</span>
                       </h4>
+                      <button
+                        onClick={() => void regenerate({ op: "regenerate-category", category }, `category:${category}`)}
+                        disabled={regenBusy !== null}
+                        className="mt-1 rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {regenBusy === `category:${category}` ? `Regenerating ${CATEGORY_LABELS[category] ?? category}…` : "Regenerate category"}
+                      </button>
                       <ul className="mt-2 space-y-2">
                         {items.map((q, i) => (
                           <li key={q.id} className="rounded-lg border border-slate-100 p-3">
@@ -770,6 +804,13 @@ export default function KitDetail() {
               <h3 className="text-sm font-semibold text-slate-700">
                 Schedule — {scheduleDays} days planned
               </h3>
+              <button
+                onClick={() => void regenerate({ op: "regenerate-schedule" }, "schedule")}
+                disabled={regenBusy !== null}
+                className="mt-2 rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {regenBusy === "schedule" ? "Regenerating schedule…" : "Regenerate schedule"}
+              </button>
               <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
                 {schedule.map((d) => {
                   const isEmpty = d.minutes === 0 || d.question_ids.length === 0;

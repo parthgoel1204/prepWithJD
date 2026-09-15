@@ -1,4 +1,4 @@
-import type { CompanyBrief, EvaluateInput, EvaluateOutput, Flashcard, KitContent, KitInput, KitSchedule, KitStageError, Question, RetrievalOptions, RetrievalResult, RoleBreakdown } from "./types";
+import type { CompanyBrief, EvaluateInput, EvaluateOutput, Flashcard, KitContent, KitInput, KitSchedule, KitStageError, Question, QuestionCategory, RetrievalOptions, RetrievalResult, RoleBreakdown } from "./types";
 import { companyNameFromUrl, nowIso } from "./lib/util";
 import { resolveRetrievalOptions } from "./retrieval/options";
 import { crawlSite } from "./retrieval/crawler";
@@ -34,6 +34,11 @@ export {
 } from "./persistence/repositories";
 export { resolveRetrievalOptions } from "./retrieval/options";
 export { companyNameFromUrl, hostnameOf } from "./lib/util";
+export { buildSchedule, adaptiveTargetMinutes, minutesForQuestion, sortByScheduleOrder } from "./scheduling";
+export { LlmExtractor } from "./extraction";
+export { LlmGenerator } from "./generation";
+export type { GenerationContext } from "./generation";
+export type { ExtractionContext } from "./extraction";
 export type {
   EvaluateInput,
   EvaluateOutput,
@@ -225,4 +230,76 @@ export async function evaluate(inputs: EvaluateInput[], opts?: RetrievalOptions)
     console.log(`[evaluate] ${input.id}: ${kits[kits.length - 1]!.status} in ${Date.now() - started}ms (${input.jd.length} jd chars, ${input.days} days)`);
   }
   return { version: PIPELINE_VERSION, generated_at: nowIso(), kits };
+}
+
+// ---------- builder UI: regenerate ONE section (re-runs that stage only) ----------
+
+function maxId(items: Array<{ id: string }>, prefix: "q" | "f"): number {
+  const re = new RegExp(`^${prefix}(\\d+)$`);
+  let max = 0;
+  for (const item of items) {
+    const m = re.exec(item.id);
+    if (m) max = Math.max(max, parseInt(m[1]!, 10));
+  }
+  return max;
+}
+
+/** Re-run ONLY brief extraction (re-crawls for page text) and merge, always
+ *  preserving a hand-edited summary. Fresh brief replaces unedited content. */
+export async function regenerateCompanyBrief(
+  content: KitContent,
+  input: Pick<KitInput, "jd" | "company_url">,
+): Promise<KitContent> {
+  const retrieval = await runRetrieval(input);
+  const extractor = new LlmExtractor();
+  const fresh = await extractor.extractCompanyBrief({
+    jd: input.jd.trim(),
+    company: retrieval.company,
+    pages: retrieval.pages,
+  });
+  const edited = content.company_brief.edited === true;
+  return {
+    ...content,
+    company_brief: edited ? { ...fresh, summary: content.company_brief.summary, edited: true } : { ...fresh, edited: false },
+    source: { ...content.source, researched_at: nowIso() },
+  };
+}
+
+/** Re-run ONE question category's generation call and merge back. Hand-edited
+ *  questions/flashcards in that scope survive untouched; unedited ones in the
+ *  category are replaced by the fresh batch (new unique ids, edited:false). */
+export async function regenerateQuestionCategory(
+  content: KitContent,
+  input: Pick<KitInput, "jd">,
+  category: QuestionCategory,
+): Promise<KitContent> {
+  const requirements = content.role.requirements;
+  const known = new Set(requirements.map((r) => r.id));
+  const genCtx: GenerationContext = {
+    jd: input.jd.trim(),
+    company: content.source.company,
+    company_brief: content.company_brief,
+    role: content.role,
+    discussion: content.source.discussion,
+  };
+  const generator = new LlmGenerator();
+  const batch = await generator.generateCategory(category, genCtx, requirements, known, maxId(content.questions, "q"), maxId(content.flashcards, "f"));
+
+  const kept = content.questions.filter((q) => q.category === category && q.edited === true);
+  const questions = [
+    ...content.questions.filter((q) => q.category !== category),
+    ...kept,
+    ...batch.questions.map((q) => ({ ...q, edited: false })),
+  ];
+  const flashcards = [
+    ...content.flashcards.filter((f) => f.edited === true),
+    ...batch.flashcards.map((f) => ({ ...f, edited: false })),
+  ];
+  return { ...content, questions, flashcards };
+}
+
+/** Re-run ONLY the schedule allocator against the current question set. Pure
+ *  (no LLM); keeps the planned days_available as-is. */
+export function regenerateSchedule(content: KitContent): KitContent {
+  return { ...content, schedule: buildSchedule(content.role.requirements, content.questions, content.schedule.days_available) };
 }

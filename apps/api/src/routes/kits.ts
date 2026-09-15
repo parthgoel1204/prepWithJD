@@ -12,6 +12,9 @@ import {
   persistGeneratedKit,
   persistFailedKit,
   saveKitContent,
+  regenerateCompanyBrief,
+  regenerateQuestionCategory,
+  regenerateSchedule,
   recordSourceFailures,
   listSourceFailures,
   deleteKit,
@@ -80,6 +83,16 @@ const contentPatchSchema = z.discriminatedUnion("op", [
     op: z.literal("practice"),
     card_id: z.string().min(1),
     confidence: z.enum(["low", "medium", "high"]),
+  }),
+  z.object({
+    op: z.literal("regenerate-brief"),
+  }),
+  z.object({
+    op: z.literal("regenerate-category"),
+    category: questionCategory,
+  }),
+  z.object({
+    op: z.literal("regenerate-schedule"),
   }),
 ]);
 
@@ -183,6 +196,11 @@ function applyContentPatch(content: KitContent, patch: z.infer<typeof contentPat
       content.practice = entries;
       return content;
     }
+    // Regenerate ops are async and handled in the route; keep the switch exhaustive.
+    case "regenerate-brief":
+    case "regenerate-category":
+    case "regenerate-schedule":
+      return content;
   }
 }
 
@@ -278,7 +296,13 @@ kitsRouter.patch(
       throw new HttpError(400, "VALIDATION", parsed.error.issues.map((i) => i.message).join("; "));
     }
 
-    const content = applyContentPatch(structuredClone(kit.content) as KitContent, parsed.data);
+    let content = structuredClone(kit.content) as KitContent;
+    const patch = parsed.data;
+    if (patch.op === "regenerate-brief") content = await regenerateCompanyBrief(content, kit.input);
+    else if (patch.op === "regenerate-category") content = await regenerateQuestionCategory(content, kit.input, patch.category);
+    else if (patch.op === "regenerate-schedule") content = regenerateSchedule(content);
+    else content = applyContentPatch(content, patch);
+
     await saveKitContent(id, content);
     res.json({ kit: { ...kit, content } });
   }),
