@@ -229,6 +229,47 @@ function AddItemForm({
   );
 }
 
+/** Confirmation dialog for deletions (scoped to this pass's delete flow). */
+function ConfirmDeleteDialog({
+  label,
+  busy,
+  error,
+  onCancel,
+  onConfirm,
+}: {
+  label: string;
+  busy: boolean;
+  error: string | null;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4" role="dialog" aria-modal="true">
+      <div className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-5 shadow-lg">
+        <h3 className="text-sm font-semibold text-slate-800">Delete this {label}?</h3>
+        <p className="mt-1 text-sm text-slate-500">This removes it permanently from the kit. There's no undo.</p>
+        {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+        <div className="mt-4 flex justify-end gap-2">
+          <button
+            onClick={onCancel}
+            disabled={busy}
+            className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={busy}
+            className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-50"
+          >
+            {busy ? "Deleting…" : "Delete"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function KitDetail() {
   const params = useParams<{ id: string }>();
   const id = params.id;
@@ -243,6 +284,24 @@ export default function KitDetail() {
 
   const [generating, setGenerating] = useState<"idle" | "retrieving" | "generating">("idle");
   const [generateError, setGenerateError] = useState<string | null>(null);
+
+  const [pendingDelete, setPendingDelete] = useState<{ target: "questions" | "flashcards"; id: string; label: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const confirmDelete = async () => {
+    if (!pendingDelete) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await patchContent({ op: "remove-item", target: pendingDelete.target, id: pendingDelete.id });
+      setPendingDelete(null);
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : "Delete failed");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const load = useCallback(async () => {
     setLoadState("loading");
@@ -581,6 +640,12 @@ export default function KitDetail() {
                       </span>
                       <span className="text-xs text-amber-600">{"★".repeat(Math.max(0, Math.min(3, q.difficulty)))}{"☆".repeat(Math.max(0, 3 - Math.min(3, q.difficulty)))}</span>
                       <span className="ml-auto font-mono text-[10px] text-slate-400">{q.requirement_ids.join(", ")}</span>
+                      <button
+                        onClick={() => setPendingDelete({ target: "questions", id: q.id, label: "question" })}
+                        className="text-xs font-medium text-red-500 transition hover:text-red-700"
+                      >
+                        Delete
+                      </button>
                     </div>
                     <div className="mt-1">
                       <InlineEdit
@@ -616,6 +681,12 @@ export default function KitDetail() {
                     <div className="flex flex-wrap items-center gap-2 text-sm">
                       <span className="font-mono text-[10px] text-slate-400">{f.id}</span>
                       <span className="ml-auto font-mono text-[10px] text-slate-400">{f.requirement_ids.join(", ")}</span>
+                      <button
+                        onClick={() => setPendingDelete({ target: "flashcards", id: f.id, label: "flashcard" })}
+                        className="text-xs font-medium text-red-500 transition hover:text-red-700"
+                      >
+                        Delete
+                      </button>
                     </div>
                     <div className="mt-1 text-sm font-medium text-slate-800">
                       <InlineEdit
@@ -708,6 +779,16 @@ export default function KitDetail() {
           {JSON.stringify(kit, null, 2)}
         </pre>
       </section>
+
+      {pendingDelete && (
+        <ConfirmDeleteDialog
+          label={pendingDelete.label}
+          busy={deleting}
+          error={deleteError}
+          onCancel={() => setPendingDelete(null)}
+          onConfirm={() => void confirmDelete()}
+        />
+      )}
     </main>
   );
 }
