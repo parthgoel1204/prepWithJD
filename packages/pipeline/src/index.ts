@@ -28,6 +28,7 @@ export {
   persistRetrieval,
   persistGeneratedKit,
   persistFailedKit,
+  saveKitContent,
   recordSourceFailures,
   listSourceFailures,
 } from "./persistence/repositories";

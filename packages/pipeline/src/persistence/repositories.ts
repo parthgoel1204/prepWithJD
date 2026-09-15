@@ -97,6 +97,11 @@ export async function persistGeneratedKit(kitId: string, content: KitContent): P
   await KitModel.updateOne({ _id: kitId }, { $set: { status: "generated", content } });
 }
 
+/** Builder UI: persist a hand-edited KitContent (add/edit/reorder/practice). */
+export async function saveKitContent(kitId: string, content: KitContent): Promise<void> {
+  await KitModel.updateOne({ _id: kitId }, { $set: { content } });
+}
+
 export async function persistFailedKit(id: string, error: string): Promise<void> {
   await KitModel.updateOne({ _id: id }, { $set: { status: "failed" } });
   await KitModel.updateOne({ _id: id }, { $push: { errorLog: error } });

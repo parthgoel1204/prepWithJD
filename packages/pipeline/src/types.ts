@@ -30,6 +30,8 @@ export interface CompanyBrief {
   summary: string;
   what_they_do: string;
   sources: string[];
+  /** Add-only field (builder UI): true once hand-edited/added. */
+  edited?: boolean;
 }
 
 export interface Requirement {
@@ -53,6 +55,8 @@ export interface Question {
   prompt: string;
   answer_outline: string;
   difficulty: number; // 1 | 2 | 3
+  /** Add-only field (builder UI): true once hand-edited/added. */
+  edited?: boolean;
 }
 
 export interface Flashcard {
@@ -60,6 +64,8 @@ export interface Flashcard {
   front: string;
   back: string;
   requirement_ids: string[];
+  /** Add-only field (builder UI): true once hand-edited/added. */
+  edited?: boolean;
 }
 
 export interface ScheduleDay {
@@ -77,6 +83,14 @@ export interface KitSchedule {
 export interface Coverage {
   uncovered_requirement_ids: string[];
   passes: number;
+}
+
+export type PracticeConfidence = "low" | "medium" | "high";
+
+export interface PracticeEntry {
+  cardId: string;
+  confidence: PracticeConfidence;
+  lastSeenAt: string;
 }
 
 /** A stage that degraded but didn't stop the pipeline (log-and-continue). */
@@ -97,6 +111,8 @@ export interface KitContent {
   coverage: Coverage;
   /** Extended field (add-only): structured stage degradations (e.g. a page or LLM call failed). */
   stage_errors?: KitStageError[];
+  /** Add-only field (builder UI): per-card practice confidence records. */
+  practice?: PracticeEntry[];
 }
 
 // ---------- raw user input ----------

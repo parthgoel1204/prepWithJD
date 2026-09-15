@@ -41,12 +41,93 @@ interface RetrievalResultResponse {
 
 // Pipeline output (the generated KitContent) rendered by the Day-2 Generate action.
 interface PipelineContent {
+  company_brief?: { summary: string; what_they_do: string; sources: string[] };
   role?: { title: string; seniority: string; responsibilities: string[]; requirements: Array<{ id: string; text: string; kind: string; priority: string }> };
   questions?: Array<{ id: string; requirement_ids: string[]; category: string; prompt: string; answer_outline: string; difficulty: number }>;
   flashcards?: Array<{ id: string; front: string; back: string; requirement_ids: string[] }>;
   schedule?: { days_available: number; days: Array<{ day: number; focus: string; question_ids: string[]; minutes: number }> };
   coverage?: { uncovered_requirement_ids: string[]; passes: number };
   stage_errors?: Array<{ stage: string; code: string; message: string; occurred_at: string }>;
+}
+
+/** Click-to-edit text area — edits in place, saves on blur or Enter (Shift+Enter = newline). */
+function InlineEdit({
+  value,
+  onSave,
+  label,
+  textClass,
+}: {
+  value: string;
+  onSave: (next: string) => Promise<void>;
+  label: string;
+  textClass?: string;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value);
+  const [saving, setSaving] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  const begin = () => {
+    setDraft(value);
+    setFailed(false);
+    setEditing(true);
+  };
+
+  const save = async () => {
+    if (draft !== value) {
+      setSaving(true);
+      setFailed(false);
+      try {
+        await onSave(draft);
+        setEditing(false);
+      } catch (err) {
+        setFailed(true);
+      } finally {
+        setSaving(false);
+      }
+    } else {
+      setEditing(false);
+    }
+  };
+
+  if (editing) {
+    return (
+      <div className="w-full">
+        <textarea
+          autoFocus
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={() => void save()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              e.currentTarget.blur();
+            } else if (e.key === "Escape") {
+              setEditing(false);
+            }
+          }}
+          disabled={saving}
+          aria-label={`Edit ${label}`}
+          className="w-full rounded-md border border-violet-300 bg-white px-2 py-1 text-sm text-slate-800 outline-none ring-1 ring-violet-100"
+          rows={3}
+        />
+        {failed && <p className="mt-1 text-xs text-red-600">Save failed — try again.</p>}
+      </div>
+    );
+  }
+
+  return (
+    <button type="button" onClick={begin} title={`Click to edit ${label}`} className="group block w-full text-left">
+      <span className={textClass ?? "text-sm text-slate-800"}>
+        {value ? (
+          value
+        ) : (
+          <span className="italic text-slate-400">Click to add {label}</span>
+        )}
+      </span>
+      <span className="ml-1 text-xs text-slate-300 group-hover:text-violet-500">✎</span>
+    </button>
+  );
 }
 
 type LoadState = "loading" | "loaded" | "error";
@@ -95,6 +176,17 @@ export default function KitDetail() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- initial data load
     if (id) void load();
   }, [id, load]);
+
+  const patchContent = useCallback(
+    async (op: unknown): Promise<void> => {
+      const res = await apiFetch<{ kit: KitFull }>(`/api/kits/${id}/content`, {
+        method: "PATCH",
+        body: JSON.stringify(op),
+      });
+      setKit(res.kit);
+    },
+    [id],
+  );
 
   const runRetrieval = async () => {
     setRetrieving(true);
@@ -165,6 +257,7 @@ export default function KitDetail() {
 
   const content = kit.content as PipelineContent;
   const generated = kit.status === "generated";
+  const brief = content.company_brief;
   const reqs = content.role?.requirements ?? [];
   const questions = content.questions ?? [];
   const catCount = new Set(questions.map((q) => q.category)).size;
@@ -345,6 +438,32 @@ export default function KitDetail() {
 
         {generated && (
           <div className="mt-6 space-y-6">
+            {brief && (
+              <div>
+                <h3 className="text-sm font-semibold text-slate-700">Company brief</h3>
+                <div className="mt-2 rounded-lg border border-slate-100 bg-slate-50 p-3">
+                  <div className="text-xs font-medium text-slate-500">Summary</div>
+                  <InlineEdit
+                    value={brief.summary}
+                    onSave={(v) => patchContent({ op: "update-brief", field: "summary", value: v })}
+                    label="company brief summary"
+                    textClass="mt-1 text-sm text-slate-800"
+                  />
+                  {brief.what_they_do && (
+                    <>
+                      <div className="mt-3 text-xs font-medium text-slate-500">What they do</div>
+                      <p className="mt-1 whitespace-pre-wrap text-sm text-slate-600">{brief.what_they_do}</p>
+                    </>
+                  )}
+                  {brief.sources.length > 0 && (
+                    <div className="mt-3 text-xs text-slate-500">
+                      Sources: <span className="font-mono">{brief.sources.join(", ")}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             <div>
               <h3 className="text-sm font-semibold text-slate-700">
                 Requirements — {reqs.length} extracted
@@ -377,10 +496,23 @@ export default function KitDetail() {
                       <span className="text-xs text-amber-600">{"★".repeat(Math.max(0, Math.min(3, q.difficulty)))}{"☆".repeat(Math.max(0, 3 - Math.min(3, q.difficulty)))}</span>
                       <span className="ml-auto font-mono text-[10px] text-slate-400">{q.requirement_ids.join(", ")}</span>
                     </div>
-                    <p className="mt-1 text-sm text-slate-800">{q.prompt}</p>
+                    <div className="mt-1">
+                      <InlineEdit
+                        value={q.prompt}
+                        onSave={(v) => patchContent({ op: "update-item", target: "questions", id: q.id, field: "prompt", value: v })}
+                        label="question prompt"
+                      />
+                    </div>
                     <details className="mt-1">
                       <summary className="cursor-pointer text-xs font-medium text-slate-500">Answer outline</summary>
-                      <p className="mt-1 whitespace-pre-wrap text-xs text-slate-600">{q.answer_outline}</p>
+                      <div className="mt-1 whitespace-pre-wrap text-xs text-slate-600">
+                        <InlineEdit
+                          value={q.answer_outline}
+                          onSave={(v) => patchContent({ op: "update-item", target: "questions", id: q.id, field: "answer_outline", value: v })}
+                          label="answer outline"
+                          textClass="text-xs text-slate-600"
+                        />
+                      </div>
                     </details>
                   </li>
                 ))}
@@ -398,10 +530,24 @@ export default function KitDetail() {
                       <span className="font-mono text-[10px] text-slate-400">{f.id}</span>
                       <span className="ml-auto font-mono text-[10px] text-slate-400">{f.requirement_ids.join(", ")}</span>
                     </div>
-                    <p className="mt-1 text-sm font-medium text-slate-800">{f.front}</p>
+                    <div className="mt-1 text-sm font-medium text-slate-800">
+                      <InlineEdit
+                        value={f.front}
+                        onSave={(v) => patchContent({ op: "update-item", target: "flashcards", id: f.id, field: "front", value: v })}
+                        label="flashcard front"
+                        textClass="text-sm font-medium text-slate-800"
+                      />
+                    </div>
                     <details className="mt-1">
                       <summary className="cursor-pointer text-xs font-medium text-slate-500">Reveal answer</summary>
-                      <p className="mt-1 whitespace-pre-wrap text-xs text-slate-600">{f.back}</p>
+                      <div className="mt-1 whitespace-pre-wrap text-xs text-slate-600">
+                        <InlineEdit
+                          value={f.back}
+                          onSave={(v) => patchContent({ op: "update-item", target: "flashcards", id: f.id, field: "back", value: v })}
+                          label="flashcard back"
+                          textClass="text-xs text-slate-600"
+                        />
+                      </div>
                     </details>
                   </li>
                 ))}

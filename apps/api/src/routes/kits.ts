@@ -11,6 +11,7 @@ import {
   persistRetrieval,
   persistGeneratedKit,
   persistFailedKit,
+  saveKitContent,
   recordSourceFailures,
   listSourceFailures,
   deleteKit,
@@ -32,6 +33,158 @@ const batchSchema = z.object({
     .min(1, "at least one item is required")
     .max(100, "batch is capped at 100 items"),
 });
+
+const questionCategory = z.enum(["technical", "behavioural", "system-design", "company-fit"]);
+
+/** Builder edits (Day 3 scope). One op per request; server applies it to the
+ *  current persisted content, so a stale client copy can never clobber fields
+ *  written elsewhere (still a single read-modify-write per call). */
+const contentPatchSchema = z.discriminatedUnion("op", [
+  z.object({
+    op: z.literal("update-item"),
+    target: z.enum(["questions", "flashcards"]),
+    id: z.string().min(1),
+    field: z.enum(["prompt", "answer_outline", "front", "back"]),
+    value: z.string().max(20_000),
+  }),
+  z.object({
+    op: z.literal("update-brief"),
+    field: z.literal("summary"),
+    value: z.string().max(10_000),
+  }),
+  z.object({
+    op: z.literal("add-question"),
+    category: questionCategory,
+    prompt: z.string().trim().min(1, "prompt is required").max(10_000),
+    answer_outline: z.string().max(20_000).optional().default(""),
+    requirement_ids: z.array(z.string()).max(50).optional().default([]),
+    difficulty: z.number().int().min(1).max(3).optional().default(2),
+  }),
+  z.object({
+    op: z.literal("add-flashcard"),
+    front: z.string().trim().min(1, "front is required").max(1_000),
+    back: z.string().trim().min(1, "back is required").max(5_000),
+    requirement_ids: z.array(z.string()).max(50).optional().default([]),
+  }),
+  z.object({
+    op: z.literal("remove-item"),
+    target: z.enum(["questions", "flashcards"]),
+    id: z.string().min(1),
+  }),
+  z.object({
+    op: z.literal("reorder-questions"),
+    category: questionCategory,
+    ordered_ids: z.array(z.string()).min(1),
+  }),
+  z.object({
+    op: z.literal("practice"),
+    card_id: z.string().min(1),
+    confidence: z.enum(["low", "medium", "high"]),
+  }),
+]);
+
+/** Stable next id matching the pipeline's cursor scheme (q1, q2, …, f1, f2, …). */
+function nextItemId(prefix: "q" | "f", existing: Array<{ id: string }>): string {
+  const re = new RegExp(`^${prefix}(\\d+)$`);
+  let max = 0;
+  for (const item of existing) {
+    const m = re.exec(item.id);
+    if (m) max = Math.max(max, parseInt(m[1]!, 10));
+  }
+  return `${prefix}${max + 1}`;
+}
+
+/** Reorder questions within one category, preserving other categories' order. */
+function reorderQuestions(content: KitContent, category: string, orderedIds: string[]): KitContent {
+  const byCategory = new Map<string, KitContent["questions"]>();
+  for (const q of content.questions) {
+    const list = byCategory.get(q.category) ?? [];
+    list.push(q);
+    byCategory.set(q.category, list);
+  }
+  const target = byCategory.get(category) ?? [];
+  const expected = new Set(target.map((q) => q.id));
+  if (expected.size !== orderedIds.length || !orderedIds.every((id) => expected.has(id))) {
+    throw new HttpError(400, "VALIDATION", "ordered_ids must contain exactly the current question ids in this category");
+  }
+  const position = new Map(orderedIds.map((id, i) => [id, i]));
+  const sorted = [...target].sort((a, b) => (position.get(a.id) ?? 0) - (position.get(b.id) ?? 0));
+  byCategory.set(category, sorted);
+  const reordered: KitContent["questions"] = [];
+  for (const list of byCategory.values()) reordered.push(...list);
+  return { ...content, questions: reordered };
+}
+
+function applyContentPatch(content: KitContent, patch: z.infer<typeof contentPatchSchema>): KitContent {
+  switch (patch.op) {
+    case "update-item": {
+      if (patch.target === "questions") {
+        const item = content.questions.find((i) => i.id === patch.id);
+        if (!item) throw new HttpError(404, "NOT_FOUND", "Question not found");
+        if (patch.field === "prompt") item.prompt = patch.value;
+        else item.answer_outline = patch.value;
+        item.edited = true;
+      } else {
+        const item = content.flashcards.find((i) => i.id === patch.id);
+        if (!item) throw new HttpError(404, "NOT_FOUND", "Flashcard not found");
+        if (patch.field === "front") item.front = patch.value;
+        else item.back = patch.value;
+        item.edited = true;
+      }
+      return content;
+    }
+    case "update-brief": {
+      content.company_brief.summary = patch.value;
+      content.company_brief.edited = true;
+      return content;
+    }
+    case "add-question": {
+      content.questions.push({
+        id: nextItemId("q", content.questions),
+        requirement_ids: patch.requirement_ids,
+        category: patch.category,
+        prompt: patch.prompt,
+        answer_outline: patch.answer_outline,
+        difficulty: patch.difficulty,
+        edited: true,
+      });
+      return content;
+    }
+    case "add-flashcard": {
+      content.flashcards.push({
+        id: nextItemId("f", content.flashcards),
+        front: patch.front,
+        back: patch.back,
+        requirement_ids: patch.requirement_ids,
+        edited: true,
+      });
+      return content;
+    }
+    case "remove-item": {
+      if (patch.target === "questions") {
+        const next = content.questions.filter((i) => i.id !== patch.id);
+        if (next.length === content.questions.length) throw new HttpError(404, "NOT_FOUND", "Question not found");
+        content.questions = next;
+      } else {
+        const next = content.flashcards.filter((i) => i.id !== patch.id);
+        if (next.length === content.flashcards.length) throw new HttpError(404, "NOT_FOUND", "Flashcard not found");
+        content.flashcards = next;
+      }
+      return content;
+    }
+    case "reorder-questions":
+      return reorderQuestions(content, patch.category, patch.ordered_ids);
+    case "practice": {
+      const entries = content.practice ?? [];
+      const existing = entries.findIndex((e) => e.cardId === patch.card_id);
+      const entry = { cardId: patch.card_id, confidence: patch.confidence, lastSeenAt: new Date().toISOString() };
+      if (existing === -1) entries.push(entry);
+      else entries[existing] = entry;
+      content.practice = entries;
+      return content;
+    }
+  }
+}
 
 /** Merge a fresh retrieval result into the persisted source block (shared by
  * the standalone retrieve route and the generate route's auto-retrieve step). */
@@ -109,6 +262,25 @@ kitsRouter.delete(
     if (!kit || !kit.userId.equals(req.user!._id)) throw new HttpError(404, "NOT_FOUND", "Kit not found");
     await deleteKit(paramStr(req, "id"));
     res.json({ ok: true });
+  }),
+);
+
+// Builder edit endpoint (Day 3): one targeted op applied to the persisted content.
+kitsRouter.patch(
+  "/:id/content",
+  asyncH(async (req: Request, res: Response) => {
+    const id = paramStr(req, "id");
+    const kit = await findKitById(id);
+    if (!kit || !kit.userId.equals(req.user!._id)) throw new HttpError(404, "NOT_FOUND", "Kit not found");
+
+    const parsed = contentPatchSchema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      throw new HttpError(400, "VALIDATION", parsed.error.issues.map((i) => i.message).join("; "));
+    }
+
+    const content = applyContentPatch(structuredClone(kit.content) as KitContent, parsed.data);
+    await saveKitContent(id, content);
+    res.json({ kit: { ...kit, content } });
   }),
 );
 

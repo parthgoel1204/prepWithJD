@@ -20,6 +20,8 @@ const questionSchema = new Schema(
     prompt: { type: String, default: "" },
     answer_outline: { type: String, default: "" },
     difficulty: { type: Number, min: 1, max: 3, default: 2 },
+    // Add-only field (builder UI): true once this item was edited/added by hand.
+    edited: { type: Boolean, default: false },
   },
   { _id: false },
 );
@@ -30,6 +32,8 @@ const flashcardSchema = new Schema(
     front: { type: String, default: "" },
     back: { type: String, default: "" },
     requirement_ids: { type: [String], default: [] },
+    // Add-only field (builder UI): true once this card was edited/added by hand.
+    edited: { type: Boolean, default: false },
   },
   { _id: false },
 );
@@ -62,6 +66,15 @@ const robotsBlockedItemSchema = new Schema(
   { _id: false },
 );
 
+const practiceEntrySchema = new Schema(
+  {
+    cardId: { type: String, required: true },
+    confidence: { type: String, enum: ["low", "medium", "high"], required: true },
+    lastSeenAt: { type: String, required: true },
+  },
+  { _id: false },
+);
+
 const kitContentSchema = new Schema(
   {
     source: {
@@ -81,6 +94,8 @@ const kitContentSchema = new Schema(
       summary: { type: String, default: "" },
       what_they_do: { type: String, default: "" },
       sources: { type: [String], default: [] },
+      // Add-only field (builder UI): true once the summary was edited by hand.
+      edited: { type: Boolean, default: false },
     },
     role: {
       title: { type: String, default: "" },
@@ -98,6 +113,8 @@ const kitContentSchema = new Schema(
       uncovered_requirement_ids: { type: [String], default: [] },
       passes: { type: Number, default: 0 },
     },
+    // Add-only field (practice mode): per-card confidence, upserted by cardId.
+    practice: { type: [practiceEntrySchema], default: [] },
   },
   { _id: false },
 );

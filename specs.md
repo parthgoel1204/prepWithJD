@@ -327,3 +327,75 @@ After both fixes, re-run npm run evaluate against tooling/cases.json once more e
 to confirm nothing regressed, and re-run npm run typecheck / lint / build. Report pass/fail
 on each before we move to Day 3 (builder UI: edit/reorder/regenerate-one-section, and
 practice mode).
+
+
+
+
+
+
+
+
+
+FINAL BUILD PASS — hard deadline, submission at 1pm. Work fast. After completing EACH
+numbered item below, make ONE commit with a short one-line message (e.g. "add inline
+question editing", "add flashcard delete", "restyle kit-detail with tab layout") and
+tell me it's done before moving to the next item. Do not batch commits. Do not add
+anything not listed here, no matter how small it seems — scope discipline matters more
+than completeness right now.
+
+DO NOT touch retrieval/extraction/generation/scheduling/validation logic in this pass.
+Only kit-detail.tsx, a new PATCH endpoint, and Tailwind classes are in scope.
+
+VISUAL DIRECTION (inspired by myjdprep.com, adapt don't copy):
+- Muted purple/indigo accent color (e.g. Tailwind indigo-900/violet-900) used sparingly
+  for active states/buttons only — keep backgrounds white/slate-50, text slate-800/600.
+- Replace the current single long scroll with a TAB-STYLE section switcher at the top of
+  kit-detail.tsx: tabs like "Overview | Requirements | Questions | Flashcards | Practice |
+  Schedule" — clicking a tab shows only that section (simple useState, no routing needed).
+- Each tab's content in a clean bordered card (border-slate-200, rounded-lg, p-6), not the
+  current dense stacked panels.
+- Small count badges next to tab labels (e.g. "Questions 13") like the reference site.
+- Keep the raw JSON panel, but move it to the very bottom as a collapsed "Developer view"
+  disclosure, not part of the tab flow.
+
+FUNCTIONAL ITEMS, IN ORDER:
+
+1. Inline edit: question prompt + answer_outline, flashcard front + back, and
+   company_brief.summary become click-to-edit (textarea on click, save on blur/Enter).
+   New endpoint PATCH /api/kits/:id/content updates just the touched field(s) in Mongo
+   and sets an `edited: true` flag on that specific item (add-only schema field).
+   COMMIT after this works.
+
+2. Add a question or flashcard by hand (small inline form: category/prompt/outline for
+   questions, front/back for flashcards). New item gets a stable next id and edited:true.
+   COMMIT after this works.
+
+3. Delete any question or flashcard, confirm dialog, persists via the same PATCH pattern.
+   COMMIT after this works.
+
+4. Reorder: simple up/down arrow buttons on each question within its category list
+   (no drag-and-drop). Persist new order.
+   COMMIT after this works.
+
+5. Regenerate one section: three buttons — regenerate company brief / regenerate one
+   question category / regenerate schedule. Each re-runs just that pipeline stage and
+   merges back, skipping any item with edited:true so hand-edits survive. Distinct loading
+   label per action.
+   COMMIT after this works.
+
+6. Practice mode as its own tab: flashcards one at a time, front shown, click to reveal
+   back, three confidence buttons (Low/Medium/High), persisted per card
+   ({cardId, confidence, lastSeenAt}), a simple progress readout ("8 of 14 reviewed"),
+   and a "review lowest confidence first" toggle that re-sorts the deck.
+   COMMIT after this works.
+
+7. Apply the tab-layout + card + accent-color visual pass across the whole kit-detail
+   page, including the existing retrieval/pages/schedule sections (visual only, no logic
+   change to those).
+   COMMIT after this works.
+
+CHECKPOINT: after item 4, tell me your elapsed time and remaining item count so I can
+tell you whether to keep going through items 5-7 or stop and ship what you have. Do not
+wait for me to ask proactively report elapsed time at that checkpoint.
+
+If Groq's LLM quota is hit again during regenerate-section testing (item 5), don't block on it note it and move on, we already have LLM_FALLBACK=1 as a safety net.
