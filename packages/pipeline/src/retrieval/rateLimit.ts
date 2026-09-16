@@ -1,8 +1,8 @@
 /**
  * Token-bucket rate limiter with a shared FIFO queue.
  *
- * The SAME limiter instance is used by external calls (search API today, LLM calls on
- * Day 2), so total outbound request rate stays under configured RPM.
+ * The SAME limiter instance is used by external calls (search API and LLM), so total
+ * outbound request rate stays under the configured RPM.
  */
 
 export interface TokenBucketConfig {

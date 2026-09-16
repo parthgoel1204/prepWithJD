@@ -18,7 +18,7 @@ interface TavilyResponse {
 /**
  * Search public discussion of a company's interview process via the Tavily API.
  * Every call goes through the SHARED rate-limited queue — the same token bucket that
- * will pace LLM calls on Day 2 — so outbound research traffic stays throttled.
+ * paces the pipeline's LLM calls — so outbound research traffic stays throttled.
  *
  * A missing/invalid key is NOT a fatal error: it is reported as a structured failure so
  * the run still completes without fabricating anything.

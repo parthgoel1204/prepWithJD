@@ -587,7 +587,7 @@ export default function KitDetail() {
           </section>
 
           <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-slate-800">Research (Day 1)</h2>
+            <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-slate-800">Research</h2>
             <p className="mt-1 text-sm text-slate-500">
               Crawls the company home page, ranks internal links (careers/culture/blog), respects robots.txt, and uses Tavily
               to find interview-process discussion.
@@ -678,7 +678,7 @@ export default function KitDetail() {
           </section>
 
           <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-slate-800">Pipeline (Day 2)</h2>
+            <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-slate-800">Pipeline</h2>
             <p className="mt-1 text-sm text-slate-500">
               One-click flow: for a draft kit, auto-runs retrieval first, then requirement extraction → per-category question
               generation → coverage loop → schedule → validation (LLM calls take ~1–2 minutes).

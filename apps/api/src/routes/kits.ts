@@ -39,7 +39,7 @@ const batchSchema = z.object({
 
 const questionCategory = z.enum(["technical", "behavioural", "system-design", "company-fit"]);
 
-/** Builder edits (Day 3 scope). One op per request; server applies it to the
+/** Builder edits. One op per request; server applies it to the
  *  current persisted content, so a stale client copy can never clobber fields
  *  written elsewhere (still a single read-modify-write per call). */
 const contentPatchSchema = z.discriminatedUnion("op", [
@@ -225,7 +225,7 @@ function withSource(content: KitContent, result: RetrievalResult, jd: string, co
 export const kitsRouter = Router();
 kitsRouter.use(requireAuth);
 
-// Create a single draft (raw input persisted — generation comes on Day 2).
+// Create a single draft (raw input persisted; generation is a separate step).
 kitsRouter.post(
   "/",
   asyncH(async (req: Request, res: Response) => {
@@ -283,7 +283,7 @@ kitsRouter.delete(
   }),
 );
 
-// Builder edit endpoint (Day 3): one targeted op applied to the persisted content.
+// Builder edit endpoint: one targeted op applied to the persisted content.
 kitsRouter.patch(
   "/:id/content",
   asyncH(async (req: Request, res: Response) => {
@@ -374,7 +374,6 @@ kitsRouter.post(
 // validation. Retrieval and generation stay separate internal pipeline stages;
 // this route just chains them. The fresh retrieval result is injected into
 // runPipeline so the site is not crawled twice. Same code path as the CLI.
-// The full builder UI (edit/reorder/regenerate-one-section) is Day 3 scope.
 kitsRouter.post(
   "/:id/generate",
   asyncH(async (req: Request, res: Response) => {

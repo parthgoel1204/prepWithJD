@@ -1,5 +1,5 @@
 /**
- * Requirement extraction (Day 2, real implementation).
+ * Requirement extraction.
  *
  * LlmExtractor grounds EVERY extracted requirement in the JD text. The prompt
  * forbids implied/industry-standard requirements ("must know Git" just because
@@ -11,7 +11,7 @@
  * consistency check logs warnings for any priority that reads contradictory.
  */
 import type { CompanyBrief, CrawledPage, Requirement } from "../types";
-import { PipelineError, PipelineNotImplementedError } from "../errors";
+import { PipelineError } from "../errors";
 import { callLLM, type LLMCallResult } from "../llm/client";
 import { UNTRUSTED_DATA_BOILERPLATE } from "../llm/config";
 import { matchesShape, type JsonSchema } from "../llm/shape";
@@ -34,16 +34,19 @@ export interface Extractor {
 }
 
 export class NotImplementedExtractor implements Extractor {
+  /** @deprecated superseded by LlmExtractor */
   async extractCompanyBrief(_ctx: ExtractionContext): Promise<CompanyBrief> {
-    throw new PipelineNotImplementedError("extraction");
+    throw new PipelineError("not implemented", "NOT_IMPLEMENTED", "extraction");
   }
+  /** @deprecated superseded by LlmExtractor */
   async extractRequirements(
     _ctx: ExtractionContext,
   ): Promise<{ title: string; seniority: string; responsibilities: string[]; requirements: Requirement[] }> {
-    throw new PipelineNotImplementedError("extraction");
+    throw new PipelineError("not implemented", "NOT_IMPLEMENTED", "extraction");
   }
+  /** @deprecated superseded by LlmExtractor */
   async coverageGaps(_ctx: ExtractionContext): Promise<string[]> {
-    throw new PipelineNotImplementedError("extraction");
+    throw new PipelineError("not implemented", "NOT_IMPLEMENTED", "extraction");
   }
 }
 

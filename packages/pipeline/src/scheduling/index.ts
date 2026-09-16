@@ -20,21 +20,6 @@
  * totals are deterministic for a fixed difficulty set.
  */
 import type { Question, Requirement, ScheduleDay, KitSchedule } from "../types";
-import { PipelineNotImplementedError } from "../errors";
-
-/**
- * Day-1 contract kept so the pipeline compiles until Step 8 wires the real
- * allocator. The production path uses the pure buildSchedule() function.
- */
-export interface Scheduler {
-  buildSchedule(input: { daysAvailable: number; questions: Question[] }): Promise<KitSchedule>;
-}
-
-export class NotImplementedScheduler implements Scheduler {
-  async buildSchedule(_input: { daysAvailable: number; questions: Question[] }): Promise<KitSchedule> {
-    throw new PipelineNotImplementedError("scheduling");
-  }
-}
 
 /** Locked difficulty → minutes map. Independent of answer_outline length. */
 export const QUESTION_MINUTES: Record<number, number> = { 1: 10, 2: 15, 3: 20 };

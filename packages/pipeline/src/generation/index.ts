@@ -1,10 +1,10 @@
 /**
- * Question generation (Day 2, real implementation).
+ * Question generation.
  *
  * One LLM call PER category (technical | behavioural | system-design |
  * company-fit) — never one prompt asking for everything — and each category
  * call also returns its flashcards (the "derive in-category" decision from the
- * step-2 review, zero extra calls). Retrieved context from Day 1 (crawled
+ * step-2 review, zero extra calls). Retrieved context (crawled
  * interview-format pages, Tavily discussion) is injected so it shapes which
  * questions get written (e.g. a known system-design round ups that category).
  *
@@ -13,7 +13,7 @@
  * loudly, never silently kept.
  */
 import type { CompanyBrief, CrawledPage, Flashcard, Question, QuestionCategory, Requirement, RoleBreakdown } from "../types";
-import { PipelineNotImplementedError } from "../errors";
+import { PipelineError } from "../errors";
 import { callLLM, type LLMCallResult } from "../llm/client";
 import { UNTRUSTED_DATA_BOILERPLATE } from "../llm/config";
 import { matchesShape, type JsonSchema } from "../llm/shape";
@@ -25,9 +25,9 @@ export interface GenerationContext {
   company: string;
   company_brief: CompanyBrief;
   role: RoleBreakdown;
-  /** Extended (Day 2): Tavily interview-process discussion hits from retrieval. */
+  /** Tavily interview-process discussion hits from retrieval. */
   discussion?: Array<{ title: string; url: string; snippet: string }>;
-  /** Extended (Day 2): crawled pages carrying interview-format signal. */
+  /** Crawled pages carrying interview-format signal. */
   interviewPages?: CrawledPage[];
 }
 
@@ -38,15 +38,17 @@ export interface Generator {
 }
 
 export class NotImplementedGenerator implements Generator {
+  /** @deprecated superseded by LlmGenerator */
   async generateQuestions(_ctx: GenerationContext, _requirements: Requirement[]): Promise<Question[]> {
-    throw new PipelineNotImplementedError("generation");
+    throw new PipelineError("not implemented", "NOT_IMPLEMENTED", "generation");
   }
+  /** @deprecated superseded by LlmGenerator */
   async generateFlashcards(
     _ctx: GenerationContext,
     _requirements: Requirement[],
     _questions: Question[],
   ): Promise<Flashcard[]> {
-    throw new PipelineNotImplementedError("generation");
+    throw new PipelineError("not implemented", "NOT_IMPLEMENTED", "generation");
   }
 }
 
@@ -258,6 +260,13 @@ export class LlmGenerator implements Generator {
     const parsed = res.json as { questions?: Array<{ requirement_ids?: string[]; prompt?: string; answer_outline?: string; difficulty?: number }>; flashcards?: Array<{ front?: string; back?: string; requirement_ids?: string[] }> };
     const q = sanitizeQuestions(parsed.questions ?? [], known, qStart);
     const f = sanitizeFlashcards(parsed.flashcards ?? [], known, fStart);
+    for (const question of q.questions) {
+      console.log(`[generation]   Q [${question.id}] ${question.prompt.slice(0, 120)}`);
+    }
+    for (const card of f.flashcards) {
+      console.log(`[generation]   F [${card.id}] ${card.front.slice(0, 100)}`);
+    }
+    console.log(`[generation] gap pass2: ${q.questions.length} questions, ${f.flashcards.length} flashcards (${fmt(res)})`);
     return { questions: q.questions, flashcards: f.flashcards, dropped: [...q.dropped, ...f.dropped] };
   }
 
@@ -292,6 +301,12 @@ export class LlmGenerator implements Generator {
     const f = sanitizeFlashcards(parsed.flashcards ?? [], known, fStart);
     for (const d of q.dropped) console.warn(`[generation] ${category}: ${d}`);
     for (const d of f.dropped) console.warn(`[generation] ${category}: ${d}`);
+    for (const question of q.questions) {
+      console.log(`[generation]   Q [${question.id}] ${question.prompt.slice(0, 120)}`);
+    }
+    for (const card of f.flashcards) {
+      console.log(`[generation]   F [${card.id}] ${card.front.slice(0, 100)}`);
+    }
     console.log(`[generation] ${category}: ${q.questions.length} questions, ${f.flashcards.length} flashcards (${fmt(res)})`);
     return { questions: q.questions, flashcards: f.flashcards, dropped: [] as string[] };
   }

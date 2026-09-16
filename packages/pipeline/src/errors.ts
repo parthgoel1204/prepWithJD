@@ -9,11 +9,3 @@ export class PipelineError extends Error {
     this.stage = stage;
   }
 }
-
-/** Thrown by stages that are intentionally not implemented yet (Day 1 stubs). */
-export class PipelineNotImplementedError extends PipelineError {
-  constructor(stage: string) {
-    super(`${stage} is not implemented yet (Day 1 stub)`, "NOT_IMPLEMENTED", stage);
-    this.name = "PipelineNotImplementedError";
-  }
-}

@@ -59,14 +59,14 @@ web app's exact pipeline, and a rule that research must never fabricate.
   are deleted and answered with `401`, which the web client turns into a redirect —
   graceful, not a crash.
 
-## Search API: Brave Search API (decision asked upfront)
+## Search API: Tavily
 
 - Candidates were SerpAPI (~100 free queries/month), Brave (2000 free queries/month),
-  Tavily (AI-oriented). Brave won on free quota and a clean JSON API.
+  Tavily (AI-oriented). Tavily is the implementation in the repo (Brave was never wired in).
 - It is only used by the `searchInterviewProcess` function and is optional: a missing
   key records an honest `SEARCH_API_KEY_MISSING` failure instead of fabricating results.
 - All outbound research calls go through one shared token-bucket queue
-  (`retrieval/rateLimit.ts`) — the same queue will pace LLM calls on Day 2.
+  (`retrieval/rateLimit.ts`) — the same queue paces LLM calls.
 
 ## Retrieval design (the Day-1 core)
 
