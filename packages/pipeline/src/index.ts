@@ -9,7 +9,7 @@ import { LLM_MODEL } from "./llm/config";
 import { validateOrRepair } from "./validation";
 import { PipelineError } from "./errors";
 
-export { connectDb, disconnectDb, isConnected } from "./persistence/connect";
+export { connectDb, disconnectDb, isConnected, mongoReadyState } from "./persistence/connect";
 export * as models from "./persistence/models";
 export { UserModel } from "./persistence/models";
 export {

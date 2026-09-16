@@ -16,3 +16,8 @@ export async function disconnectDb(): Promise<void> {
 export function isConnected(): boolean {
   return mongoose.connection.readyState === 1;
 }
+
+/** Raw Mongoose connection readyState (0=disconnected, 1=connected, 2=connecting, 3=disconnecting). */
+export function mongoReadyState(): number {
+  return mongoose.connection.readyState;
+}
