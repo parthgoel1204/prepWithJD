@@ -5,6 +5,7 @@ import { connectDb, disconnectDb, deleteExpiredSessions, mongoReadyState } from 
 import { config } from "./config";
 import { authRouter } from "./routes/auth";
 import { kitsRouter } from "./routes/kits";
+import { jdRouter } from "./routes/jd";
 import { serializeError } from "./lib/http";
 
 console.log("[api] starting up...");
@@ -85,6 +86,7 @@ async function main(): Promise<void> {
   });
   app.use("/api/auth", authRouter);
   app.use("/api/kits", kitsRouter);
+  app.use("/api/jd", jdRouter);
 
   app.use((_req, res) => res.status(404).json({ error: "NOT_FOUND", message: "Route not found" }));
 

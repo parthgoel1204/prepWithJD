@@ -28,6 +28,7 @@ const kitInputSchema = z.object({
   jd: z.string().trim().min(1, "job description is required").max(50_000),
   company_url: z.string().trim().min(4, "company URL is required").max(2048),
   days: z.coerce.number().int().min(1, "days must be between 1 and 60").max(60).default(5),
+  file_name: z.string().trim().min(1).max(255).optional(),
 });
 
 const batchSchema = z.object({
@@ -233,8 +234,8 @@ kitsRouter.post(
     if (!parsed.success) {
       throw new HttpError(400, "VALIDATION", parsed.error.issues.map((i) => i.message).join("; "));
     }
-    const { jd, company_url, days } = parsed.data;
-    const kit = await createKit({ userId: req.user!._id, jd, company_url, days });
+    const { jd, company_url, days, file_name } = parsed.data;
+    const kit = await createKit({ userId: req.user!._id, jd, company_url, days, file_name });
     res.status(201).json({ kit });
   }),
 );
