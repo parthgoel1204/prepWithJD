@@ -271,7 +271,7 @@ function ConfirmDeleteDialog({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4" role="dialog" aria-modal="true">
       <div className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-5 shadow-lg">
         <h3 className="text-sm font-semibold text-slate-800">Delete this {label}?</h3>
-        <p className="mt-1 text-sm text-slate-500">This removes it permanently from the kit. There's no undo.</p>
+        <p className="mt-1 text-sm text-slate-500">This removes it permanently from the kit. There&apos;s no undo.</p>
         {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
         <div className="mt-4 flex justify-end gap-2">
           <button
@@ -1005,7 +1005,7 @@ export default function KitDetail() {
             <>
               {noScheduleMaterial && (
                 <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-                  This job description didn't contain enough detail to generate a study plan.
+                  This job description didn&apos;t contain enough detail to generate a study plan.
                 </p>
               )}
               <button
