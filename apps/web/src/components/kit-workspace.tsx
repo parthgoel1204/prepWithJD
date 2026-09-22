@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, apiUpload } from "@/lib/api";
 
 interface KitListItem {
   _id: string;
@@ -28,6 +28,10 @@ export default function KitWorkspace() {
   const [days, setDays] = useState(5);
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+
+  const [jdFile, setJdFile] = useState<string | null>(null);
+  const [jdUploadState, setJdUploadState] = useState<SubmitState>("idle");
+  const [jdUploadMessage, setJdUploadMessage] = useState<string | null>(null);
 
   const [batchState, setBatchState] = useState<SubmitState>("idle");
   const [batchMessage, setBatchMessage] = useState<string | null>(null);
@@ -57,17 +61,48 @@ export default function KitWorkspace() {
     try {
       const res = await apiFetch<{ kit: KitListItem }>("/api/kits", {
         method: "POST",
-        body: JSON.stringify({ jd, company_url: companyUrl, days }),
+        body: JSON.stringify({ jd, company_url: companyUrl, days, file_name: jdFile ?? undefined }),
       });
       setKits((prev) => [res.kit, ...prev]);
       setJd("");
       setCompanyUrl("");
       setDays(5);
+      setJdFile(null);
+      setJdUploadState("idle");
+      setJdUploadMessage(null);
       setSubmitState("saved");
       setSubmitMessage("Saved. Open the kit to run retrieval.");
     } catch (err) {
       setSubmitState("error");
       setSubmitMessage(err instanceof Error ? err.message : "Failed to save kit");
+    }
+  };
+
+  const uploadJd = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      e.target.value = "";
+      return;
+    }
+    setJdUploadState("saving");
+    setJdUploadMessage(null);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await apiUpload<{ file_name: string; chars: number; truncated: boolean; text: string }>(
+        "/api/jd/extract",
+        form,
+      );
+      setJd(res.text);
+      setJdFile(res.file_name);
+      const truncNote = res.truncated ? " (truncated to 50,000 chars)" : "";
+      setJdUploadState("saved");
+      setJdUploadMessage(`Loaded ${res.chars.toLocaleString()} chars from ${res.file_name}${truncNote}. Review it below, then save.`);
+    } catch (err) {
+      setJdUploadState("error");
+      setJdUploadMessage(err instanceof Error ? err.message : "Failed to extract text from file");
+    } finally {
+      e.target.value = "";
     }
   };
 
@@ -164,6 +199,22 @@ export default function KitWorkspace() {
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
             />
           </div>
+          <label className="flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-slate-300 px-4 py-4 text-sm text-slate-500 hover:border-indigo-400 hover:text-indigo-600">
+            {jdUploadState === "saving" ? "Extracting text…" : jdFile ? `Loaded ${jdFile}` : "Upload PDF/DOCX"}
+            <input type="file" accept=".pdf,.docx" className="hidden" onChange={uploadJd} disabled={jdUploadState === "saving"} />
+          </label>
+          {jdUploadMessage && (
+            <div
+              role={jdUploadState === "error" ? "alert" : "status"}
+              className={`rounded-lg border px-3 py-2 text-sm ${
+                jdUploadState === "error"
+                  ? "border-red-200 bg-red-50 text-red-700"
+                  : "border-emerald-200 bg-emerald-50 text-emerald-800"
+              }`}
+            >
+              {jdUploadMessage}
+            </div>
+          )}
           <div className="flex items-end justify-between gap-4">
             <div>
               <label htmlFor="days" className="mb-1 block text-sm font-medium text-slate-700">Prep days</label>
@@ -260,7 +311,7 @@ export default function KitWorkspace() {
                   </span>
                 </div>
                 <p className="mt-0.5 truncate text-xs text-slate-500">
-                  {kit.input.jd.length.toLocaleString()} chars · {kit.input.days} days ·{" "}
+                  {kit.input.jd.length.toLocaleString()} chars · {kit.input.days} days{kit.input.file_name ? ` · ${kit.input.file_name}` : ""} ·{" "}
                   {new Date(kit.createdAt).toLocaleString()}
                 </p>
               </div>

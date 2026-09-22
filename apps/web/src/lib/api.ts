@@ -18,20 +18,7 @@ export interface ApiErrorBody {
 /** Session-related 401 codes the API returns on protected routes. */
 const SESSION_401_CODES = ["SESSION_EXPIRED", "SESSION_INVALID", "UNAUTHENTICATED"];
 
-/**
- * fetch wrapper: JSON body, same-origin /api proxy.
- *
- * 401s are NOT all the same failure:
- *  - `/api/auth/*` (login/register): never redirect — surface the server message inline
- *    (e.g. "Invalid email or password").
- *  - protected routes with a session-related 401 (expired/invalid/unauthenticated):
- *    hard-redirect to /login with ?reason=session_expired so the login page can show it.
- */
-export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const headers = new Headers(options?.headers);
-  if (options?.body) headers.set("Content-Type", "application/json");
-
-  const res = await fetch(path, { ...options, headers });
+async function handleResponse<T>(res: Response, path: string): Promise<T> {
   const data = (await res.json().catch(() => null)) as (T & ApiErrorBody) | null;
 
   if (res.status === 401) {
@@ -52,4 +39,30 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
     throw new ApiError(data?.message ?? `Request failed (${res.status})`, res.status);
   }
   return data as T;
+}
+
+/**
+ * fetch wrapper: JSON body, same-origin /api proxy.
+ *
+ * 401s are NOT all the same failure:
+ *  - `/api/auth/*` (login/register): never redirect — surface the server message inline
+ *    (e.g. "Invalid email or password").
+ *  - protected routes with a session-related 401 (expired/invalid/unauthenticated):
+ *    hard-redirect to /login with ?reason=session_expired so the login page can show it.
+ */
+export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  const headers = new Headers(options?.headers);
+  if (options?.body) headers.set("Content-Type", "application/json");
+
+  const res = await fetch(path, { ...options, headers });
+  return handleResponse<T>(res, path);
+}
+
+/**
+ * fetch wrapper for multipart/form-data uploads — no JSON content-type here,
+ * the browser sets the boundary header instead.
+ */
+export async function apiUpload<T>(path: string, form: FormData): Promise<T> {
+  const res = await fetch(path, { method: "POST", body: form });
+  return handleResponse<T>(res, path);
 }
