@@ -399,3 +399,13 @@ tell you whether to keep going through items 5-7 or stop and ship what you have.
 wait for me to ask proactively report elapsed time at that checkpoint.
 
 If Groq's LLM quota is hit again during regenerate-section testing (item 5), don't block on it note it and move on, we already have LLM_FALLBACK=1 as a safety net.
+
+This project is moving from a timed assessment to a portfolio project — no more rushed scope-cutting, take time to do this properly and explain trade-offs like before.
+
+PDF/DOCX job description upload. Add file upload support to kit-workspace.tsx
+(single kit form) using pdf-parse for PDFs and mammoth for .docx, extracting text
+server-side via a new endpoint, then feeding the extracted text into the exact same
+extraction pipeline already in place — no pipeline changes needed. Handle corrupt/
+unreadable files gracefully with a clear error, not a crash.
+
+Report back once it is done and tested, then we'll plan the UI redesign pass next.
