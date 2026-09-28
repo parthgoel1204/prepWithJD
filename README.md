@@ -4,7 +4,12 @@ Users paste a job description, a company URL, and how many prep days they have. 
 crawls the company's site, searches public discussion of its interview process, and
 generates a structured prep kit: company brief, role breakdown, categorized question
 bank, flashcards, and a day-by-day schedule. Users can then edit / add / delete / reorder /
-regenerate any section and practice against the flashcards.
+regenerate any section and practice against the flashcards. The JD can also be uploaded as
+a PDF or DOCX (`POST /api/jd/extract`): the file is validated by magic bytes (5 MB cap),
+text is extracted in memory — never written to disk — and dropped into the JD box for review
+before the kit is created. Mismatched extension/magic bytes, unreadable/corrupt,
+password-protected, scanned (no text layer) and oversized files each map to a typed error
+code surfaced inline.
 
 ## Project Overview and Tech Stack
 
@@ -60,7 +65,7 @@ Environment variables (`apps/api/.env`, read from `src/config.ts` and
 Useful commands: `npm run typecheck` (tsc across all workspaces), `npm run smoke`
 (crawler against `npm run fixture`'s local fixture site), and the verify scripts under
 `tooling/` (`verify-llm`, `verify-extraction`, `verify-coverage`, `verify-scheduling`,
-`verify-generation`, `verify-validation`, `verify-search`, `e2e`).
+`verify-generation`, `verify-validation`, `verify-search`, `verify-upload`, `e2e`).
 
 ### Deployed
 
