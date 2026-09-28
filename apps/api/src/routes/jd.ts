@@ -1,25 +1,46 @@
+import { Buffer } from "node:buffer";
 import { Router, type Request, type Response } from "express";
 import multer from "multer";
-import pdfParse from "pdf-parse";
+import pdfParse from "pdf-parse/lib/pdf-parse.js";
 import mammoth from "mammoth";
 import { asyncH, HttpError } from "../lib/http";
 import { requireAuth } from "../middleware/auth";
 
-// Mirrors the kit input schema's jd cap in routes/kits.ts so a huge file can
-// never blow past the persisted-jd limit — it is truncated here instead.
+// Mirrors the create-kit jd cap in routes/kits.ts: text over this is rejected
+// (413 TEXT_TOO_LONG), never silently truncated, so what the user reviews here
+// is exactly what the pipeline will be fed.
 const MAX_JD_CHARS = 50_000;
-// Memory storage keeps the whole upload in RAM for the duration of the request.
-const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+// Extracted text under this is almost certainly a scanned/image-only PDF.
+const MIN_TEXT_CHARS = 50;
+// Memory storage keeps the file in RAM for the duration of the upload; nothing
+// is ever written to disk and file contents are never logged.
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 const UPLOAD_FIELD = "file";
-const PDF_RE = /\.pdf$/i;
-const DOCX_RE = /\.docx$/i;
+const ALLOWED_EXT_RE = /\.([a-z0-9]+)$/i;
+
+// Magic-byte signatures (checked against the actual bytes, not extension/mime):
+// PDF begins "%PDF-", DOCX is a ZIP beginning with "PK\x03\x04" (stored-entry mode).
+const PDF_MAGIC = Buffer.from("%PDF-", "latin1");
+const ZIP_MAGIC = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
+
+function fileExtension(name: string): string | null {
+  const m = ALLOWED_EXT_RE.exec(name);
+  return m ? m[1]!.toLowerCase() : null;
+}
+
+function detectKind(buffer: Buffer): "pdf" | "docx" | null {
+  if (buffer.length >= PDF_MAGIC.length && buffer.subarray(0, PDF_MAGIC.length).equals(PDF_MAGIC)) return "pdf";
+  if (buffer.length >= ZIP_MAGIC.length && buffer.subarray(0, ZIP_MAGIC.length).equals(ZIP_MAGIC)) return "docx";
+  return null;
+}
 
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: MAX_UPLOAD_BYTES, files: 1 },
   fileFilter: (_req, file, cb) => {
-    if (!(PDF_RE.test(file.originalname) || DOCX_RE.test(file.originalname))) {
-      cb(new HttpError(400, "UNSUPPORTED_FILE", "Only .pdf and .docx files are supported"));
+    const ext = fileExtension(file.originalname);
+    if (ext !== "pdf" && ext !== "docx") {
+      cb(new HttpError(400, "UNSUPPORTED_FILE_TYPE", "Only .pdf and .docx files are supported"));
       return;
     }
     cb(null, true);
@@ -28,7 +49,7 @@ const upload = multer({
 
 /**
  * Extract text from a PDF buffer. pdf-parse bundles pdf.js 1.x, which prints a
- * "Warning: Indexing all PDF objects" line per document (and worker/intro
+ * "Warning: Indexing all PDF objects" line per document (plus worker/intro
  * noise) straight to the console. Those lines are harmless but would spam the
  * API logs, so coarser console output is suppressed for the in-flight parse.
  */
@@ -56,17 +77,21 @@ async function parseDocx(buffer: Buffer): Promise<string> {
   return result.value;
 }
 
-/** Light normalization: unify line endings, drop trailing space, cap blank runs. */
+/** Normalize extracted text: strip null bytes, unify EOLs, collapse blank runs, trim. */
 function normalizeJdText(raw: string): string {
-  return raw.replace(/\r\n?/g, "\n").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+  return raw
+    .replace(/\u0000/g, "")
+    .replace(/\r\n?/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 export const jdRouter = Router();
 jdRouter.use(requireAuth);
 
-// Feed a job-description file through to text. Returns the extracted text plus
-// the source file name; the client drops it into the (editable) JD field and
-// saves a kit as usual — the pipeline is fed the same text either way.
+// Extract JD text from an uploaded .pdf/.docx. Returns only { text }; it does
+// not create anything. The client drops the text into the editable JD field and
+// creates a kit via the normal flow, so the pipeline is fed identical input.
 jdRouter.post(
   "/extract",
   upload.single(UPLOAD_FIELD),
@@ -76,31 +101,44 @@ jdRouter.post(
       throw new HttpError(400, "NO_FILE", `Attach a .pdf or .docx file with field name "${UPLOAD_FIELD}"`);
     }
 
-    let text: string;
+    const ext = fileExtension(file.originalname);
+    const kind = detectKind(file.buffer);
+    if (!kind || kind !== ext) {
+      throw new HttpError(
+        400,
+        "UNSUPPORTED_FILE_TYPE",
+        "File contents don't match a .pdf/.docx signature — only .pdf and .docx files are supported",
+      );
+    }
+
+    let raw: string;
     try {
-      text = PDF_RE.test(file.originalname) ? await parsePdf(file.buffer) : await parseDocx(file.buffer);
-    } catch (err) {
-      if (err instanceof HttpError) throw err;
+      raw = kind === "pdf" ? await parsePdf(file.buffer) : await parseDocx(file.buffer);
+    } catch {
       throw new HttpError(
         422,
-        "FILE_PARSE_FAILED",
-        `Could not read "${file.originalname}" — it may be corrupt, encrypted, or in an unexpected format.`,
+        "UNREADABLE_FILE",
+        "This file is corrupt, password-protected, or in an unexpected format",
       );
     }
 
-    text = normalizeJdText(text);
-    if (!text) {
+    const text = normalizeJdText(raw);
+    if (text.length < MIN_TEXT_CHARS) {
       throw new HttpError(
         422,
-        "NO_TEXT_EXTRACTED",
-        `No readable text found in "${file.originalname}" — it may be a scanned image (no text layer) or an empty document.`,
+        "NO_TEXT_FOUND",
+        "No readable text found. If this is a scanned PDF, paste the text manually.",
+      );
+    }
+    if (text.length > MAX_JD_CHARS) {
+      throw new HttpError(
+        413,
+        "TEXT_TOO_LONG",
+        `The extracted JD is ${text.length.toLocaleString("en-US")} characters, over the ${MAX_JD_CHARS.toLocaleString("en-US")}-character limit`,
       );
     }
 
-    const truncated = text.length > MAX_JD_CHARS;
-    const body = truncated ? text.slice(0, MAX_JD_CHARS) : text;
-
-    res.json({ file_name: file.originalname, chars: body.length, truncated, text: body });
+    res.json({ text });
   }),
 );
 
@@ -109,7 +147,7 @@ jdRouter.post(
 jdRouter.use((err: unknown, _req: Request, res: Response, next: (e?: unknown) => void) => {
   if (err instanceof multer.MulterError) {
     if (err.code === "LIMIT_FILE_SIZE") {
-      res.status(413).json({ error: "FILE_TOO_LARGE", message: "File is too large (10 MB limit)" });
+      res.status(413).json({ error: "FILE_TOO_LARGE", message: "File is too large (5 MB limit)" });
     } else {
       res.status(400).json({ error: "BAD_UPLOAD", message: `Upload is missing the "${UPLOAD_FIELD}" file field` });
     }
