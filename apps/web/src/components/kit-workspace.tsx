@@ -1,8 +1,31 @@
 "use client";
 
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type DragEvent, type FormEvent } from "react";
 import Link from "next/link";
-import { apiFetch, apiUpload } from "@/lib/api";
+import { ApiError, apiFetch, apiUpload } from "@/lib/api";
+
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+const UPLOAD_TYPES = [".pdf", ".docx"];
+
+/** Friendly, user-facing copy for each upload error code returned by /api/jd/extract. */
+function uploadErrorLabel(err: unknown): string {
+  if (err instanceof ApiError) {
+    if (err.status === 413) return "File is too large; the limit is 5 MB.";
+    switch (err.code) {
+      case "FILE_TOO_LARGE":
+        return "File is too large; the limit is 5 MB.";
+      case "UNSUPPORTED_FILE_TYPE":
+        return "Unsupported file type; upload a .pdf or .docx.";
+      case "TEXT_TOO_LONG":
+        return "The description is over 50,000 characters; trim it and try again.";
+      case "NO_TEXT_FOUND":
+        return "No readable text found. If this is a scanned PDF, paste the text manually.";
+      case "UNREADABLE_FILE":
+        return "Could not read the file; it may be corrupt or password-protected.";
+    }
+  }
+  return err instanceof Error ? err.message : "Failed to extract text from the file";
+}
 
 interface KitListItem {
   _id: string;
@@ -79,9 +102,21 @@ export default function KitWorkspace() {
   };
 
   const uploadJd = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) {
-      e.target.value = "";
+    await handleJdFile(e.target.files?.[0]);
+    e.target.value = "";
+  };
+
+  const handleJdFile = async (file: File | undefined) => {
+    if (!file) return;
+    const ext = file.name.toLowerCase().slice(file.name.lastIndexOf("."));
+    if (!UPLOAD_TYPES.includes(ext)) {
+      setJdUploadState("error");
+      setJdUploadMessage("Unsupported file type; upload a .pdf or .docx.");
+      return;
+    }
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setJdUploadState("error");
+      setJdUploadMessage("File is too large; the limit is 5 MB.");
       return;
     }
     setJdUploadState("saving");
@@ -89,21 +124,23 @@ export default function KitWorkspace() {
     try {
       const form = new FormData();
       form.append("file", file);
-      const res = await apiUpload<{ file_name: string; chars: number; truncated: boolean; text: string }>(
-        "/api/jd/extract",
-        form,
-      );
+      const res = await apiUpload<{ text: string }>("/api/jd/extract", form);
       setJd(res.text);
-      setJdFile(res.file_name);
-      const truncNote = res.truncated ? " (truncated to 50,000 chars)" : "";
+      setJdFile(file.name);
       setJdUploadState("saved");
-      setJdUploadMessage(`Loaded ${res.chars.toLocaleString()} chars from ${res.file_name}${truncNote}. Review it below, then save.`);
+      setJdUploadMessage(`Extracted from ${file.name}, review before generating.`);
     } catch (err) {
       setJdUploadState("error");
-      setJdUploadMessage(err instanceof Error ? err.message : "Failed to extract text from file");
-    } finally {
-      e.target.value = "";
+      setJdUploadMessage(uploadErrorLabel(err));
     }
+  };
+
+  const [isDragging, setIsDragging] = useState(false);
+
+  const dropJd = async (e: DragEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    void handleJdFile(e.dataTransfer.files?.[0]);
   };
 
   const parseBatchFile = async (file: File): Promise<Array<{ jd: string; company_url: string; days?: number }>> => {
@@ -193,28 +230,39 @@ export default function KitWorkspace() {
               id="jd"
               required
               rows={6}
-              placeholder="Paste the full job description here…"
+              placeholder="Paste the full job description here, or drop a PDF/DOCX onto this box…"
               value={jd}
               onChange={(e) => setJd(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-            />
-          </div>
-          <label className="flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-slate-300 px-4 py-4 text-sm text-slate-500 hover:border-indigo-400 hover:text-indigo-600">
-            {jdUploadState === "saving" ? "Extracting text…" : jdFile ? `Loaded ${jdFile}` : "Upload PDF/DOCX"}
-            <input type="file" accept=".pdf,.docx" className="hidden" onChange={uploadJd} disabled={jdUploadState === "saving"} />
-          </label>
-          {jdUploadMessage && (
-            <div
-              role={jdUploadState === "error" ? "alert" : "status"}
-              className={`rounded-lg border px-3 py-2 text-sm ${
-                jdUploadState === "error"
-                  ? "border-red-200 bg-red-50 text-red-700"
-                  : "border-emerald-200 bg-emerald-50 text-emerald-800"
+              onDragOver={(e) => {
+                e.preventDefault();
+                setIsDragging(true);
+              }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={(e) => void dropJd(e)}
+              className={`w-full rounded-lg border px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 ${
+                isDragging ? "border-indigo-500 ring-2 ring-indigo-200" : "border-slate-300"
               }`}
-            >
-              {jdUploadMessage}
+            />
+            <div className="mt-1.5 flex items-center gap-2">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100">
+                {jdUploadState === "saving" ? "Extracting…" : "Upload PDF/DOCX"}
+                <input type="file" accept=".pdf,.docx" className="hidden" onChange={(e) => void uploadJd(e)} disabled={jdUploadState === "saving"} />
+              </label>
+              <span className="text-xs text-slate-400">or drop a file onto the box above</span>
             </div>
-          )}
+            {jdUploadMessage && (
+              <div
+                role={jdUploadState === "error" ? "alert" : "status"}
+                className={`mt-2 rounded-lg border px-3 py-2 text-sm ${
+                  jdUploadState === "error"
+                    ? "border-red-200 bg-red-50 text-red-700"
+                    : "border-emerald-200 bg-emerald-50 text-emerald-800"
+                }`}
+              >
+                {jdUploadMessage}
+              </div>
+            )}
+          </div>
           <div className="flex items-end justify-between gap-4">
             <div>
               <label htmlFor="days" className="mb-1 block text-sm font-medium text-slate-700">Prep days</label>
