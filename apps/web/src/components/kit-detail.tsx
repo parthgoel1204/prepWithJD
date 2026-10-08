@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { apiFetch } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { GenerationProgress } from "@/components/generation-progress";
+import { TransitionPanel } from "@/components/core/transition-panel";
 
 interface KitFull {
   _id: string;
@@ -347,6 +348,8 @@ export default function KitDetail() {
   const [qText, setQText] = useState("");
   const [qSort, setQSort] = useState<QuestionSort>("schedule");
   const [expandedQ, setExpandedQ] = useState<string | null>(null);
+  const [flashIdx, setFlashIdx] = useState(0);
+  const [fRevealed, setFRevealed] = useState(false);
 
   const [retrieving, setRetrieving] = useState(false);
   const [retrieval, setRetrieval] = useState<RetrievalResultResponse["retrieval"] | null>(null);
@@ -542,6 +545,12 @@ export default function KitDetail() {
   };
 
   const activeIndexText = practiceCursor === "__done__" ? -1 : activeIndex;
+
+  const activeFlashIdx = Math.min(flashIdx, Math.max(0, flashes.length - 1));
+  const goFlash = (dir: -1 | 1) => {
+    setFlashIdx((i) => Math.min(Math.max(i + dir, 0), Math.max(0, flashes.length - 1)));
+    setFRevealed(false);
+  };
 
   const companyHost = (() => {
     try {
@@ -1146,49 +1155,85 @@ export default function KitDetail() {
       )}
 
       {tab === "flashcards" && (
-        <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-slate-800">Flashcards — {flashes.length} cards</h2>
-          {generated ? (
-            <>
-              <AddItemForm kind="flashcard" onAdd={(payload) => patchContent(payload)} />
-              <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <section className="mt-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-zinc-950">Flashcards</h2>
+              <p className="mt-0.5 text-[11px] uppercase tracking-wider text-zinc-500">{flashes.length} cards</p>
+            </div>
+            <AddItemForm kind="flashcard" onAdd={(payload) => patchContent(payload)} />
+          </div>
+          {generated && flashes.length > 0 ? (
+            <div className="mt-4">
+              <div className="flex items-center justify-between gap-3">
+                <button
+                  onClick={() => goFlash(-1)}
+                  disabled={activeFlashIdx <= 0}
+                  className="rounded-lg border border-zinc-950/10 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  Previous
+                </button>
+                <span className="text-xs text-zinc-500" aria-live="polite">
+                  {activeFlashIdx + 1} / {flashes.length}
+                </span>
+                <button
+                  onClick={() => goFlash(1)}
+                  disabled={activeFlashIdx >= flashes.length - 1}
+                  className="rounded-lg border border-zinc-950/10 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  Next
+                </button>
+              </div>
+              <TransitionPanel activeIndex={activeFlashIdx} className="mt-3 overflow-hidden">
                 {flashes.map((f) => (
-                  <li key={f.id} className="rounded-lg border border-slate-200 bg-white p-3">
-                    <div className="flex flex-wrap items-center gap-2 text-sm">
-                      <span className="font-mono text-[10px] text-slate-400">{f.id}</span>
-                      <span className="ml-auto font-mono text-[10px] text-slate-400">{f.requirement_ids.join(", ")}</span>
+                  <div key={f.id} className="rounded-xl border border-zinc-950/10 bg-white p-5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="text-[11px] uppercase tracking-wider text-zinc-500">
+                        {f.requirement_ids.length ? f.requirement_ids.join(" · ") : "Flashcard"}
+                      </div>
                       <button
                         onClick={() => setPendingDelete({ target: "flashcards", id: f.id, label: "flashcard" })}
-                        className="text-xs font-medium text-red-500 transition hover:text-red-700"
+                        className="rounded-lg border border-red-200 px-2 py-0.5 text-xs font-medium text-red-600 transition hover:bg-red-50 active:scale-[0.98]"
                       >
                         Delete
                       </button>
                     </div>
-                    <div className="mt-1 text-sm font-medium text-slate-800">
+                    <div className="mt-2">
                       <InlineEdit
                         value={f.front}
                         onSave={(v) => patchContent({ op: "update-item", target: "flashcards", id: f.id, field: "front", value: v })}
                         label="flashcard front"
-                        textClass="text-sm font-medium text-slate-800"
+                        textClass="text-lg font-medium text-zinc-900"
                       />
                     </div>
-                    <details className="mt-1">
-                      <summary className="cursor-pointer text-xs font-medium text-violet-700 transition hover:text-violet-900">Reveal answer</summary>
-                      <div className="mt-1 whitespace-pre-wrap text-xs text-slate-600">
-                        <InlineEdit
-                          value={f.back}
-                          onSave={(v) => patchContent({ op: "update-item", target: "flashcards", id: f.id, field: "back", value: v })}
-                          label="flashcard back"
-                          textClass="text-xs text-slate-600"
-                        />
+                    {fRevealed ? (
+                      <div className="mt-4 rounded-xl bg-zinc-100 p-4">
+                        <div className="text-[11px] uppercase tracking-wider text-zinc-500">Back</div>
+                        <div className="mt-1 whitespace-pre-wrap text-sm text-zinc-800">
+                          <InlineEdit
+                            value={f.back}
+                            onSave={(v) => patchContent({ op: "update-item", target: "flashcards", id: f.id, field: "back", value: v })}
+                            label="flashcard back"
+                            textClass="text-sm text-zinc-800"
+                          />
+                        </div>
                       </div>
-                    </details>
-                  </li>
+                    ) : (
+                      <button
+                        onClick={() => setFRevealed(true)}
+                        className="mt-4 rounded-lg border border-zinc-950/10 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 active:scale-[0.98]"
+                      >
+                        Reveal
+                      </button>
+                    )}
+                  </div>
                 ))}
-              </ul>
-            </>
+              </TransitionPanel>
+            </div>
+          ) : generated ? (
+            <p className="mt-4 text-sm text-zinc-500">No flashcards yet — add one above.</p>
           ) : (
-            <p className="mt-2 text-sm text-slate-500">Run Generate in Overview to create flashcards.</p>
+            <p className="mt-4 text-sm text-zinc-500">Run Generate in Overview to create flashcards.</p>
           )}
         </section>
       )}

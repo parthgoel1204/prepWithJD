@@ -1,9 +1,9 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, type Variants } from "motion/react";
 import type { Transition } from "motion/react";
 import useMeasure from "react-use-measure";
-import { Children, cloneElement, isValidElement, useId, useRef, useState, type ReactNode } from "react";
+import { Children, cloneElement, isValidElement, useId, useState, type ReactNode } from "react";
 
 export type TransitionPanelProps = {
   children: ReactNode[];
@@ -14,6 +14,12 @@ export type TransitionPanelProps = {
 };
 
 const defaultTransition: Transition = { type: "spring", stiffness: 300, damping: 32 };
+
+const slideVariants: Variants = {
+  enter: (dir: number) => ({ opacity: 0, x: dir >= 0 ? 48 : -48, filter: "blur(4px)" }),
+  center: { opacity: 1, x: 0, filter: "blur(0px)" },
+  exit: (dir: number) => ({ opacity: 0, x: dir >= 0 ? -48 : 48, filter: "blur(4px)" }),
+};
 
 /**
  * Direction-aware panel that slides children in/out horizontally (tracks which
@@ -30,10 +36,12 @@ export function TransitionPanel({
 }: TransitionPanelProps) {
   const id = useId();
   const [ref, bounds] = useMeasure();
-  const activeIndexRef = useRef(activeIndex);
-  const [direction, setDirection] = useState(0);
+  const [lastMove, setLastMove] = useState({ index: activeIndex, direction: 0 });
+  const direction = lastMove.direction;
 
-  const hasMultipleChildren = Children.count(children) > 1;
+  if (lastMove.index !== activeIndex) {
+    setLastMove({ index: activeIndex, direction: activeIndex > lastMove.index ? 1 : -1 });
+  }
 
   const activeChild = Children.toArray(children)[activeIndex];
   const keyed =
@@ -49,18 +57,14 @@ export function TransitionPanel({
       transition={transition ?? defaultTransition}
     >
       <div ref={ref}>
-        <AnimatePresence
-          mode="popLayout"
-          initial={false}
-          onExitComplete={() => {
-            /* measurement re-reads next render */
-          }}
-        >
+        <AnimatePresence mode="popLayout" initial={false} custom={direction}>
           <motion.div
-            key={direction !== 0 ? `${id}-${activeIndex}` : `${id}-${activeIndex}-initial`}
-            initial={{ opacity: 0, x: direction >= 0 ? 48 : -48, filter: "blur(4px)" }}
-            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, x: direction >= 0 ? -48 : 48, filter: "blur(4px)" }}
+            key={`${id}-${activeIndex}`}
+            variants={slideVariants}
+            custom={direction}
+            initial="enter"
+            animate="center"
+            exit="exit"
             transition={transition ?? defaultTransition}
           >
             {keyed}
