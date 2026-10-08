@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { AnimatePresence } from "motion/react";
 import { apiFetch } from "@/lib/api";
+import { GenerationProgress } from "@/components/generation-progress";
 
 interface KitFull {
   _id: string;
@@ -698,6 +700,10 @@ export default function KitDetail() {
                       ? "Generate kit"
                       : "Generate kit (auto-retrieves first)"}
             </button>
+
+            <AnimatePresence>
+              {generating !== "idle" && <GenerationProgress phase={generating} />}
+            </AnimatePresence>
 
             {generateError && (
               <div role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
