@@ -66,7 +66,7 @@ export default async function Home() {
       </InView>
 
       <InView delay={0.05} className="mx-auto mt-10 max-w-5xl px-4 sm:mt-14 md:mt-16">
-        <div className="rounded-2xl border border-zinc-950/10 bg-white/80 p-5 shadow-[0_1px_1px_rgba(0,0,0,0.01)] backdrop-blur-sm sm:p-6">
+        <div className="rounded-xl border border-zinc-950/10 bg-white/80 p-5 shadow-[0_1px_1px_rgba(0,0,0,0.01)] backdrop-blur-sm sm:p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-xl border border-zinc-950/10 bg-zinc-50/80 p-4">
               <div className="flex items-center justify-between">

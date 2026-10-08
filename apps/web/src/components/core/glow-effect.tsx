@@ -34,14 +34,14 @@ const modeTransitions: Record<string, Transition> = {
   flowVertical: { duration: 5, repeat: Infinity, ease: "linear" },
 };
 
-function animationFor(mode: GlowEffectProps["mode"], scale: number, duration: number) {
+function animationFor(mode: GlowEffectProps["mode"], scale: number, duration: number, colors: string[]) {
   switch (mode) {
     case "pulse":
       return { animate: { opacity: [1, 0.25, 1] }, transition: { ...modeTransitions.pulse, duration } };
     case "breathe":
       return { animate: { scale: [scale, scale * 1.15, scale] }, transition: { ...modeTransitions.breathe, duration } };
     case "colorShift":
-      return { animate: { background: defaultColors, opacity: [0.5, 1, 0.5] }, transition: { ...modeTransitions.colorShift, duration } };
+      return { animate: { background: colors, opacity: [0.5, 1, 0.5] }, transition: { ...modeTransitions.colorShift, duration } };
     case "flowHorizontal":
       return {
         animate: { x: ["-50%", "50%", "-50%"], y: ["-25%", "25%", "-25%"] },
@@ -72,7 +72,7 @@ export function GlowEffect({
   duration = 5,
 }: GlowEffectProps) {
   const blurValue = typeof blur === "number" ? blur : blurValues[blur] ?? 10;
-  const { animate, transition: animTransition } = animationFor(mode, scale, duration);
+  const { animate, transition: animTransition } = animationFor(mode, scale, duration, colors);
   const isColorShift = mode === "colorShift" || animate.background !== undefined;
 
   return (

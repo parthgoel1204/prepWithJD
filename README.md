@@ -328,6 +328,23 @@ explicitly allows either.
   `NODE_ENV`, `Secure` in production), an explicit CORS allowlist, and auth middleware on
   every kit/route.
 
+## Design
+
+The web app is a restrained light theme (zinc surfaces, violet-600 accent for primary
+actions/active states, Geist typeface, 1px `zinc-950/10` borders instead of heavy shadows,
+`rounded-xl` cards / `rounded-lg` controls / pill primary buttons). Motion is limited and
+honours `prefers-reduced-motion`. Hand-ported motion-primitives live in
+`apps/web/src/components/core/`:
+
+- `border-trail.tsx` — orbiting gradient border, shown around the JD textarea while focused
+  (kits list "New kit" form).
+- `glow-effect.tsx` — soft color-shift glow behind the generation progress card while the
+  pipeline runs (`generation-progress.tsx`).
+- `text-morph.tsx` — crossfading stage labels in that same progress card.
+- `transition-panel.tsx` — direction-aware slide used by the flashcard viewer
+  (Previous/Next + `3/24` counter).
+- `in-view.tsx` — scroll-reveal wrapper used by the landing page's three-step flow.
+
 ## Known Limitations
 
 - **Groq free-tier quota**: the ~200K tokens/day on the primary `gpt-oss-120b` model can be

@@ -135,7 +135,7 @@ function InlineEdit({
       try {
         await onSave(draft);
         setEditing(false);
-      } catch (err) {
+      } catch {
         setFailed(true);
       } finally {
         setSaving(false);
@@ -163,7 +163,7 @@ function InlineEdit({
           }}
           disabled={saving}
           aria-label={`Edit ${label}`}
-          className="w-full rounded-md border border-violet-300 bg-white px-2 py-1 text-sm text-slate-800 outline-none ring-1 ring-violet-100"
+          className="w-full rounded-lg border border-zinc-950/15 bg-white px-2 py-1 text-sm text-zinc-900 outline-none ring-2 ring-violet-600/20 focus:border-violet-600"
           rows={3}
         />
         {failed && <p className="mt-1 text-xs text-red-600">Save failed — try again.</p>}
@@ -173,14 +173,14 @@ function InlineEdit({
 
   return (
     <button type="button" onClick={begin} title={`Click to edit ${label}`} className="group block w-full text-left">
-      <span className={textClass ?? "text-sm text-slate-800"}>
+      <span className={textClass ?? "text-sm text-zinc-900"}>
         {value ? (
           value
         ) : (
-          <span className="italic text-slate-400">Click to add {label}</span>
+          <span className="italic text-zinc-400">Click to add {label}</span>
         )}
       </span>
-      <span className="ml-1 text-xs text-slate-300 group-hover:text-violet-500">✎</span>
+      <span className="ml-1 text-xs text-zinc-300 group-hover:text-violet-500">✎</span>
     </button>
   );
 }
@@ -309,23 +309,23 @@ function ConfirmDeleteDialog({
   onConfirm: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4" role="dialog" aria-modal="true">
-      <div className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-5 shadow-lg">
-        <h3 className="text-sm font-semibold text-slate-800">Delete this {label}?</h3>
-        <p className="mt-1 text-sm text-slate-500">This removes it permanently from the kit. There&apos;s no undo.</p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 p-4" role="dialog" aria-modal="true">
+      <div className="w-full max-w-sm rounded-lg border border-zinc-950/10 bg-white p-5 shadow-lg">
+        <h3 className="text-sm font-semibold text-zinc-900">Delete this {label}?</h3>
+        <p className="mt-1 text-sm text-zinc-500">This removes it permanently from the kit. There&apos;s no undo.</p>
         {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
         <div className="mt-4 flex justify-end gap-2">
           <button
             onClick={onCancel}
             disabled={busy}
-            className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:opacity-50"
+            className="rounded-lg px-3 py-1.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={busy}
-            className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-50"
+            className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-red-700 active:scale-[0.98] disabled:opacity-50"
           >
             {busy ? "Deleting…" : "Delete"}
           </button>
@@ -478,8 +478,20 @@ export default function KitDetail() {
 
   if (loadState === "loading") {
     return (
-      <main className="mx-auto max-w-4xl px-4 py-8">
-        <p className="text-sm text-slate-500">Loading kit…</p>
+      <main className="mx-auto max-w-4xl px-4 py-8 md:px-8" aria-busy>
+        <div className="h-9 w-64 animate-pulse rounded-lg bg-zinc-200" aria-hidden />
+        <div className="mt-3 h-4 w-96 max-w-full animate-pulse rounded bg-zinc-100" aria-hidden />
+        <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4" aria-hidden>
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="h-16 animate-pulse rounded-xl border border-zinc-950/10 bg-zinc-100" />
+          ))}
+        </div>
+        <div className="mt-8 space-y-3" aria-hidden>
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-24 animate-pulse rounded-xl border border-zinc-950/10 bg-zinc-100" />
+          ))}
+        </div>
+        <span className="sr-only">Loading kit…</span>
       </main>
     );
   }
@@ -490,7 +502,7 @@ export default function KitDetail() {
         <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
-        <Link href="/dashboard" className="mt-4 inline-block text-sm font-medium text-indigo-600 hover:underline">
+        <Link href="/dashboard" className="mt-4 inline-block text-sm font-medium text-violet-700 hover:text-violet-800 hover:underline">
           Back to dashboard
         </Link>
       </main>
@@ -645,7 +657,23 @@ export default function KitDetail() {
         </div>
       </header>
 
-      <nav className="mt-6 flex flex-wrap gap-1 border-b border-zinc-950/10" aria-label="Kit sections">
+      <nav
+        className="mt-6 flex flex-wrap gap-1 border-b border-zinc-950/10"
+        aria-label="Kit sections"
+        role="tablist"
+        onKeyDown={(e) => {
+          if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+          e.preventDefault();
+          const buttons = Array.from(e.currentTarget.querySelectorAll("button"));
+          const from = buttons.findIndex(
+            (b) => b === document.activeElement || b.getAttribute("aria-selected") === "true",
+          );
+          const base = from >= 0 ? from : 0;
+          const next = buttons[(base + (e.key === "ArrowRight" ? 1 : -1) + buttons.length) % buttons.length];
+          next?.focus();
+          next?.click();
+        }}
+      >
         {TABS.map((t) => {
           const count =
             t.key === "requirements"
@@ -661,6 +689,9 @@ export default function KitDetail() {
           return (
             <button
               key={t.key}
+              role="tab"
+              aria-selected={active}
+              tabIndex={active ? 0 : -1}
               onClick={() => setTab(t.key)}
               className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium transition ${
                 active
@@ -694,43 +725,43 @@ export default function KitDetail() {
 
       {tab === "overview" && (
         <>
-          <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <section className="mt-4 rounded-xl border border-zinc-950/10 bg-white p-6">
             <dl className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
               <div>
-                <dt className="text-slate-500">Company URL</dt>
-                <dd className="font-medium text-slate-800">{kit.input.company_url}</dd>
+                <dt className="text-zinc-500">Company URL</dt>
+                <dd className="font-medium text-zinc-900">{kit.input.company_url}</dd>
               </div>
               <div>
-                <dt className="text-slate-500">Prep days</dt>
-                <dd className="font-medium text-slate-800">{kit.input.days}</dd>
+                <dt className="text-zinc-500">Prep days</dt>
+                <dd className="font-medium text-zinc-900">{kit.input.days}</dd>
               </div>
               <div>
-                <dt className="text-slate-500">Created</dt>
-                <dd className="font-medium text-slate-800">{new Date(kit.createdAt).toLocaleString()}</dd>
+                <dt className="text-zinc-500">Created</dt>
+                <dd className="font-medium text-zinc-900">{new Date(kit.createdAt).toLocaleString()}</dd>
               </div>
               <div>
-                <dt className="text-slate-500">JD length</dt>
-                <dd className="font-medium text-slate-800">{kit.input.jd.length.toLocaleString()} chars</dd>
+                <dt className="text-zinc-500">JD length</dt>
+                <dd className="font-medium text-zinc-900">{kit.input.jd.length.toLocaleString()} chars</dd>
               </div>
             </dl>
             <details className="mt-4">
-              <summary className="cursor-pointer text-sm font-medium text-slate-700">Show job description</summary>
-              <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded-lg bg-slate-50 p-3 text-xs text-slate-700">
+              <summary className="cursor-pointer text-sm font-medium text-zinc-700">Show job description</summary>
+              <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded-lg bg-zinc-100 p-3 text-xs text-zinc-700">
                 {kit.input.jd}
               </pre>
             </details>
           </section>
 
-          <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-slate-800">Research</h2>
-            <p className="mt-1 text-sm text-slate-500">
+          <section className="mt-6 rounded-xl border border-zinc-950/10 bg-white p-6">
+            <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-zinc-900">Research</h2>
+            <p className="mt-1 text-sm text-zinc-500">
               Crawls the company home page, ranks internal links (careers/culture/blog), respects robots.txt, and uses Tavily
               to find interview-process discussion.
             </p>
             <button
               onClick={() => void runRetrieval()}
               disabled={retrieving}
-              className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-4 rounded-full bg-violet-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {retrieving ? "Crawling… (timeouts/retries run in the background)" : "Run retrieval"}
             </button>
@@ -744,13 +775,13 @@ export default function KitDetail() {
             {retrieval && (
               <div className="mt-5 space-y-5">
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-700">Pages used ({retrieval.pages_used.length})</h3>
+                  <h3 className="text-sm font-semibold text-zinc-700">Pages used ({retrieval.pages_used.length})</h3>
                   <ul className="mt-2 space-y-1">
                     {retrieval.pages.map((p, i) => (
-                      <li key={`${p.url}-${i}`} className="truncate rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600">
-                        <span className="mr-2 inline-block w-6 text-right text-xs text-slate-400">{i + 1}</span>
-                        <span className="font-medium text-slate-800">{p.title || "(untitled)"}</span>{" "}
-                        <span className="text-slate-400">· d{p.depth}</span> — <span className="text-xs">{p.url}</span>
+                      <li key={`${p.url}-${i}`} className="truncate rounded-lg border border-zinc-950/10 bg-white px-3 py-1.5 text-sm text-zinc-600">
+                        <span className="mr-2 inline-block w-6 text-right text-xs text-zinc-400">{i + 1}</span>
+                        <span className="font-medium text-zinc-900">{p.title || "(untitled)"}</span>{" "}
+                        <span className="text-zinc-400">· d{p.depth}</span> — <span className="text-xs">{p.url}</span>
                       </li>
                     ))}
                   </ul>
@@ -758,14 +789,14 @@ export default function KitDetail() {
 
                 {retrieval.search_hits.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-700">Interview-process discussion (Tavily) — {retrieval.search_hits.length} results</h3>
+                    <h3 className="text-sm font-semibold text-zinc-700">Interview-process discussion (Tavily) — {retrieval.search_hits.length} results</h3>
                     <ul className="mt-2 space-y-1.5">
                       {retrieval.search_hits.map((s, i) => (
                         <li key={`${s.url}-${i}`} className="text-sm">
-                          <a href={s.url} target="_blank" rel="noopener noreferrer" className="font-medium text-indigo-600 hover:underline">
+                          <a href={s.url} target="_blank" rel="noopener noreferrer" className="font-medium text-violet-700 hover:text-violet-800 hover:underline">
                             {s.title}
                           </a>
-                          {s.snippet && <p className="text-xs text-slate-500">{s.snippet}</p>}
+                          {s.snippet && <p className="text-xs text-zinc-500">{s.snippet}</p>}
                         </li>
                       ))}
                     </ul>
@@ -774,16 +805,16 @@ export default function KitDetail() {
 
                 {retrieval.robots_blocked.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-700">
+                    <h3 className="text-sm font-semibold text-zinc-700">
                       robots.txt-blocked pages{" "}
-                      <span className="font-normal text-slate-500">({retrieval.robots_blocked.length} — skipped by this rule, not by accident)</span>
+                      <span className="font-normal text-zinc-500">({retrieval.robots_blocked.length} — skipped by this rule, not by accident)</span>
                     </h3>
                     <ul className="mt-2 space-y-1">
                       {retrieval.robots_blocked.map((b) => (
-                        <li key={`${b.url}-${b.rule}`} className="truncate rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600">
+                        <li key={`${b.url}-${b.rule}`} className="truncate rounded-lg border border-zinc-950/10 bg-white px-3 py-1.5 text-xs text-zinc-600">
                           <span className="rounded bg-amber-50 px-1.5 py-0.5 font-mono text-[10px] text-amber-700">{b.rule}</span>{" "}
                           <span className="font-mono">{b.url}</span>
-                          <span className="text-slate-400"> (linked from {b.via})</span>
+                          <span className="text-zinc-400"> (linked from {b.via})</span>
                         </li>
                       ))}
                     </ul>
@@ -791,16 +822,16 @@ export default function KitDetail() {
                 )}
 
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-700">
+                  <h3 className="text-sm font-semibold text-zinc-700">
                     Source failures logged{" "}
-                    <span className="font-normal text-slate-500">({retrieval.failures.length} — crawl continues past these)</span>
+                    <span className="font-normal text-zinc-500">({retrieval.failures.length} — crawl continues past these)</span>
                   </h3>
                   {retrieval.failures.length === 0 ? (
                     <p className="mt-2 text-sm text-emerald-700">No failures this run — clean crawl.</p>
                   ) : (
                     <ul className="mt-2 space-y-1">
                       {retrieval.failures.map((f, i) => (
-                        <li key={`${f.source_url}-${i}`} className="truncate rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600">
+                        <li key={`${f.source_url}-${i}`} className="truncate rounded-lg border border-zinc-950/10 bg-white px-3 py-1.5 text-xs text-zinc-600">
                           <span className="rounded bg-red-50 px-1.5 py-0.5 font-mono text-[10px] text-red-600">{f.code}</span>{" "}
                           [{f.stage}] <span className="font-mono">{f.source_url}</span> — {f.message}
                         </li>
@@ -812,16 +843,16 @@ export default function KitDetail() {
             )}
           </section>
 
-          <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-slate-800">Pipeline</h2>
-            <p className="mt-1 text-sm text-slate-500">
+          <section className="mt-6 rounded-xl border border-zinc-950/10 bg-white p-6">
+            <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-zinc-900">Pipeline</h2>
+            <p className="mt-1 text-sm text-zinc-500">
               One-click flow: for a draft kit, auto-runs retrieval first, then requirement extraction → per-category question
               generation → coverage loop → schedule → validation (LLM calls take ~1–2 minutes).
             </p>
             <button
               onClick={() => void runGenerate()}
               disabled={generating !== "idle"}
-              className="mt-4 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-4 rounded-full bg-violet-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {generating === "retrieving"
                 ? "Retrieving… (crawl + search)"
@@ -853,30 +884,30 @@ export default function KitDetail() {
             {generated && brief && (
               <div className="mt-6 space-y-6">
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-700">Company brief</h3>
-                  <div className="mt-2 rounded-lg border border-slate-200 bg-white p-3">
-                    <div className="text-xs font-medium text-slate-500">Summary</div>
+                  <h3 className="text-sm font-semibold text-zinc-700">Company brief</h3>
+                  <div className="mt-2 rounded-lg border border-zinc-950/10 bg-white p-3">
+                    <div className="text-xs font-medium text-zinc-500">Summary</div>
                     <InlineEdit
                       value={brief.summary}
                       onSave={(v) => patchContent({ op: "update-brief", field: "summary", value: v })}
                       label="company brief summary"
-                      textClass="mt-1 text-sm text-slate-800"
+                      textClass="mt-1 text-sm text-zinc-900"
                     />
                     {brief.what_they_do && (
                       <>
-                        <div className="mt-3 text-xs font-medium text-slate-500">What they do</div>
-                        <p className="mt-1 whitespace-pre-wrap text-sm text-slate-600">{brief.what_they_do}</p>
+                        <div className="mt-3 text-xs font-medium text-zinc-500">What they do</div>
+                        <p className="mt-1 whitespace-pre-wrap text-sm text-zinc-600">{brief.what_they_do}</p>
                       </>
                     )}
                     {brief.sources.length > 0 && (
-                      <div className="mt-3 text-xs text-slate-500">
+                      <div className="mt-3 text-xs text-zinc-500">
                         Sources: <span className="font-mono">{brief.sources.join(", ")}</span>
                       </div>
                     )}
                     <button
                       onClick={() => void regenerate({ op: "regenerate-brief" }, "brief")}
                       disabled={regenBusy !== null}
-                      className="mt-3 rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="mt-3 rounded-lg border border-zinc-950/10 px-2.5 py-1 text-xs font-medium text-zinc-600 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {regenBusy === "brief" ? "Regenerating brief…" : "Regenerate brief"}
                     </button>
@@ -885,10 +916,10 @@ export default function KitDetail() {
 
                 {stageErrors.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-700">Stage degradations (log-and-continue)</h3>
+                    <h3 className="text-sm font-semibold text-zinc-700">Stage degradations (log-and-continue)</h3>
                     <ul className="mt-2 space-y-1">
                       {stageErrors.map((e, i) => (
-                        <li key={`${e.stage}-${i}`} className="truncate text-xs text-slate-600">
+                        <li key={`${e.stage}-${i}`} className="truncate text-xs text-zinc-600">
                           <span className="rounded bg-red-50 px-1.5 py-0.5 font-mono text-[10px] text-red-600">{e.code}</span> [{e.stage}] {e.message}
                         </li>
                       ))}
@@ -902,22 +933,22 @@ export default function KitDetail() {
       )}
 
       {tab === "requirements" && (
-        <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-slate-800">Requirements — {reqs.length} extracted</h2>
+        <section className="mt-4 rounded-xl border border-zinc-950/10 bg-white p-6">
+          <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-zinc-900">Requirements — {reqs.length} extracted</h2>
           {generated ? (
             <ul className="mt-2 grid grid-cols-1 gap-2">
               {reqs.map((r) => (
-                <li key={r.id} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
-                  <span className="mr-2 rounded bg-white px-1.5 py-0.5 font-mono text-[10px] text-slate-500">{r.id}</span>
-                  <span className={`mr-2 rounded px-1.5 py-0.5 text-[10px] font-medium ${PRIORITY_STYLES[r.priority] ?? "bg-slate-100 text-slate-600"}`}>
+                <li key={r.id} className="rounded-lg border border-zinc-950/10 bg-white px-3 py-2 text-sm">
+                  <span className="mr-2 rounded bg-white px-1.5 py-0.5 font-mono text-[10px] text-zinc-500">{r.id}</span>
+                  <span className={`mr-2 rounded px-1.5 py-0.5 text-[10px] font-medium ${PRIORITY_STYLES[r.priority] ?? "bg-zinc-100 text-zinc-600"}`}>
                     {r.priority}
                   </span>
-                  <span className="text-slate-800">{r.text}</span>
+                  <span className="text-zinc-900">{r.text}</span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="mt-2 text-sm text-slate-500">Run Generate in Overview to extract requirements from the job description.</p>
+            <p className="mt-2 text-sm text-zinc-500">Run Generate in Overview to extract requirements from the job description.</p>
           )}
         </section>
       )}
@@ -1164,7 +1195,20 @@ export default function KitDetail() {
             <AddItemForm kind="flashcard" onAdd={(payload) => patchContent(payload)} />
           </div>
           {generated && flashes.length > 0 ? (
-            <div className="mt-4">
+            <div
+              className="mt-4"
+              onKeyDown={(e) => {
+                const tag = (e.target as HTMLElement).tagName;
+                if (tag === "TEXTAREA" || tag === "INPUT" || tag === "SELECT") return;
+                if (e.key === "ArrowLeft") {
+                  e.preventDefault();
+                  goFlash(-1);
+                } else if (e.key === "ArrowRight") {
+                  e.preventDefault();
+                  goFlash(1);
+                }
+              }}
+            >
               <div className="flex items-center justify-between gap-3">
                 <button
                   onClick={() => goFlash(-1)}
