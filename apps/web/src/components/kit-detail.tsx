@@ -91,9 +91,9 @@ const DIFFICULTY_LABELS: Record<number, { label: string; className: string }> = 
 type QuestionSort = "schedule" | "difficulty" | "confidence";
 
 const CONFIDENCE_STYLES: Record<"low" | "medium" | "high", string> = {
-  low: "rounded-md bg-rose-50 px-3 py-1.5 text-sm font-medium text-rose-700 transition hover:bg-rose-100",
-  medium: "rounded-md bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-700 transition hover:bg-amber-100",
-  high: "rounded-md bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 transition hover:bg-emerald-100",
+  low: "text-rose-700 hover:bg-rose-50",
+  medium: "text-amber-700 hover:bg-amber-50",
+  high: "text-emerald-700 hover:bg-emerald-50",
 };
 
 const TABS: Array<{ key: TabKey; label: string }> = [
@@ -1239,65 +1239,97 @@ export default function KitDetail() {
       )}
 
       {tab === "practice" && (
-        <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-slate-800">Practice</h2>
+        <section className="mt-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-zinc-950">Practice</h2>
+              <p className="mt-0.5 text-[11px] uppercase tracking-wider text-zinc-500">
+                {reviewedCount} / {flashes.length} reviewed
+              </p>
+            </div>
             <button
               onClick={toggleLowestFirst}
-              className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100"
               aria-pressed={lowestFirst}
+              className={cn(
+                "rounded-lg border px-3 py-1.5 text-xs font-medium transition active:scale-[0.98]",
+                lowestFirst
+                  ? "border-violet-600 bg-violet-50 text-violet-700"
+                  : "border-zinc-950/10 bg-white text-zinc-600 hover:bg-zinc-100",
+              )}
             >
-              {lowestFirst ? "Reviewing lowest confidence first" : "Review in deck order"}
+              {lowestFirst ? "Lowest confidence first" : "Deck order"}
             </button>
           </div>
 
           {flashes.length === 0 ? (
-            <p className="mt-4 text-sm text-slate-500">No flashcards yet — run Generate in Overview to create a deck.</p>
+            <p className="mt-4 text-sm text-zinc-500">No flashcards yet — run Generate in Overview to create a deck.</p>
           ) : practiceCursor === "__done__" ? (
-            <p className="mt-4 text-sm text-emerald-700">Deck complete — all {flashes.length} cards reviewed.</p>
+            <div className="mt-4 rounded-xl border border-zinc-950/10 bg-white px-4 py-8 text-center">
+              <p className="text-sm font-medium text-zinc-900">Deck complete</p>
+              <p className="mt-1 text-sm text-zinc-500">All {flashes.length} cards reviewed.</p>
+              <button
+                onClick={() => {
+                  setPracticeCursor(null);
+                  setRevealed(false);
+                }}
+                className="mt-4 rounded-full bg-violet-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-700 active:scale-[0.98]"
+              >
+                Review again
+              </button>
+            </div>
           ) : current ? (
             <div className="mt-4">
-              <div className="flex items-center justify-between text-xs text-slate-500">
-                <span>
-                  {reviewedCount} of {flashes.length} reviewed
-                </span>
+              <div className="flex items-center justify-between text-xs text-zinc-500">
+                <span>{reviewedCount} of {flashes.length} reviewed</span>
                 <span>
                   Card {activeIndexText + 1} of {deck.length}
                 </span>
               </div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-2 h-1 overflow-hidden rounded-full bg-zinc-100">
                 <div
-                  className="h-full bg-violet-600 transition-all"
+                  className="h-full rounded-full bg-violet-600"
                   style={{ width: `${Math.round((reviewedCount / flashes.length) * 100)}%` }}
                 />
               </div>
-              <div className="mt-4 rounded-lg border border-slate-200 p-6">
-                <p className="text-center text-xs font-medium text-slate-400">Front</p>
-                <p className="mt-2 text-center text-lg font-medium text-slate-800">{current.front}</p>
-                <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                  {revealed ? (
-                    <>
-                      <div className="w-full rounded-md bg-slate-50 p-4">
-                        <p className="text-xs font-medium text-slate-400">Back</p>
-                        <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{current.back}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        {(["low", "medium", "high"] as const).map((c) => (
-                          <button key={c} onClick={() => void answerCard(c)} className={CONFIDENCE_STYLES[c]}>
-                            {c === "low" ? "Low" : c === "medium" ? "Medium" : "High"}
-                          </button>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
+              <div className="mt-4 rounded-xl border border-zinc-950/10 bg-white p-6">
+                <p className="text-center text-[11px] uppercase tracking-wider text-zinc-500">Front</p>
+                <p className="mt-2 text-center text-lg font-medium text-zinc-900">{current.front}</p>
+                {revealed ? (
+                  <div className="mt-4">
+                    <div className="rounded-xl bg-zinc-100 p-4">
+                      <p className="text-[11px] uppercase tracking-wider text-zinc-500">Back</p>
+                      <p className="mt-1 whitespace-pre-wrap text-sm text-zinc-800">{current.back}</p>
+                    </div>
+                    <div
+                      className="mt-4 flex overflow-hidden rounded-lg border border-zinc-950/10"
+                      role="group"
+                      aria-label="How well did you know this card?"
+                    >
+                      {(["low", "medium", "high"] as const).map((c, i) => (
+                        <button
+                          key={c}
+                          onClick={() => void answerCard(c)}
+                          className={cn(
+                            "flex-1 px-4 py-2 text-sm font-medium transition active:scale-[0.98]",
+                            i > 0 && "border-l border-zinc-950/10",
+                            CONFIDENCE_STYLES[c],
+                          )}
+                        >
+                          {c === "low" ? "Low" : c === "medium" ? "Medium" : "High"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-4 flex justify-center">
                     <button
                       onClick={() => setRevealed(true)}
-                      className="rounded-md bg-violet-700 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-violet-800"
+                      className="rounded-full bg-violet-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-violet-700 active:scale-[0.98]"
                     >
                       Reveal answer
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           ) : null}
@@ -1305,44 +1337,48 @@ export default function KitDetail() {
       )}
 
       {tab === "schedule" && (
-        <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-slate-800">Schedule — {scheduleDays} days planned</h2>
+        <section className="mt-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-zinc-950">Schedule</h2>
+              <p className="mt-0.5 text-[11px] uppercase tracking-wider text-zinc-500">{scheduleDays} days planned</p>
+            </div>
+            <button
+              onClick={() => void regenerate({ op: "regenerate-schedule" }, "schedule")}
+              disabled={regenBusy !== null}
+              className="rounded-lg border border-zinc-950/10 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {regenBusy === "schedule" ? "Regenerating schedule…" : "Regenerate schedule"}
+            </button>
+          </div>
           {generated ? (
             <>
               {noScheduleMaterial && (
-                <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                <p role="status" className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                   This job description didn&apos;t contain enough detail to generate a study plan.
                 </p>
               )}
-              <button
-                onClick={() => void regenerate({ op: "regenerate-schedule" }, "schedule")}
-                disabled={regenBusy !== null}
-                className="mt-2 rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {regenBusy === "schedule" ? "Regenerating schedule…" : "Regenerate schedule"}
-              </button>
-              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {schedule.map((d) => {
                   const isEmpty = d.minutes === 0 || d.question_ids.length === 0;
                   return (
                     <div
                       key={d.day}
-                      className={
-                        isEmpty
-                          ? "rounded-lg border border-dashed border-slate-200 bg-white p-2.5 text-xs"
-                          : "rounded-lg border border-slate-100 bg-slate-50 p-2.5 text-xs"
-                      }
+                      className={cn(
+                        "rounded-xl border bg-white p-4",
+                        isEmpty ? "border-dashed border-zinc-950/15" : "border-zinc-950/10",
+                      )}
                     >
-                      <div className="font-semibold text-slate-700">
-                        Day {d.day}
-                        {!isEmpty && <span className="text-slate-400"> · {d.minutes} min</span>}
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] uppercase tracking-wider text-zinc-500">Day {d.day}</span>
+                        {!isEmpty && <span className="text-xs text-zinc-500">{d.minutes} min</span>}
                       </div>
                       {isEmpty ? (
-                        <div className="italic text-slate-400">Review day — no new material scheduled</div>
+                        <p className="mt-2 text-sm italic text-zinc-400">Review day, no new material scheduled</p>
                       ) : (
                         <>
-                          <div className="text-slate-500">{d.focus}</div>
-                          <div className="mt-0.5 font-mono text-[10px] text-slate-400">{d.question_ids.join(", ")}</div>
+                          <p className="mt-1.5 text-sm font-medium text-zinc-900">{d.focus}</p>
+                          <p className="mt-2 font-mono text-[10px] leading-4 text-zinc-500">{d.question_ids.join(", ")}</p>
                         </>
                       )}
                     </div>
@@ -1350,13 +1386,13 @@ export default function KitDetail() {
                 })}
               </div>
               {coverage && coverage.uncovered_requirement_ids.length > 0 && (
-                <p className="mt-2 rounded bg-amber-50 px-2 py-1 text-xs text-amber-700">
+                <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
                   Coverage left uncovered (honest): {coverage.uncovered_requirement_ids.join(", ")} after {coverage.passes} pass(es)
                 </p>
               )}
             </>
           ) : (
-            <p className="mt-2 text-sm text-slate-500">Run Generate in Overview to create a study plan.</p>
+            <p className="mt-4 text-sm text-zinc-500">Run Generate in Overview to create a study plan.</p>
           )}
         </section>
       )}
