@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { apiFetch } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import { GenerationProgress } from "@/components/generation-progress";
 
 interface KitFull {
@@ -74,6 +75,19 @@ const PRIORITY_STYLES: Record<string, string> = {
   must: "bg-rose-100 text-rose-700",
   nice: "bg-amber-100 text-amber-700",
 };
+
+// Mirrors packages/pipeline scheduling (1=10, 2=15, 3=20 minutes); the web app must not import the pipeline.
+const QUESTION_MINUTES: Record<number, number> = { 1: 10, 2: 15, 3: 20 };
+const minutesForDifficulty = (difficulty: number): number =>
+  QUESTION_MINUTES[Math.min(3, Math.max(1, Math.round(difficulty)))] ?? 15;
+
+const DIFFICULTY_LABELS: Record<number, { label: string; className: string }> = {
+  1: { label: "Easy", className: "bg-emerald-50 text-emerald-700" },
+  2: { label: "Medium", className: "bg-amber-50 text-amber-700" },
+  3: { label: "Hard", className: "bg-red-50 text-red-700" },
+};
+
+type QuestionSort = "schedule" | "difficulty" | "confidence";
 
 const CONFIDENCE_STYLES: Record<"low" | "medium" | "high", string> = {
   low: "rounded-md bg-rose-50 px-3 py-1.5 text-sm font-medium text-rose-700 transition hover:bg-rose-100",
@@ -179,6 +193,7 @@ function AddItemForm({
   onAdd: (payload: Record<string, unknown>) => Promise<void>;
 }) {
   const isQuestion = kind === "question";
+  const [open, setOpen] = useState(false);
   const [category, setCategory] = useState(isQuestion ? "technical" : "");
   const [prompt, setPrompt] = useState("");
   const [outline, setOutline] = useState("");
@@ -203,6 +218,7 @@ function AddItemForm({
         setFront("");
         setBack("");
       }
+      setOpen(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Add failed");
     } finally {
@@ -210,15 +226,27 @@ function AddItemForm({
     }
   };
 
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="rounded-lg border border-zinc-950/10 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 active:scale-[0.98]"
+      >
+        Add {kind}
+      </button>
+    );
+  }
+
   return (
-    <form onSubmit={submit} className="mt-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
-      <p className="text-xs font-semibold text-slate-600">Add {kind} by hand</p>
-      <div className="mt-2 flex flex-wrap items-start gap-2">
+    <form onSubmit={submit} className="rounded-xl border border-zinc-950/10 bg-zinc-100 p-4">
+      <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Add {kind} by hand</p>
+      <div className="mt-3 flex flex-wrap items-start gap-2">
         {isQuestion && (
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="rounded-md border border-slate-200 bg-white px-2 py-1 text-sm"
+            className="rounded-lg border border-zinc-950/10 bg-white px-2 py-1.5 text-sm text-zinc-800 focus:border-violet-600 focus:outline-none focus:ring-2 focus:ring-violet-600/20"
           >
             {Object.keys(CATEGORY_LABELS).map((c) => (
               <option key={c} value={c}>
@@ -232,14 +260,24 @@ function AddItemForm({
           onChange={(e) => (isQuestion ? setPrompt(e.target.value) : setFront(e.target.value))}
           placeholder={isQuestion ? "Question prompt" : "Card front"}
           maxLength={isQuestion ? 10_000 : 1_000}
-          className="w-full flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-sm sm:w-64"
+          className="w-full flex-1 rounded-lg border border-zinc-950/10 bg-white px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-violet-600 focus:outline-none focus:ring-2 focus:ring-violet-600/20 sm:w-64"
         />
         <button
           type="submit"
           disabled={saving || (isQuestion ? !prompt.trim() : !front.trim())}
-          className="rounded-md bg-violet-700 px-3 py-1 text-sm font-medium text-white transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-full bg-violet-600 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-violet-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {saving ? "Adding…" : "Add"}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setOpen(false);
+            setError(null);
+          }}
+          className="rounded-lg border border-zinc-950/10 bg-white px-3 py-1.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 active:scale-[0.98]"
+        >
+          Cancel
         </button>
       </div>
       <textarea
@@ -247,7 +285,7 @@ function AddItemForm({
         onChange={(e) => (isQuestion ? setOutline(e.target.value) : setBack(e.target.value))}
         placeholder={isQuestion ? "Answer outline (optional)" : "Card back"}
         maxLength={isQuestion ? 20_000 : 5_000}
-        className="mt-2 w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-sm"
+        className="mt-2 w-full rounded-lg border border-zinc-950/10 bg-white px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-violet-600 focus:outline-none focus:ring-2 focus:ring-violet-600/20"
         rows={2}
       />
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
@@ -305,6 +343,10 @@ export default function KitDetail() {
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<TabKey>("overview");
   const reduceMotion = useReducedMotion();
+  const [qCategory, setQCategory] = useState<string>("all");
+  const [qText, setQText] = useState("");
+  const [qSort, setQSort] = useState<QuestionSort>("schedule");
+  const [expandedQ, setExpandedQ] = useState<string | null>(null);
 
   const [retrieving, setRetrieving] = useState(false);
   const [retrieval, setRetrieval] = useState<RetrievalResultResponse["retrieval"] | null>(null);
@@ -518,6 +560,48 @@ export default function KitDetail() {
     { eyebrow: "Days", value: String(scheduleDays) },
     { eyebrow: "Requirements", value: String(reqs.length) },
   ];
+
+  const questionPracticed = (q: (typeof questions)[number]): boolean =>
+    flashes.some((f) => f.requirement_ids.some((r) => q.requirement_ids.includes(r)) && practiceMap.has(f.id));
+
+  const questionRank = (q: (typeof questions)[number]): number => {
+    const ranks = flashes
+      .filter((f) => f.requirement_ids.some((r) => q.requirement_ids.includes(r)))
+      .map((f) => rankOf(f))
+      .filter((r) => r > 0);
+    return ranks.length ? Math.min(...ranks) : 0;
+  };
+
+  const categoryCounts = new Map<string, number>();
+  for (const q of questions) categoryCounts.set(q.category, (categoryCounts.get(q.category) ?? 0) + 1);
+
+  const normalizedQuery = qText.trim().toLowerCase();
+  const visibleGroups = [...new Set(questions.map((q) => q.category))]
+    .filter((c) => qCategory === "all" || c === qCategory)
+    .map((category) => {
+      let items = questions.filter((q) => q.category === category);
+      if (normalizedQuery) items = items.filter((q) => q.prompt.toLowerCase().includes(normalizedQuery));
+      if (qSort === "difficulty") items = [...items].sort((a, b) => a.difficulty - b.difficulty);
+      else if (qSort === "confidence") items = [...items].sort((a, b) => questionRank(a) - questionRank(b));
+      return { category, items };
+    })
+    .filter((g) => g.items.length > 0);
+
+  const nextCard = (() => {
+    if (!flashes.length) return undefined;
+    const unreviewed = flashes.find((f) => !practiceMap.has(f.id));
+    if (unreviewed) return unreviewed;
+    return [...flashes].sort((a, b) => rankOf(a) - rankOf(b) || (a.id < b.id ? -1 : 1))[0];
+  })();
+
+  const coverageStats = (() => {
+    if (!coverage || !reqs.length) return null;
+    return [...new Set(reqs.map((r) => r.priority))].map((priority) => {
+      const inPriority = reqs.filter((r) => r.priority === priority);
+      const covered = inPriority.filter((r) => !coverage.uncovered_requirement_ids.includes(r.id)).length;
+      return { priority, covered, total: inPriority.length };
+    });
+  })();
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8 md:px-8">
@@ -830,102 +914,233 @@ export default function KitDetail() {
       )}
 
       {tab === "questions" && (
-        <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-slate-800">
-            Questions — {questions.length} across {catCount} categories
-          </h2>
+        <section className="mt-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-lg font-semibold text-zinc-950">Question bank</h2>
+            <span className="text-[11px] uppercase tracking-wider text-zinc-500">
+              {questions.length} questions · {catCount} categories
+            </span>
+          </div>
           {generated ? (
-            <>
-              <AddItemForm kind="question" onAdd={(payload) => patchContent(payload)} />
-
-              {(() => {
-                const move = async (category: string, id: string, dir: -1 | 1) => {
-                  const items = questions.filter((q) => q.category === category);
-                  const idx = items.findIndex((q) => q.id === id);
-                  const swap = idx + dir;
-                  if (idx < 0 || swap < 0 || swap >= items.length) return;
-                  const next = [...items];
-                  [next[idx], next[swap]] = [next[swap], next[idx]];
-                  await patchContent({ op: "reorder-questions", category, ordered_ids: next.map((q) => q.id) });
-                };
-                const cats = [...new Set(questions.map((q) => q.category))];
-                return cats.map((category) => {
-                  const items = questions.filter((q) => q.category === category);
-                  return (
-                    <div key={category} className="mt-4">
-                      <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                        {CATEGORY_LABELS[category] ?? category} <span className="text-slate-400">· {items.length}</span>
-                      </h4>
+            <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-start">
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  {[
+                    { key: "all", label: "All", count: questions.length },
+                    ...Object.keys(CATEGORY_LABELS)
+                      .filter((c) => categoryCounts.has(c))
+                      .map((c) => ({ key: c, label: CATEGORY_LABELS[c] ?? c, count: categoryCounts.get(c) ?? 0 })),
+                  ].map((chip) => {
+                    const active = qCategory === chip.key;
+                    return (
                       <button
-                        onClick={() => void regenerate({ op: "regenerate-category", category }, `category:${category}`)}
-                        disabled={regenBusy !== null}
-                        className="mt-1 rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                        key={chip.key}
+                        onClick={() => setQCategory(chip.key)}
+                        aria-pressed={active}
+                        className={cn(
+                          "rounded-full border px-3 py-1 text-xs font-medium transition active:scale-[0.98]",
+                          active
+                            ? "border-violet-600 bg-violet-600 text-white"
+                            : "border-zinc-950/10 bg-white text-zinc-600 hover:bg-zinc-100",
+                        )}
                       >
-                        {regenBusy === `category:${category}` ? `Regenerating ${CATEGORY_LABELS[category] ?? category}…` : "Regenerate category"}
+                        {chip.label}{" "}
+                        <span className={active ? "text-violet-200" : "text-zinc-400"}>{chip.count}</span>
                       </button>
+                    );
+                  })}
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <input
+                    value={qText}
+                    onChange={(e) => setQText(e.target.value)}
+                    placeholder="Filter questions…"
+                    aria-label="Filter questions"
+                    className="min-w-0 flex-1 rounded-lg border border-zinc-950/10 bg-white px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-violet-600 focus:outline-none focus:ring-2 focus:ring-violet-600/20"
+                  />
+                  <select
+                    value={qSort}
+                    onChange={(e) => setQSort(e.target.value as QuestionSort)}
+                    aria-label="Sort questions"
+                    className="rounded-lg border border-zinc-950/10 bg-white px-2 py-1.5 text-sm text-zinc-700 focus:border-violet-600 focus:outline-none focus:ring-2 focus:ring-violet-600/20"
+                  >
+                    <option value="schedule">Schedule order</option>
+                    <option value="difficulty">Difficulty</option>
+                    <option value="confidence">Confidence</option>
+                  </select>
+                </div>
+
+                <div className="mt-4">
+                  <AddItemForm kind="question" onAdd={(payload) => patchContent(payload)} />
+                </div>
+
+                {visibleGroups.length === 0 && (
+                  <p className="mt-4 rounded-xl border border-dashed border-zinc-950/15 px-4 py-8 text-center text-sm text-zinc-500">
+                    No questions match these filters.
+                  </p>
+                )}
+
+                {visibleGroups.map(({ category, items }) => {
+                  const categoryItems = questions.filter((x) => x.category === category);
+                  const move = async (id: string, dir: -1 | 1) => {
+                    const idx = categoryItems.findIndex((q) => q.id === id);
+                    const swap = idx + dir;
+                    if (idx < 0 || swap < 0 || swap >= categoryItems.length) return;
+                    const next = [...categoryItems];
+                    [next[idx], next[swap]] = [next[swap], next[idx]];
+                    await patchContent({ op: "reorder-questions", category, ordered_ids: next.map((q) => q.id) });
+                  };
+                  return (
+                    <div key={category} className="mt-6">
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="text-[11px] uppercase tracking-wider text-zinc-500">
+                          {CATEGORY_LABELS[category] ?? category} · {items.length}
+                        </h3>
+                        <button
+                          onClick={() => void regenerate({ op: "regenerate-category", category }, `category:${category}`)}
+                          disabled={regenBusy !== null}
+                          className="rounded-lg border border-zinc-950/10 bg-white px-2.5 py-1 text-xs font-medium text-zinc-600 transition hover:bg-zinc-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {regenBusy === `category:${category}` ? "Regenerating…" : "Regenerate category"}
+                        </button>
+                      </div>
                       <ul className="mt-2 space-y-2">
-                        {items.map((q, i) => (
-                          <li key={q.id} className="rounded-lg border border-slate-200 bg-white p-3">
-                            <div className="flex flex-wrap items-center gap-2 text-sm">
-                              <span className="flex overflow-hidden rounded border border-slate-200">
+                        {items.map((q) => {
+                          const catIdx = categoryItems.findIndex((x) => x.id === q.id);
+                          const diff =
+                            DIFFICULTY_LABELS[Math.min(3, Math.max(1, Math.round(q.difficulty)))] ?? DIFFICULTY_LABELS[2];
+                          const practiced = questionPracticed(q);
+                          const expanded = expandedQ === q.id;
+                          return (
+                            <li key={q.id} className="rounded-xl border border-zinc-950/10 bg-white p-3 transition hover:border-zinc-950/20">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span
+                                  title={practiced ? "Related flashcards have been practised" : "Not practised yet"}
+                                  className={cn("h-2 w-2 shrink-0 rounded-full", practiced ? "bg-violet-600" : "bg-zinc-300")}
+                                  aria-hidden
+                                />
+                                <span className={cn("rounded px-1.5 py-0.5 font-mono text-[10px] uppercase", diff.className)}>
+                                  {diff.label}
+                                </span>
+                                <span className="text-xs text-zinc-500">{minutesForDifficulty(q.difficulty)} min</span>
+                                <span className="ml-auto flex flex-wrap items-center justify-end gap-1">
+                                  {q.requirement_ids.map((rid) => (
+                                    <span
+                                      key={rid}
+                                      className="rounded-full border border-zinc-950/10 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500"
+                                    >
+                                      {rid}
+                                    </span>
+                                  ))}
+                                </span>
+                                <span className="flex overflow-hidden rounded-lg border border-zinc-950/10">
+                                  <button
+                                    onClick={() => void move(q.id, -1)}
+                                    disabled={patchBusy || catIdx <= 0}
+                                    aria-label="Move question up"
+                                    className="px-1.5 py-0.5 text-xs text-zinc-500 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30"
+                                  >
+                                    ↑
+                                  </button>
+                                  <button
+                                    onClick={() => void move(q.id, 1)}
+                                    disabled={patchBusy || catIdx >= categoryItems.length - 1}
+                                    aria-label="Move question down"
+                                    className="border-l border-zinc-950/10 px-1.5 py-0.5 text-xs text-zinc-500 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-30"
+                                  >
+                                    ↓
+                                  </button>
+                                </span>
                                 <button
-                                  onClick={() => void move(category, q.id, -1)}
-                                  disabled={patchBusy || i === 0}
-                                  aria-label="Move question up"
-                                  className="px-1.5 text-xs text-slate-500 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-30"
+                                  onClick={() => setPendingDelete({ target: "questions", id: q.id, label: "question" })}
+                                  className="rounded-lg border border-red-200 px-2 py-0.5 text-xs font-medium text-red-600 transition hover:bg-red-50 active:scale-[0.98]"
                                 >
-                                  ↑
+                                  Delete
                                 </button>
-                                <button
-                                  onClick={() => void move(category, q.id, 1)}
-                                  disabled={patchBusy || i === items.length - 1}
-                                  aria-label="Move question down"
-                                  className="border-l border-slate-200 px-1.5 text-xs text-slate-500 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-30"
-                                >
-                                  ↓
-                                </button>
-                              </span>
-                              <span className="font-mono text-[10px] text-slate-400">{q.id}</span>
-                              <span className="rounded bg-indigo-50 px-1.5 py-0.5 text-[10px] font-medium text-indigo-700">
-                                {CATEGORY_LABELS[q.category] ?? q.category}
-                              </span>
-                              <span className="text-xs text-amber-600">{"★".repeat(Math.max(0, Math.min(3, q.difficulty)))}{"☆".repeat(Math.max(0, 3 - Math.min(3, q.difficulty)))}</span>
-                              <span className="ml-auto font-mono text-[10px] text-slate-400">{q.requirement_ids.join(", ")}</span>
-                              <button
-                                onClick={() => setPendingDelete({ target: "questions", id: q.id, label: "question" })}
-                                className="text-xs font-medium text-red-500 transition hover:text-red-700"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                            <div className="mt-1">
-                              <InlineEdit
-                                value={q.prompt}
-                                onSave={(v) => patchContent({ op: "update-item", target: "questions", id: q.id, field: "prompt", value: v })}
-                                label="question prompt"
-                              />
-                            </div>
-                            <details className="mt-1">
-                              <summary className="cursor-pointer text-xs font-medium text-violet-700 transition hover:text-violet-900">Answer outline</summary>
-                              <div className="mt-1 whitespace-pre-wrap text-xs text-slate-600">
+                              </div>
+                              <div className={cn("mt-2", !expanded && "line-clamp-2")}>
                                 <InlineEdit
-                                  value={q.answer_outline}
-                                  onSave={(v) => patchContent({ op: "update-item", target: "questions", id: q.id, field: "answer_outline", value: v })}
-                                  label="answer outline"
-                                  textClass="text-xs text-slate-600"
+                                  value={q.prompt}
+                                  onSave={(v) => patchContent({ op: "update-item", target: "questions", id: q.id, field: "prompt", value: v })}
+                                  label="question prompt"
                                 />
                               </div>
-                            </details>
-                          </li>
-                        ))}
+                              {q.prompt.length > 140 && (
+                                <button
+                                  onClick={() => setExpandedQ(expanded ? null : q.id)}
+                                  className="mt-1 text-xs font-medium text-violet-700 transition hover:text-violet-800"
+                                >
+                                  {expanded ? "Show less" : "Show more"}
+                                </button>
+                              )}
+                              <details className="mt-1">
+                                <summary className="cursor-pointer text-xs font-medium text-violet-700 transition hover:text-violet-800">
+                                  Answer outline
+                                </summary>
+                                <div className="mt-1 whitespace-pre-wrap text-xs text-zinc-600">
+                                  <InlineEdit
+                                    value={q.answer_outline}
+                                    onSave={(v) =>
+                                      patchContent({ op: "update-item", target: "questions", id: q.id, field: "answer_outline", value: v })
+                                    }
+                                    label="answer outline"
+                                    textClass="text-xs text-zinc-600"
+                                  />
+                                </div>
+                              </details>
+                            </li>
+                          );
+                        })}
                       </ul>
                     </div>
                   );
-                });
-              })()}
-            </>
+                })}
+              </div>
+
+              <aside className="w-full shrink-0 space-y-4 lg:w-72">
+                <div className="rounded-xl border border-zinc-950/10 bg-white p-4">
+                  <div className="text-[11px] uppercase tracking-wider text-zinc-500">Next up</div>
+                  {nextCard ? (
+                    <>
+                      <p className="line-clamp-4 mt-2 text-sm text-zinc-800">{nextCard.front}</p>
+                      <button
+                        onClick={() => setTab("practice")}
+                        className="mt-3 w-full rounded-full bg-violet-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-700 active:scale-[0.98]"
+                      >
+                        Practice
+                      </button>
+                    </>
+                  ) : (
+                    <p className="mt-2 text-sm text-zinc-500">No flashcards yet.</p>
+                  )}
+                </div>
+                <div className="rounded-xl border border-zinc-950/10 bg-white p-4">
+                  <div className="text-[11px] uppercase tracking-wider text-zinc-500">Coverage</div>
+                  {coverageStats && coverageStats.length > 0 ? (
+                    coverageStats.map((s) => (
+                      <div key={s.priority} className="mt-3">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-medium capitalize text-zinc-700">{s.priority}</span>
+                          <span className="text-zinc-500">
+                            {s.covered}/{s.total}
+                          </span>
+                        </div>
+                        <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-zinc-100">
+                          <div
+                            className="h-full rounded-full bg-violet-600"
+                            style={{ width: `${s.total ? Math.round((s.covered / s.total) * 100) : 0}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="mt-2 text-sm text-zinc-500">Run Generate in Overview to compute coverage.</p>
+                  )}
+                </div>
+              </aside>
+            </div>
           ) : (
-            <p className="mt-2 text-sm text-slate-500">Run Generate in Overview to create questions.</p>
+            <p className="mt-3 text-sm text-zinc-500">Run Generate in Overview to create questions.</p>
           )}
         </section>
       )}
