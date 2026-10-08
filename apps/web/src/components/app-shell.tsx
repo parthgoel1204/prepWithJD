@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Home, Menu, X } from "lucide-react";
 import { apiFetch } from "@/lib/api";
@@ -21,7 +21,6 @@ function getBreadcrumb(pathname: string) {
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
   const [email, setEmail] = useState<string | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -43,6 +42,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     try {
       await apiFetch("/api/auth/logout", { method: "POST" });
     } finally {
+      // Full reload: clears client state even when a stale component is mounted.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- session teardown forces a clean reload
       window.location.assign("/login");
     }
   };

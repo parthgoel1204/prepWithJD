@@ -16,7 +16,6 @@ export function GenerationProgress({ phase }: { phase: "retrieving" | "generatin
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    setIndex(0);
     if (labels.length <= 1) return;
     const id = window.setInterval(() => setIndex((v) => (v + 1) % labels.length), 2500);
     return () => window.clearInterval(id);

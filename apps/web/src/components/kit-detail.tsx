@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { apiFetch } from "@/lib/api";
 import { GenerationProgress } from "@/components/generation-progress";
 
@@ -304,6 +304,7 @@ export default function KitDetail() {
   const [kit, setKit] = useState<KitFull | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<TabKey>("overview");
+  const reduceMotion = useReducedMotion();
 
   const [retrieving, setRetrieving] = useState(false);
   const [retrieval, setRetrieval] = useState<RetrievalResultResponse["retrieval"] | null>(null);
@@ -500,28 +501,58 @@ export default function KitDetail() {
 
   const activeIndexText = practiceCursor === "__done__" ? -1 : activeIndex;
 
-  return (
-    <main className="mx-auto max-w-4xl px-4 py-8">
-      <Link href="/dashboard" className="text-sm font-medium text-indigo-600 hover:underline">
-        ← Dashboard
-      </Link>
+  const companyHost = (() => {
+    try {
+      return new URL(kit.input.company_url).hostname.replace(/^www\./, "");
+    } catch {
+      return kit.input.company_url;
+    }
+  })();
+  const kitTitle = content.role?.title
+    ? `${content.role.title} at ${companyHost}`
+    : companyHost;
 
-      <header className="mt-4 flex flex-wrap items-center gap-3">
-        <h1 className="text-xl font-semibold text-slate-900">Kit detail</h1>
-        <span
-          className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-            kit.status === "generated"
-              ? "bg-emerald-100 text-emerald-700"
-              : kit.status === "retrieved"
-                ? "bg-sky-100 text-sky-700"
-                : "bg-slate-100 text-slate-600"
-          }`}
-        >
-          {kit.status}
-        </span>
+  const stats: Array<{ eyebrow: string; value: string }> = [
+    { eyebrow: "Questions", value: String(questions.length) },
+    { eyebrow: "Flashcards", value: String(flashes.length) },
+    { eyebrow: "Days", value: String(scheduleDays) },
+    { eyebrow: "Requirements", value: String(reqs.length) },
+  ];
+
+  return (
+    <main className="mx-auto max-w-4xl px-4 py-8 md:px-8">
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-semibold tracking-tight text-zinc-950">{kitTitle}</h1>
+          <p className="mt-1.5 text-sm text-zinc-500">
+            <span
+              className={
+                kit.status === "generated"
+                  ? "rounded-full bg-violet-50 px-2 py-0.5 text-xs font-medium text-violet-700"
+                  : kit.status === "retrieved"
+                    ? "rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-700"
+                    : "rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600"
+              }
+            >
+              {kit.status}
+            </span>
+            <span className="mx-1.5">·</span>
+            {kit.input.days} prep days
+            <span className="mx-1.5">·</span>
+            Created {new Date(kit.createdAt).toLocaleDateString()}
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {stats.map((s) => (
+            <div key={s.eyebrow} className="rounded-xl border border-zinc-950/10 bg-white px-3 py-2 text-center">
+              <div className="text-[11px] uppercase tracking-wider text-zinc-500">{s.eyebrow}</div>
+              <div className="mt-0.5 text-base font-semibold text-zinc-950">{s.value}</div>
+            </div>
+          ))}
+        </div>
       </header>
 
-      <nav className="mt-4 flex flex-wrap gap-1 border-b border-slate-200" aria-label="Kit sections">
+      <nav className="mt-6 flex flex-wrap gap-1 border-b border-zinc-950/10" aria-label="Kit sections">
         {TABS.map((t) => {
           const count =
             t.key === "requirements"
@@ -540,15 +571,15 @@ export default function KitDetail() {
               onClick={() => setTab(t.key)}
               className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium transition ${
                 active
-                  ? "border-violet-700 text-violet-900"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  ? "border-violet-600 text-violet-700"
+                  : "border-transparent text-zinc-500 hover:text-zinc-900"
               }`}
             >
               {t.label}
               {typeof count === "number" && (
                 <span
                   className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
-                    active ? "bg-violet-100 text-violet-800" : "bg-slate-100 text-slate-500"
+                    active ? "bg-violet-50 text-violet-700" : "bg-zinc-100 text-zinc-500"
                   }`}
                 >
                   {count}
@@ -558,6 +589,15 @@ export default function KitDetail() {
           );
         })}
       </nav>
+
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={tab}
+          initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -6 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+        >
 
       {tab === "overview" && (
         <>
@@ -702,7 +742,7 @@ export default function KitDetail() {
             </button>
 
             <AnimatePresence>
-              {generating !== "idle" && <GenerationProgress phase={generating} />}
+              {generating !== "idle" && <GenerationProgress key={generating} phase={generating} />}
             </AnimatePresence>
 
             {generateError && (
@@ -1061,15 +1101,18 @@ export default function KitDetail() {
         </section>
       )}
 
-      <details className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <summary className="cursor-pointer select-none text-sm font-medium text-slate-500 transition hover:text-slate-800">
+        </motion.div>
+      </AnimatePresence>
+
+      <details className="mt-6 rounded-xl border border-zinc-950/10 bg-white p-4">
+        <summary className="cursor-pointer select-none text-xs font-medium text-zinc-500 transition hover:text-zinc-900">
           <span className="inline-flex items-center gap-2">
-            <span className="rounded bg-violet-50 px-1.5 py-0.5 font-mono text-[10px] text-violet-700">json</span>
+            <span className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[10px] text-zinc-600">json</span>
             Developer view
           </span>
         </summary>
-        <p className="mt-2 text-xs text-slate-500">Raw model as persisted in MongoDB — confirms the save path and output contract fields.</p>
-        <pre className="mt-3 max-h-96 overflow-auto rounded-lg bg-slate-900 p-4 text-xs text-slate-100">
+        <p className="mt-2 text-xs text-zinc-500">Raw model as persisted in MongoDB — confirms the save path and output contract fields.</p>
+        <pre className="mt-3 max-h-96 overflow-auto rounded-lg bg-zinc-950 p-4 text-xs text-zinc-100">
           {JSON.stringify(kit, null, 2)}
         </pre>
       </details>
