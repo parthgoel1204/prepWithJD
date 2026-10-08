@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  /* Design token: 1px low-contrast borders instead of heavy shadows. */
+  *,
+  ::before,
+  ::after {
+    border-color: color-mix(in oklab, var(--color-zinc-950) 10%, transparent);
+  }
+
+  body {
+    @apply bg-zinc-50 text-zinc-900 antialiased;
+  }
+
+  /* Visible, consistent focus ring for keyboard users. */
+  :focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--color-violet-600) 70%, transparent);
+    outline-offset: 2px;
+  }
+}
