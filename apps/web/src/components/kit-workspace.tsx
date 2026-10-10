@@ -45,8 +45,8 @@ interface KitListResponse {
 type SubmitState = "idle" | "saving" | "saved" | "error";
 
 const STATUS_STYLES: Record<string, string> = {
-  generated: "bg-violet-50 text-violet-700",
-  retrieved: "bg-zinc-100 text-zinc-700",
+  generated: "bg-zinc-100 text-zinc-700",
+  retrieved: "bg-zinc-100 text-zinc-600",
 };
 
 export default function KitWorkspace() {
@@ -271,7 +271,7 @@ export default function KitWorkspace() {
                   "mt-3 rounded-lg border px-3 py-2 text-sm",
                   jdUploadState === "error"
                     ? "border-red-200 bg-red-50 text-red-700"
-                    : "border-violet-600/20 bg-violet-50 text-violet-700",
+                    : "border-zinc-950/10 bg-zinc-50 text-zinc-700",
                 )}
               >
                 {jdUploadMessage}
@@ -304,7 +304,7 @@ export default function KitWorkspace() {
         </form>
 
         {submitState === "saved" && (
-          <div role="status" className="mt-4 rounded-lg border border-violet-600/20 bg-violet-50 px-3 py-2 text-sm text-violet-700">
+          <div role="status" className="mt-4 rounded-lg border border-zinc-950/10 bg-zinc-50 px-3 py-2 text-sm text-zinc-700">
             {submitMessage}
           </div>
         )}
@@ -340,7 +340,7 @@ export default function KitWorkspace() {
                 "mt-4 rounded-lg border px-3 py-2 text-sm",
                 batchState === "error"
                   ? "border-red-200 bg-red-50 text-red-700"
-                  : "border-violet-600/20 bg-violet-50 text-violet-700",
+                  : "border-zinc-950/10 bg-zinc-50 text-zinc-700",
               )}
             >
               {batchMessage}

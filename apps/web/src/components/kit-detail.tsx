@@ -266,7 +266,7 @@ function AddItemForm({
         <button
           type="submit"
           disabled={saving || (isQuestion ? !prompt.trim() : !front.trim())}
-          className="rounded-full bg-violet-600 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-violet-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-lg bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-zinc-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {saving ? "Adding…" : "Add"}
         </button>
@@ -503,7 +503,7 @@ export default function KitDetail() {
         <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
-        <Link href="/dashboard" className="mt-4 inline-block text-sm font-medium text-violet-700 hover:text-violet-800 hover:underline">
+        <Link href="/dashboard" className="mt-4 inline-block text-sm font-medium text-zinc-700 hover:text-zinc-900 hover:underline">
           Back to dashboard
         </Link>
       </main>
@@ -653,7 +653,7 @@ export default function KitDetail() {
             <span
               className={
                 kit.status === "generated"
-                  ? "rounded-full bg-violet-50 px-2 py-0.5 text-xs font-medium text-violet-700"
+                  ? "rounded-full bg-zinc-900 px-2 py-0.5 text-xs font-medium text-white"
                   : kit.status === "retrieved"
                     ? "rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-700"
                     : "rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600"
@@ -773,7 +773,7 @@ export default function KitDetail() {
           </section>
 
           <section className="mt-6 rounded-xl border border-zinc-950/10 bg-white p-6">
-            <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-zinc-900">Research</h2>
+            <h2 className="border-l-2 border-zinc-300 pl-2.5 text-base font-semibold text-zinc-900">Research</h2>
             <p className="mt-1 text-sm text-zinc-500">
               Crawls the company home page, ranks internal links (careers/culture/blog), respects robots.txt, and uses Tavily
               to find interview-process discussion.
@@ -781,7 +781,7 @@ export default function KitDetail() {
             <button
               onClick={() => void runRetrieval()}
               disabled={retrieving}
-              className="mt-4 rounded-full bg-violet-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-4 rounded-lg border border-zinc-950/10 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {retrieving ? "Crawling… (timeouts/retries run in the background)" : "Run retrieval"}
             </button>
@@ -813,7 +813,7 @@ export default function KitDetail() {
                     <ul className="mt-2 space-y-1.5">
                       {retrieval.search_hits.map((s, i) => (
                         <li key={`${s.url}-${i}`} className="text-sm">
-                          <a href={s.url} target="_blank" rel="noopener noreferrer" className="font-medium text-violet-700 hover:text-violet-800 hover:underline">
+                          <a href={s.url} target="_blank" rel="noopener noreferrer" className="font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-2 hover:decoration-zinc-900">
                             {s.title}
                           </a>
                           {s.snippet && <p className="text-xs text-zinc-500">{s.snippet}</p>}
@@ -864,7 +864,7 @@ export default function KitDetail() {
           </section>
 
           <section className="mt-6 rounded-xl border border-zinc-950/10 bg-white p-6">
-            <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-zinc-900">Pipeline</h2>
+            <h2 className="border-l-2 border-zinc-300 pl-2.5 text-base font-semibold text-zinc-900">Pipeline</h2>
             <p className="mt-1 text-sm text-zinc-500">
               One-click flow: for a draft kit, auto-runs retrieval first, then requirement extraction → per-category question
               generation → coverage loop → schedule → validation (LLM calls take ~1–2 minutes).
@@ -954,7 +954,7 @@ export default function KitDetail() {
 
       {tab === "requirements" && (
         <section className="mt-4 rounded-xl border border-zinc-950/10 bg-white p-6">
-          <h2 className="border-l-2 border-violet-500 pl-2.5 text-base font-semibold text-zinc-900">Requirements — {reqs.length} extracted</h2>
+          <h2 className="border-l-2 border-zinc-300 pl-2.5 text-base font-semibold text-zinc-900">Requirements — {reqs.length} extracted</h2>
           {generated ? (
             <ul className="mt-2 grid grid-cols-1 gap-2">
               {reqs.map((r) => (
@@ -1000,12 +1000,11 @@ export default function KitDetail() {
                         className={cn(
                           "rounded-full border px-3 py-1 text-xs font-medium transition active:scale-[0.98]",
                           active
-                            ? "border-violet-600 bg-violet-600 text-white"
+                            ? "border-zinc-900 bg-zinc-900 text-white"
                             : "border-zinc-950/10 bg-white text-zinc-600 hover:bg-zinc-100",
                         )}
                       >
-                        {chip.label}{" "}
-                        <span className={active ? "text-violet-200" : "text-zinc-400"}>{chip.count}</span>
+                        {chip.label} <span className="text-zinc-400">{chip.count}</span>
                       </button>
                     );
                   })}
@@ -1128,13 +1127,13 @@ export default function KitDetail() {
                               {q.prompt.length > 140 && (
                                 <button
                                   onClick={() => setExpandedQ(expanded ? null : q.id)}
-                                  className="mt-1 text-xs font-medium text-violet-700 transition hover:text-violet-800"
+                                  className="mt-1 text-xs font-medium text-zinc-600 transition hover:text-zinc-900"
                                 >
                                   {expanded ? "Show less" : "Show more"}
                                 </button>
                               )}
                               <details className="mt-1">
-                                <summary className="cursor-pointer text-xs font-medium text-violet-700 transition hover:text-violet-800">
+                                <summary className="cursor-pointer text-xs font-medium text-zinc-600 transition hover:text-zinc-900">
                                   Answer outline
                                 </summary>
                                 <div className="mt-1 whitespace-pre-wrap text-xs text-zinc-600">
@@ -1165,7 +1164,7 @@ export default function KitDetail() {
                       <p className="line-clamp-4 mt-2 text-sm text-zinc-800">{nextCard.front}</p>
                       <button
                         onClick={() => setTab("practice")}
-                        className="mt-3 w-full rounded-full bg-violet-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-700 active:scale-[0.98]"
+                        className="mt-3 w-full rounded-lg border border-zinc-950/10 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 active:scale-[0.98]"
                       >
                         Practice
                       </button>
@@ -1317,7 +1316,7 @@ export default function KitDetail() {
               className={cn(
                 "rounded-lg border px-3 py-1.5 text-xs font-medium transition active:scale-[0.98]",
                 lowestFirst
-                  ? "border-violet-600 bg-violet-50 text-violet-700"
+                  ? "border-zinc-900 bg-zinc-900 text-white"
                   : "border-zinc-950/10 bg-white text-zinc-600 hover:bg-zinc-100",
               )}
             >

@@ -117,7 +117,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </button>
           <div className="text-sm font-medium text-zinc-900">{crumb.label || "prepWithJD"}</div>
           {crumb.back ? (
-            <Link href={crumb.back} className="text-xs text-violet-700 hover:text-violet-800">
+            <Link href={crumb.back} className="text-xs text-zinc-700 hover:text-zinc-900">
               Back
             </Link>
           ) : (
@@ -127,7 +127,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <header className="hidden items-center justify-between border-b border-zinc-950/10 bg-white px-6 py-3 md:flex">
           <div className="text-sm font-medium text-zinc-900">{crumb.label || "prepWithJD"}</div>
           {crumb.back ? (
-            <Link href={crumb.back} className="text-sm text-violet-700 hover:text-violet-800">
+            <Link href={crumb.back} className="text-sm text-zinc-700 hover:text-zinc-900">
               Back
             </Link>
           ) : (
