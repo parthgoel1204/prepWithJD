@@ -365,6 +365,7 @@ export default function KitDetail() {
   const [practiceCursor, setPracticeCursor] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
   const [lowestFirst, setLowestFirst] = useState(false);
+  const [practiceError, setPracticeError] = useState<string | null>(null);
 
   const confirmDelete = async () => {
     if (!pendingDelete) return;
@@ -542,18 +543,37 @@ export default function KitDetail() {
   const current = deck.length ? deck[activeIndex] : undefined;
   const reviewedCount = practiceEntries.filter((e) => flashes.some((f) => f.id === e.cardId)).length;
 
-  const answerCard = async (confidence: "low" | "medium" | "high") => {
+  const answerCard = (confidence: "low" | "medium" | "high") => {
     if (!current) return;
-    await patchContent({ op: "practice", card_id: current.id, confidence });
-    setRevealed(false);
+    const cardId = current.id;
     const next = deck[activeIndex + 1];
+
+    setKit((prev) => {
+      if (!prev) return prev;
+      const prevContent = prev.content as PipelineContent;
+      const entries = prevContent.practice ?? [];
+      const existing = entries.find((e) => e.cardId === cardId);
+      const lastSeenAt = new Date().toISOString();
+      const practice = existing
+        ? entries.map((e) => (e.cardId === cardId ? { ...e, confidence, lastSeenAt } : e))
+        : [...entries, { cardId, confidence, lastSeenAt }];
+      return { ...prev, content: { ...prevContent, practice } };
+    });
+
+    setRevealed(false);
+    setPracticeError(null);
     setPracticeCursor(next ? next.id : "__done__");
+
+    void patchContent({ op: "practice", card_id: cardId, confidence }).catch((err) => {
+      setPracticeError(err instanceof Error ? err.message : "Could not save your confidence rating");
+    });
   };
 
   const toggleLowestFirst = () => {
     setLowestFirst((v) => !v);
     setPracticeCursor(null);
     setRevealed(false);
+    setPracticeError(null);
   };
 
   const activeIndexText = practiceCursor === "__done__" ? -1 : activeIndex;
@@ -1315,6 +1335,7 @@ export default function KitDetail() {
                 onClick={() => {
                   setPracticeCursor(null);
                   setRevealed(false);
+                  setPracticeError(null);
                 }}
                 className="mt-4 rounded-full bg-violet-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-700 active:scale-[0.98]"
               >
@@ -1335,6 +1356,11 @@ export default function KitDetail() {
                   style={{ width: `${Math.round((reviewedCount / flashes.length) * 100)}%` }}
                 />
               </div>
+              {practiceError && (
+                <p role="alert" className="mt-2 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs text-red-700">
+                  {practiceError} — your rating is kept locally.
+                </p>
+              )}
               <div className="mt-4 rounded-xl border border-zinc-950/10 bg-white p-6">
                 <p className="text-center text-[11px] uppercase tracking-wider text-zinc-500">Front</p>
                 <p className="mt-2 text-center text-lg font-medium text-zinc-900">{current.front}</p>
@@ -1352,7 +1378,7 @@ export default function KitDetail() {
                       {(["low", "medium", "high"] as const).map((c, i) => (
                         <button
                           key={c}
-                          onClick={() => void answerCard(c)}
+                          onClick={() => answerCard(c)}
                           className={cn(
                             "flex-1 px-4 py-2 text-sm font-medium transition active:scale-[0.98]",
                             i > 0 && "border-l border-zinc-950/10",

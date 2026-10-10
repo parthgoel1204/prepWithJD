@@ -13,7 +13,12 @@ export type TransitionPanelProps = {
   renderAsSingleChild?: boolean;
 };
 
-const defaultTransition: Transition = { type: "spring", stiffness: 300, damping: 32 };
+const defaultTransition: Transition = {
+  type: "spring",
+  stiffness: 300,
+  damping: 30,
+  opacity: { duration: 0.2 },
+};
 
 const slideVariants: Variants = {
   enter: (dir: number) => ({ opacity: 0, x: dir >= 0 ? 48 : -48, filter: "blur(4px)" }),
