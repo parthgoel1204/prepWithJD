@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import Image from "next/image";
 import { InView } from "@/components/core/in-view";
+import { HeroIllustration } from "@/components/hero-illustration";
 
 export default async function Home() {
   const cookieStore = await cookies();
@@ -28,17 +28,7 @@ export default async function Home() {
         </nav>
       </header>
 
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <Image
-          src="/illustrations/hero-desk.svg"
-          alt=""
-          width={1600}
-          height={900}
-          className="absolute left-1/2 top-0 -translate-x-1/2 opacity-[0.08] blur-[1px] [mask-image:radial-gradient(70%_40%_at_50%_30%,black,transparent)]"
-          aria-hidden="true"
-          priority
-        />
-      </div>
+      <HeroIllustration />
 
       <InView className="mx-auto max-w-5xl px-4 pt-12 sm:pt-16 md:pt-20">
         <div className="text-center">

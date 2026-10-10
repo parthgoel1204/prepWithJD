@@ -17,7 +17,9 @@ export function proxy(req: NextRequest) {
   const isAuthRoute = AUTH_ROUTES.includes(pathname);
 
   if (pathname === "/") {
-    return NextResponse.redirect(new URL(hasSession ? "/dashboard" : "/login", req.url));
+    if (hasSession) return NextResponse.redirect(new URL("/dashboard", req.url));
+    // Logged out: let the landing page render at "/".
+    return NextResponse.next();
   }
 
   if (isAuthRoute && hasSession) {
