@@ -8,6 +8,7 @@ import { apiFetch } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { GenerationProgress } from "@/components/generation-progress";
 import { TransitionPanel } from "@/components/core/transition-panel";
+import { InView } from "@/components/core/in-view";
 
 interface KitFull {
   _id: string;
@@ -745,6 +746,7 @@ export default function KitDetail() {
 
       {tab === "overview" && (
         <>
+          <InView>
           <section className="mt-4 rounded-xl border border-zinc-950/10 bg-white p-6">
             <dl className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
               <div>
@@ -771,7 +773,9 @@ export default function KitDetail() {
               </pre>
             </details>
           </section>
+          </InView>
 
+          <InView delay={0.08}>
           <section className="mt-6 rounded-xl border border-zinc-950/10 bg-white p-6">
             <h2 className="border-l-2 border-zinc-300 pl-2.5 text-base font-semibold text-zinc-900">Research</h2>
             <p className="mt-1 text-sm text-zinc-500">
@@ -862,7 +866,9 @@ export default function KitDetail() {
               </div>
             )}
           </section>
+          </InView>
 
+          <InView delay={0.16}>
           <section className="mt-6 rounded-xl border border-zinc-950/10 bg-white p-6">
             <h2 className="border-l-2 border-zinc-300 pl-2.5 text-base font-semibold text-zinc-900">Pipeline</h2>
             <p className="mt-1 text-sm text-zinc-500">
@@ -949,10 +955,12 @@ export default function KitDetail() {
               </div>
             )}
           </section>
+          </InView>
         </>
       )}
 
       {tab === "requirements" && (
+        <InView>
         <section className="mt-4 rounded-xl border border-zinc-950/10 bg-white p-6">
           <h2 className="border-l-2 border-zinc-300 pl-2.5 text-base font-semibold text-zinc-900">Requirements — {reqs.length} extracted</h2>
           {generated ? (
@@ -971,10 +979,12 @@ export default function KitDetail() {
             <p className="mt-2 text-sm text-zinc-500">Run Generate in Overview to extract requirements from the job description.</p>
           )}
         </section>
+        </InView>
       )}
 
       {tab === "questions" && (
-        <section className="mt-4">
+        <InView className="mt-4">
+        <section>
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="text-lg font-semibold text-zinc-950">Question bank</h2>
             <span className="text-[11px] uppercase tracking-wider text-zinc-500">
@@ -1202,10 +1212,12 @@ export default function KitDetail() {
             <p className="mt-3 text-sm text-zinc-500">Run Generate in Overview to create questions.</p>
           )}
         </section>
+        </InView>
       )}
 
       {tab === "flashcards" && (
-        <section className="mt-4">
+        <InView className="mt-4">
+        <section>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold text-zinc-950">Flashcards</h2>
@@ -1299,10 +1311,12 @@ export default function KitDetail() {
             <p className="mt-4 text-sm text-zinc-500">Run Generate in Overview to create flashcards.</p>
           )}
         </section>
+        </InView>
       )}
 
       {tab === "practice" && (
-        <section className="mt-4">
+        <InView className="mt-4">
+        <section>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold text-zinc-950">Practice</h2>
@@ -1403,10 +1417,12 @@ export default function KitDetail() {
             </div>
           ) : null}
         </section>
+        </InView>
       )}
 
       {tab === "schedule" && (
-        <section className="mt-4">
+        <InView className="mt-4">
+        <section>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold text-zinc-950">Schedule</h2>
@@ -1464,6 +1480,7 @@ export default function KitDetail() {
             <p className="mt-4 text-sm text-zinc-500">Run Generate in Overview to create a study plan.</p>
           )}
         </section>
+        </InView>
       )}
 
         </motion.div>

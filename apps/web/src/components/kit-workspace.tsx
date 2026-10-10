@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useReducedMotion } from "motion/react";
 import { ApiError, apiFetch, apiUpload } from "@/lib/api";
 import { BorderTrail } from "@/components/core/border-trail";
+import { InView } from "@/components/core/in-view";
 import { cn } from "@/lib/utils";
 import { FolderOpen, Upload, ChevronDown } from "lucide-react";
 
@@ -207,6 +208,7 @@ export default function KitWorkspace() {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
         <div className="space-y-6">
         {/* Single kit form */}
+        <InView>
         <section className="rounded-xl border border-zinc-950/10 bg-white p-6">
         <h2 className="text-lg font-semibold text-zinc-950">New kit</h2>
         <form onSubmit={createSingle} className="mt-5 space-y-5">
@@ -235,8 +237,12 @@ export default function KitWorkspace() {
                 jdFocused && "focus-within:border-violet-600",
               )}
             >
-              {jdFocused && !reduceMotion && (
-                <BorderTrail size={120} className="bg-gradient-to-r from-violet-600 via-indigo-500 to-blue-500" />
+              {!reduceMotion && (
+                <BorderTrail
+                  size={90}
+                  className="bg-gradient-to-r from-violet-600/40 via-indigo-500/35 to-blue-500/40"
+                  transition={{ repeat: Infinity, duration: 9, ease: "linear" }}
+                />
               )}
               <textarea
                 id="jd"
@@ -313,9 +319,11 @@ export default function KitWorkspace() {
             {submitMessage}
           </div>
         )}
-      </section>
+        </section>
+        </InView>
 
       {/* Batch upload (secondary, collapsed) */}
+      <InView delay={0.08}>
       <details className="group rounded-xl border border-zinc-950/10 bg-white">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-6 py-4 text-sm font-medium text-zinc-900 [&::-webkit-details-marker]:hidden">
           <span>
@@ -348,9 +356,11 @@ export default function KitWorkspace() {
           )}
         </div>
       </details>
+      </InView>
         </div>
 
       {/* Kits list */}
+      <InView delay={0.04}>
       <section>
         <div className="flex items-baseline justify-between">
           <h2 className="text-lg font-semibold text-zinc-950">Your kits</h2>
@@ -381,7 +391,7 @@ export default function KitWorkspace() {
           {kits.map((kit) => (
             <li
               key={kit._id}
-              className="rounded-xl border border-zinc-950/10 bg-white px-4 py-3.5 transition hover:border-zinc-950/20"
+              className="rounded-xl border border-zinc-950/10 bg-white px-4 py-3.5 transition-all duration-200 motion-safe:hover:-translate-y-1 hover:border-zinc-950/25 hover:shadow-sm"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
@@ -426,6 +436,7 @@ export default function KitWorkspace() {
           ))}
         </ul>
       </section>
+      </InView>
       </div>
     </div>
   );
