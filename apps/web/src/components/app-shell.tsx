@@ -54,7 +54,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen flex-col md:flex-row">
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-72 -translate-x-full border-r border-zinc-950/10 bg-white/95 backdrop-blur-sm transition-transform md:static md:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 w-72 -translate-x-full border-r border-zinc-950/10 bg-white transition-transform md:static md:translate-x-0",
           sidebarOpen && "translate-x-0",
         )}
       >
@@ -104,10 +104,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
       {sidebarOpen && (
-        <div className="fixed inset-0 z-30 bg-zinc-900/40 md:hidden" onClick={() => setSidebarOpen(false)} aria-hidden />
+        <div className="fixed inset-0 z-30 bg-zinc-950/40 md:hidden" onClick={() => setSidebarOpen(false)} aria-hidden />
       )}
       <div className="flex min-h-screen flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-zinc-950/10 bg-white/80 px-4 py-3 backdrop-blur-sm md:hidden">
+        <header className="flex items-center justify-between border-b border-zinc-950/10 bg-white px-4 py-3 md:hidden">
           <button
             className="rounded-lg p-1.5 text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900"
             onClick={() => setSidebarOpen(true)}
@@ -124,7 +124,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <div />
           )}
         </header>
-        <header className="hidden items-center justify-between border-b border-zinc-950/10 bg-white/80 px-6 py-3 backdrop-blur-sm md:flex">
+        <header className="hidden items-center justify-between border-b border-zinc-950/10 bg-white px-6 py-3 md:flex">
           <div className="text-sm font-medium text-zinc-900">{crumb.label || "prepWithJD"}</div>
           {crumb.back ? (
             <Link href={crumb.back} className="text-sm text-violet-700 hover:text-violet-800">
