@@ -6,7 +6,7 @@ import { useReducedMotion } from "motion/react";
 import { ApiError, apiFetch, apiUpload } from "@/lib/api";
 import { BorderTrail } from "@/components/core/border-trail";
 import { cn } from "@/lib/utils";
-import { FolderOpen, Upload } from "lucide-react";
+import { FolderOpen, Upload, ChevronDown } from "lucide-react";
 
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 const UPLOAD_TYPES = [".pdf", ".docx"];
@@ -198,14 +198,16 @@ export default function KitWorkspace() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 md:px-8">
+    <div className="mx-auto max-w-6xl px-6 py-8 lg:px-10">
       <header className="mb-8">
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-950">Kits</h1>
+        <h1 className="text-4xl font-semibold tracking-tight text-zinc-950">Kits</h1>
         <p className="mt-1 text-sm text-zinc-500">Paste a JD, point at a company, and start research.</p>
       </header>
 
-      {/* Single kit form */}
-      <section className="rounded-xl border border-zinc-950/10 bg-white p-6">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
+        <div className="space-y-6">
+        {/* Single kit form */}
+        <section className="rounded-xl border border-zinc-950/10 bg-white p-6">
         <h2 className="text-lg font-semibold text-zinc-950">New kit</h2>
         <form onSubmit={createSingle} className="mt-5 space-y-5">
           <div>
@@ -313,34 +315,43 @@ export default function KitWorkspace() {
         )}
       </section>
 
-      {/* Batch upload */}
-      <section className="mt-6 rounded-xl border border-zinc-950/10 bg-white p-6">
-        <h2 className="text-lg font-semibold text-zinc-950">Batch prep (file)</h2>
-        <p className="mt-1 text-sm text-zinc-500">
-          Upload a JSON file: <code className="rounded bg-zinc-100 px-1 text-xs text-zinc-700">[{"{jd, company_url, days}"}, …]</code>
-        </p>
-        <label className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-950/20 px-4 py-6 text-sm text-zinc-500 transition hover:border-violet-600/60 hover:text-violet-700 active:scale-[0.99]">
-          <Upload className="h-4 w-4" />
-          {batchState === "saving" ? "Uploading…" : "Choose JSON file"}
-          <input type="file" accept="application/json,.json" className="hidden" onChange={uploadBatch} disabled={batchState === "saving"} />
-        </label>
-        {batchMessage && (
-          <div
-            role={batchState === "error" ? "alert" : "status"}
-            className={cn(
-              "mt-4 rounded-lg border px-3 py-2 text-sm",
-              batchState === "error"
-                ? "border-red-200 bg-red-50 text-red-700"
-                : "border-violet-600/20 bg-violet-50 text-violet-700",
-            )}
-          >
-            {batchMessage}
-          </div>
-        )}
-      </section>
+      {/* Batch upload (secondary, collapsed) */}
+      <details className="group rounded-xl border border-zinc-950/10 bg-white">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-6 py-4 text-sm font-medium text-zinc-900 [&::-webkit-details-marker]:hidden">
+          <span>
+            Batch prep
+            <span className="ml-2 text-xs font-normal text-zinc-500">Upload many kits from one JSON file</span>
+          </span>
+          <ChevronDown className="h-4 w-4 shrink-0 text-zinc-500 transition-transform group-open:rotate-180" aria-hidden />
+        </summary>
+        <div className="border-t border-zinc-950/10 px-6 py-5">
+          <p className="text-sm text-zinc-500">
+            Upload a JSON file: <code className="rounded bg-zinc-100 px-1 text-xs text-zinc-700">[{"{jd, company_url, days}"}, …]</code>
+          </p>
+          <label className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-950/20 px-4 py-6 text-sm text-zinc-500 transition hover:border-zinc-950/40 hover:text-zinc-700 active:scale-[0.99]">
+            <Upload className="h-4 w-4" />
+            {batchState === "saving" ? "Uploading…" : "Choose JSON file"}
+            <input type="file" accept="application/json,.json" className="hidden" onChange={uploadBatch} disabled={batchState === "saving"} />
+          </label>
+          {batchMessage && (
+            <div
+              role={batchState === "error" ? "alert" : "status"}
+              className={cn(
+                "mt-4 rounded-lg border px-3 py-2 text-sm",
+                batchState === "error"
+                  ? "border-red-200 bg-red-50 text-red-700"
+                  : "border-violet-600/20 bg-violet-50 text-violet-700",
+              )}
+            >
+              {batchMessage}
+            </div>
+          )}
+        </div>
+      </details>
+        </div>
 
       {/* Kits list */}
-      <section className="mt-8">
+      <section>
         <div className="flex items-baseline justify-between">
           <h2 className="text-lg font-semibold text-zinc-950">Your kits</h2>
           {!listLoading && !listError && kits.length > 0 && (
@@ -363,7 +374,7 @@ export default function KitWorkspace() {
           <div className="mt-4 flex flex-col items-center rounded-xl border border-dashed border-zinc-950/15 bg-white px-4 py-10 text-center">
             <FolderOpen className="h-8 w-8 text-zinc-400" aria-hidden />
             <p className="mt-3 text-sm text-zinc-600">No kits yet.</p>
-            <p className="mt-0.5 text-sm text-zinc-500">Save your first one above.</p>
+            <p className="mt-0.5 text-sm text-zinc-500">Save your first one to get started.</p>
           </div>
         )}
         <ul className="mt-4 space-y-3">
@@ -377,7 +388,7 @@ export default function KitWorkspace() {
                   <div className="flex items-center gap-2">
                     <Link
                       href={`/kits/${kit._id}`}
-                      className="truncate text-sm font-medium text-violet-700 hover:text-violet-800 hover:underline"
+                      className="truncate text-sm font-medium text-zinc-900 hover:underline"
                     >
                       {kit.input.company_url}
                     </Link>
@@ -405,7 +416,7 @@ export default function KitWorkspace() {
                   </Link>
                   <button
                     onClick={() => void deleteKit(kit._id)}
-                    className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50 active:scale-[0.98]"
+                    className="rounded-lg border border-zinc-950/10 bg-white px-3 py-1.5 text-xs font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-red-600 active:scale-[0.98]"
                   >
                     Delete
                   </button>
@@ -415,6 +426,7 @@ export default function KitWorkspace() {
           ))}
         </ul>
       </section>
+      </div>
     </div>
   );
 }
