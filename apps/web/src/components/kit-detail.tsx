@@ -1073,7 +1073,7 @@ export default function KitDetail() {
                           {regenBusy === `category:${category}` ? "Regenerating…" : "Regenerate category"}
                         </button>
                       </div>
-                      <ul className="mt-2 space-y-2">
+                      <ul className="mt-2 divide-y divide-zinc-950/10 overflow-hidden rounded-xl border border-zinc-950/10 bg-white">
                         {items.map((q) => {
                           const catIdx = categoryItems.findIndex((x) => x.id === q.id);
                           const diff =
@@ -1081,7 +1081,7 @@ export default function KitDetail() {
                           const practiced = questionPracticed(q);
                           const expanded = expandedQ === q.id;
                           return (
-                            <li key={q.id} className="rounded-xl border border-zinc-950/10 bg-white p-3 transition hover:border-zinc-950/20">
+                            <li key={q.id} className="bg-white px-4 py-4 transition hover:bg-zinc-50">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span
                                   title={practiced ? "Related flashcards have been practised" : "Not practised yet"}
@@ -1166,7 +1166,7 @@ export default function KitDetail() {
                 })}
               </div>
 
-              <aside className="w-full shrink-0 space-y-4 lg:w-72">
+              <aside className="w-full shrink-0 space-y-4 lg:sticky lg:top-6 lg:w-72">
                 <div className="rounded-xl border border-zinc-950/10 bg-white p-4">
                   <div className="text-[11px] uppercase tracking-wider text-zinc-500">Next up</div>
                   {nextCard ? (
